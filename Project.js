@@ -145,6 +145,7 @@ function showScene() {
 
     if (currentScene === 1) {
         storyCard.innerHTML =
+            "<h1>Part 1: The Exile</h1>
             "<h2>Welcome, " + playerName + "!</h2>" +
             "<p>You are a brave warrior in ancient India from the Kingdom of Ayodhya. You are soon to be crowned ruler, as your father, King Dasharatha, is getting old.</p>" +
             "<p>One of your father's wives, Kaikeyi, demands that her own son, your younger brother Bharata, be crowned instead. Your father is left with no choice but to exile you from the kingdom.</p>" +
@@ -544,14 +545,23 @@ function showScene() {
             "<div id='choices'>" +
             "<button onclick='restart()'>Restart</button>" +
             "</div>";
+        //part 2 makedecision and decision instead of makechoice and choice
     } else if (currentScene === 47) {
         storyCard.innerHTML =
             "<h2>Meeting Hanuman</h2>" +
             "<p>Grateful for your help, Sugriva brings forward his wisest and most loyal companion: Hanuman. Hanuman bows before you and offers his strength in the search for Sita.</p>" +
             "<p>A powerful new alliance has begun.</p>" +
             "<div id='choices'>" +
-            "<button onclick='makeChoice()'>Restart</button>" +
+            "<button onclick='makeDecision(1)'>Continue</button>" +
             "</div>";
+    } else if (currentScene === 53) {
+        storyCard.innerhtml = 
+            "<h1>Part 2: The Rescue</h1>" +
+            "<h2>The Rescue Begins</h2>" +
+            "<p>You cannot undo anything from here on.</p>" +
+            "<div id='choices'>" +
+            "<button onclick='makeDecision(2)'>Begin The Rescue</button>" +
+            "</div>"
     }
 
     addSceneToReceipt();
@@ -854,4 +864,10 @@ function makeChoice(choice) {
     showScene();
 }
 
-function 
+function makeDecision(decision){
+    if (decision === 1){
+        currentScene = 53
+    } else if (decision === 2){
+        currentScene = 54
+    }
+}
