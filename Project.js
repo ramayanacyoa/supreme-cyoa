@@ -545,7 +545,7 @@ function showScene() {
             "<div id='choices'>" +
             "<button onclick='restart()'>Restart</button>" +
             "</div>";
-        //part 2 makedecision and decision instead of makechoice and choice
+        //part 2 makedecision and decision instead of makechoice and choice (start from scene 53)
     } else if (currentScene === 47) {
         storyCard.innerHTML =
             "<h2>Meeting Hanuman</h2>" +
@@ -562,6 +562,11 @@ function showScene() {
             "<div id='choices'>" +
             "<button onclick='makeDecision(2)'>Begin The Rescue</button>" +
             "</div>"
+        var disableUndo = document.getElementById("undoButton");
+        disableUndo.innerhtml = 
+            "<button title = 'No longer work in this Part.' id='undoButton' onclick='undoChoice()' type='button' style='opacity = 0.6;'>Undo</button>"
+    } else if (currentScene === 54) {
+        
     }
 
     addSceneToReceipt();
@@ -866,8 +871,8 @@ function makeChoice(choice) {
 
 function makeDecision(decision){
     if (decision === 1){
-        currentScene = 53
+        currentScene = 53;
     } else if (decision === 2){
-        currentScene = 54
+        currentScene = 54; // begin the rescue
     }
 }
