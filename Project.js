@@ -54,7 +54,68 @@ var selectedMiniGameTactics = {
     chase: "balanced",
     maze: "balanced"
 };
+var miniGameScores = {
+    duel: 0,
+    brawl: 0,
+    shooting: 0,
+    chase: 0,
+    maze: 0,
+    journeyTrivia: 0
+};
+var miniGameSession = null;
 var journeyTriviaState = null;
+var ramayanaTriviaBank = [
+    {
+        prompt: "Who wrote the Ramayana, according to tradition?",
+        options: ["Valmiki", "Vyasa", "Kalidasa", "Tulsidas"],
+        correct: "Valmiki"
+    },
+    {
+        prompt: "Who is Rama's devoted wife?",
+        options: ["Sita", "Draupadi", "Mandodari", "Tara"],
+        correct: "Sita"
+    },
+    {
+        prompt: "Which brother stays with Rama during exile?",
+        options: ["Lakshmana", "Bharata", "Shatrughna", "Indrajit"],
+        correct: "Lakshmana"
+    },
+    {
+        prompt: "Who abducts Sita in the Ramayana?",
+        options: ["Ravana", "Kumbhakarna", "Vali", "Maricha"],
+        correct: "Ravana"
+    },
+    {
+        prompt: "Which vanara hero leaps to Lanka?",
+        options: ["Hanuman", "Sugriva", "Nala", "Angada"],
+        correct: "Hanuman"
+    },
+    {
+        prompt: "What is the name of Ravana's kingdom?",
+        options: ["Lanka", "Ayodhya", "Mithila", "Kishkindha"],
+        correct: "Lanka"
+    },
+    {
+        prompt: "Who helps Rama build the bridge to Lanka?",
+        options: ["Vanara army", "Kauravas", "Nagas", "Yadavas"],
+        correct: "Vanara army"
+    },
+    {
+        prompt: "What is Rama and Sita's homeland city?",
+        options: ["Ayodhya", "Dwarka", "Indraprastha", "Ujjain"],
+        correct: "Ayodhya"
+    },
+    {
+        prompt: "Who is the giant brother of Ravana?",
+        options: ["Kumbhakarna", "Vibhishana", "Meghanada", "Khara"],
+        correct: "Kumbhakarna"
+    },
+    {
+        prompt: "Who is Ravana's righteous brother who joins Rama?",
+        options: ["Vibhishana", "Kumbhakarna", "Indrajit", "Akampana"],
+        correct: "Vibhishana"
+    }
+];
 
 var timelineNodeTitles = {
     1: "The Exile",
@@ -352,6 +413,91 @@ function setMiniGameTactic(gameType, tactic) {
     showScene();
 }
 
+function getMiniGameDecisionOptions(gameType) {
+    if (gameType === "duel") {
+        return [
+            { choice: 160, label: "Feint then Parry", bonus: 10 },
+            { choice: 161, label: "Guard and Counter", bonus: 5 },
+            { choice: 162, label: "Heavy Overhead Strike", bonus: -5 }
+        ];
+    } else if (gameType === "brawl") {
+        return [
+            { choice: 163, label: "Low Stance Grapple", bonus: 10 },
+            { choice: 164, label: "Shoulder Rush", bonus: 5 },
+            { choice: 165, label: "Wild Leap Tackle", bonus: -5 }
+        ];
+    } else if (gameType === "shooting") {
+        return [
+            { choice: 166, label: "Hold Breath, Single Arrow", bonus: 10 },
+            { choice: 167, label: "Quick Draw Shot", bonus: 5 },
+            { choice: 168, label: "Rapid Triple Shot", bonus: -5 }
+        ];
+    } else if (gameType === "chase") {
+        return [
+            { choice: 169, label: "Riverbank Shortcut", bonus: 10 },
+            { choice: 170, label: "Steady Pace Through Trees", bonus: 5 },
+            { choice: 171, label: "Long Cliff Jump", bonus: -5 }
+        ];
+    }
+
+    return [
+        { choice: 172, label: "Mark Every Turn", bonus: 10 },
+        { choice: 173, label: "Follow Wind and Light", bonus: 5 },
+        { choice: 174, label: "Sprint Blindly", bonus: -5 }
+    ];
+}
+
+function beginMiniGameSession(gameType) {
+    miniGameSession = {
+        gameType: gameType,
+        round: 1,
+        maxRounds: 3,
+        score: 0
+    };
+}
+
+function handleMiniGameRound(gameType, decisionBonus, rewardName, statRewards) {
+    var odds;
+    var wonRound;
+    var rewardMessage;
+    var statName;
+
+    if (!miniGameSession || miniGameSession.gameType !== gameType) {
+        beginMiniGameSession(gameType);
+    }
+
+    odds = clampOdds(getChallengeOdds(gameType) + decisionBonus);
+    wonRound = randomizer() < odds;
+
+    if (wonRound) {
+        miniGameSession.score += 1;
+        alert("Round " + miniGameSession.round + " won! (Roll odds: " + odds + "%)");
+    } else {
+        alert("Round " + miniGameSession.round + " lost. (Roll odds: " + odds + "%)");
+    }
+
+    miniGameSession.round += 1;
+
+    if (miniGameSession.round > miniGameSession.maxRounds) {
+        miniGameScores[gameType] += miniGameSession.score;
+
+        if (miniGameSession.score >= 2) {
+            for (statName in statRewards) {
+                if (statRewards.hasOwnProperty(statName)) {
+                    awardPowerup(statName, statRewards[statName]);
+                }
+            }
+            rewardMessage = awardMiniGameReward(rewardName) + " Session score: " + miniGameSession.score + "/3.";
+            alert(rewardMessage);
+        } else {
+            alert("Training complete: " + miniGameSession.score + "/3 rounds won. You need at least 2 rounds for relic rewards.");
+        }
+
+        miniGameSession = null;
+        currentScene = 47;
+    }
+}
+
 function sampleChoicesExcluding(correctValue) {
     var pool = receiptChoices.filter(function (choiceText) {
         return choiceText !== correctValue;
@@ -375,28 +521,31 @@ function sampleChoicesExcluding(correctValue) {
 }
 
 function buildJourneyTriviaState() {
-    var firstChoice = receiptChoices[0] || "No recorded choice";
-    var lastChoice = receiptChoices[receiptChoices.length - 1] || "No recorded choice";
-    var middleIndex = Math.floor((receiptChoices.length - 1) / 2);
-    var middleChoice = receiptChoices[middleIndex] || firstChoice;
+    var pool = ramayanaTriviaBank.slice();
+    var questions = [];
+    var questionIndex;
+    var randomIndex;
+
+    while (questions.length < 5 && pool.length > 0) {
+        randomIndex = Math.floor(Math.random() * pool.length);
+        questions.push(pool[randomIndex]);
+        pool.splice(randomIndex, 1);
+    }
+
+    for (questionIndex = 0; questionIndex < questions.length; questionIndex++) {
+        questions[questionIndex] = {
+            prompt: questions[questionIndex].prompt,
+            correct: questions[questionIndex].correct,
+            options: questions[questionIndex].options.slice().sort(function () {
+                return Math.random() - 0.5;
+            })
+        };
+    }
 
     journeyTriviaState = {
         currentQuestion: 0,
         score: 0,
-        questions: [
-            {
-                prompt: "Which choice happened first in your journey?",
-                correct: firstChoice
-            },
-            {
-                prompt: "Which choice happened around the middle of your journey?",
-                correct: middleChoice
-            },
-            {
-                prompt: "Which choice was most recent before this trivia?",
-                correct: lastChoice
-            }
-        ]
+        questions: questions
     };
 }
 
@@ -584,6 +733,8 @@ function saveOldState() {
         ownedTitles: ownedTitles.slice(),
         equippedTitle: equippedTitle,
         selectedMiniGameTactics: JSON.parse(JSON.stringify(selectedMiniGameTactics)),
+        miniGameScores: JSON.parse(JSON.stringify(miniGameScores)),
+        miniGameSession: miniGameSession ? JSON.parse(JSON.stringify(miniGameSession)) : null,
         journeyTriviaState: journeyTriviaState ? JSON.parse(JSON.stringify(journeyTriviaState)) : null,
         receiptScenes: receiptScenes.slice(),
         receiptChoices: receiptChoices.slice(),
@@ -612,6 +763,8 @@ function undoChoice() {
     ownedTitles = oldState.ownedTitles || [];
     equippedTitle = oldState.equippedTitle || "";
     selectedMiniGameTactics = oldState.selectedMiniGameTactics || selectedMiniGameTactics;
+    miniGameScores = oldState.miniGameScores || miniGameScores;
+    miniGameSession = oldState.miniGameSession || null;
     journeyTriviaState = oldState.journeyTriviaState || null;
     receiptScenes = oldState.receiptScenes;
     receiptChoices = oldState.receiptChoices;
@@ -707,6 +860,15 @@ function restart() {
         chase: "balanced",
         maze: "balanced"
     };
+    miniGameScores = {
+        duel: 0,
+        brawl: 0,
+        shooting: 0,
+        chase: 0,
+        maze: 0,
+        journeyTrivia: 0
+    };
+    miniGameSession = null;
     journeyTriviaState = null;
     receiptScenes = [];
     receiptChoices = [];
@@ -1431,13 +1593,19 @@ function showScene() {
             "<p>Grateful for your help, Sugriva brings forward his wisest and most loyal companion: Hanuman. Hanuman bows before you and offers his strength in the search for Sita.</p>" +
             "<p>A powerful new alliance has begun. Hanuman also offers training mini-games before the next chapter.</p>" +
             "<p><strong>Special reward:</strong> every mini-game win grants a relic. Collect all 20 relics to unlock the title <strong>King</strong>.</p>" +
+            "<p><strong>Mini-game scoreboard:</strong> Duel " + miniGameScores.duel +
+            " | Brawl " + miniGameScores.brawl +
+            " | Shooting " + miniGameScores.shooting +
+            " | Chase " + miniGameScores.chase +
+            " | Maze " + miniGameScores.maze +
+            " | Trivia " + miniGameScores.journeyTrivia + "</p>" +
             "<div id='choices'>" +
             "<button onclick='makeChoice(55)'>Duel (Swords)</button>" +
             "<button onclick='makeChoice(56)'>Brawl (Wrestling)</button>" +
             "<button onclick='makeChoice(57)'>Shooting Range (Bows)</button>" +
             "<button onclick='makeChoice(58)'>Chase (Race)</button>" +
             "<button onclick='makeChoice(59)'>Maze (Trivia)</button>" +
-            "<button onclick='makeChoice(65)'>Journey Trivia</button>" +
+            "<button onclick='makeChoice(70)'>Journey Trivia</button>" +
             "<button onclick='makeDecision(1)'>Continue Main Story</button>" +
             "</div>";
     } else if (currentScene === 55) {
@@ -1446,11 +1614,15 @@ function showScene() {
             "<p>Hanuman arranges a sword duel to sharpen your timing and guard.</p>" +
             "<p><strong>Tactic:</strong> " + selectedMiniGameTactics.duel + "</p>" +
             "<p><strong>Current duel win odds:</strong> " + getChallengeOdds("duel") + "%</p>" +
+            "<p><strong>Session:</strong> Round " + (miniGameSession && miniGameSession.gameType === "duel" ? miniGameSession.round : 1) + "/3 | Score " +
+            (miniGameSession && miniGameSession.gameType === "duel" ? miniGameSession.score : 0) + "</p>" +
             "<div id='choices'>" +
             "<button onclick=\"setMiniGameTactic('duel','careful')\">Careful Guard (+10%)</button>" +
             "<button onclick=\"setMiniGameTactic('duel','balanced')\">Balanced Style</button>" +
             "<button onclick=\"setMiniGameTactic('duel','risky')\">All-in Strike (+15%)</button>" +
-            "<button onclick='makeChoice(60)'>Play Duel</button>" +
+            getMiniGameDecisionOptions("duel").map(function (decision) {
+                return "<button onclick='makeChoice(" + decision.choice + ")'>" + decision.label + "</button>";
+            }).join("") +
             "<button onclick='makeChoice(47)'>Back to Hanuman</button>" +
             "</div>";
     } else if (currentScene === 56) {
@@ -1459,11 +1631,15 @@ function showScene() {
             "<p>You enter a friendly wrestling brawl with the vanara champions.</p>" +
             "<p><strong>Tactic:</strong> " + selectedMiniGameTactics.brawl + "</p>" +
             "<p><strong>Current brawl win odds:</strong> " + getChallengeOdds("brawl") + "%</p>" +
+            "<p><strong>Session:</strong> Round " + (miniGameSession && miniGameSession.gameType === "brawl" ? miniGameSession.round : 1) + "/3 | Score " +
+            (miniGameSession && miniGameSession.gameType === "brawl" ? miniGameSession.score : 0) + "</p>" +
             "<div id='choices'>" +
             "<button onclick=\"setMiniGameTactic('brawl','careful')\">Defensive Grapple (+10%)</button>" +
             "<button onclick=\"setMiniGameTactic('brawl','balanced')\">Balanced Style</button>" +
             "<button onclick=\"setMiniGameTactic('brawl','risky')\">Berserker Rush (+15%)</button>" +
-            "<button onclick='makeChoice(61)'>Play Brawl</button>" +
+            getMiniGameDecisionOptions("brawl").map(function (decision) {
+                return "<button onclick='makeChoice(" + decision.choice + ")'>" + decision.label + "</button>";
+            }).join("") +
             "<button onclick='makeChoice(47)'>Back to Hanuman</button>" +
             "</div>";
     } else if (currentScene === 57) {
@@ -1472,11 +1648,15 @@ function showScene() {
             "<p>Hanuman sets up moving targets for your bow practice.</p>" +
             "<p><strong>Tactic:</strong> " + selectedMiniGameTactics.shooting + "</p>" +
             "<p><strong>Current shooting win odds:</strong> " + getChallengeOdds("shooting") + "%</p>" +
+            "<p><strong>Session:</strong> Round " + (miniGameSession && miniGameSession.gameType === "shooting" ? miniGameSession.round : 1) + "/3 | Score " +
+            (miniGameSession && miniGameSession.gameType === "shooting" ? miniGameSession.score : 0) + "</p>" +
             "<div id='choices'>" +
             "<button onclick=\"setMiniGameTactic('shooting','careful')\">Steady Aim (+10%)</button>" +
             "<button onclick=\"setMiniGameTactic('shooting','balanced')\">Balanced Style</button>" +
             "<button onclick=\"setMiniGameTactic('shooting','risky')\">Rapid Fire (+15%)</button>" +
-            "<button onclick='makeChoice(62)'>Play Shooting Range</button>" +
+            getMiniGameDecisionOptions("shooting").map(function (decision) {
+                return "<button onclick='makeChoice(" + decision.choice + ")'>" + decision.label + "</button>";
+            }).join("") +
             "<button onclick='makeChoice(47)'>Back to Hanuman</button>" +
             "</div>";
     } else if (currentScene === 58) {
@@ -1485,11 +1665,15 @@ function showScene() {
             "<p>You race through the forest in a speed and agility challenge.</p>" +
             "<p><strong>Tactic:</strong> " + selectedMiniGameTactics.chase + "</p>" +
             "<p><strong>Current chase win odds:</strong> " + getChallengeOdds("chase") + "%</p>" +
+            "<p><strong>Session:</strong> Round " + (miniGameSession && miniGameSession.gameType === "chase" ? miniGameSession.round : 1) + "/3 | Score " +
+            (miniGameSession && miniGameSession.gameType === "chase" ? miniGameSession.score : 0) + "</p>" +
             "<div id='choices'>" +
             "<button onclick=\"setMiniGameTactic('chase','careful')\">Safe Route (+10%)</button>" +
             "<button onclick=\"setMiniGameTactic('chase','balanced')\">Balanced Style</button>" +
             "<button onclick=\"setMiniGameTactic('chase','risky')\">Shortcut Sprint (+15%)</button>" +
-            "<button onclick='makeChoice(63)'>Play Chase</button>" +
+            getMiniGameDecisionOptions("chase").map(function (decision) {
+                return "<button onclick='makeChoice(" + decision.choice + ")'>" + decision.label + "</button>";
+            }).join("") +
             "<button onclick='makeChoice(47)'>Back to Hanuman</button>" +
             "</div>";
     } else if (currentScene === 59) {
@@ -1498,59 +1682,70 @@ function showScene() {
             "<p>You navigate a puzzle maze while answering ancient-knowledge trivia. Smarts now boosts maze success.</p>" +
             "<p><strong>Tactic:</strong> " + selectedMiniGameTactics.maze + "</p>" +
             "<p><strong>Current maze win odds:</strong> " + getChallengeOdds("maze") + "%</p>" +
+            "<p><strong>Session:</strong> Round " + (miniGameSession && miniGameSession.gameType === "maze" ? miniGameSession.round : 1) + "/3 | Score " +
+            (miniGameSession && miniGameSession.gameType === "maze" ? miniGameSession.score : 0) + "</p>" +
             "<div id='choices'>" +
             "<button onclick=\"setMiniGameTactic('maze','careful')\">Map Every Turn (+10%)</button>" +
             "<button onclick=\"setMiniGameTactic('maze','balanced')\">Balanced Style</button>" +
             "<button onclick=\"setMiniGameTactic('maze','risky')\">Blind Dash (+15%)</button>" +
-            "<button onclick='makeChoice(64)'>Play Maze</button>" +
+            getMiniGameDecisionOptions("maze").map(function (decision) {
+                return "<button onclick='makeChoice(" + decision.choice + ")'>" + decision.label + "</button>";
+            }).join("") +
             "<button onclick='makeChoice(47)'>Back to Hanuman</button>" +
             "</div>";
-    } else if (currentScene === 65) {
+    } else if (currentScene === 70) {
         storyCard.innerHTML =
             "<h2>Mini-game: Journey Trivia</h2>" +
-            "<p>Answer questions based on the order of your own journey. Use your Story Receipt if you need a hint.</p>" +
-            "<p><strong>Current journey trivia win odds:</strong> " + getChallengeOdds("journeyTrivia") + "%</p>" +
+            "<p>Answer Ramayana lore questions. Get at least 4 out of 5 to win a relic and stat boost.</p>" +
+            "<p><strong>Current journey trivia win odds bonus:</strong> " + getChallengeOdds("journeyTrivia") + "%</p>" +
+            "<p><strong>Total trivia score:</strong> " + miniGameScores.journeyTrivia + "</p>" +
             "<div id='choices'>" +
-            "<button onclick='makeChoice(66)'>Start Journey Trivia</button>" +
+            "<button onclick='makeChoice(71)'>Start Journey Trivia</button>" +
             "<button onclick='makeChoice(47)'>Back to Hanuman</button>" +
             "</div>";
-    } else if (currentScene === 66) {
+    } else if (currentScene === 71) {
         if (!journeyTriviaState || journeyTriviaState.currentQuestion >= journeyTriviaState.questions.length) {
             buildJourneyTriviaState();
         }
         storyCard.innerHTML =
             "<h2>Journey Trivia Question " + (journeyTriviaState.currentQuestion + 1) + "</h2>" +
             "<p><strong>" + journeyTriviaState.questions[journeyTriviaState.currentQuestion].prompt + "</strong></p>" +
+            "<p><strong>Current score:</strong> " + journeyTriviaState.score + "/" + journeyTriviaState.currentQuestion + "</p>" +
             "<div id='choices'>" +
-            sampleChoicesExcluding(journeyTriviaState.questions[journeyTriviaState.currentQuestion].correct).map(function (optionText) {
-                return "<button onclick='makeChoice(" + (optionText === journeyTriviaState.questions[journeyTriviaState.currentQuestion].correct ? 67 : 68) + ")'>" + optionText + "</button>";
+            journeyTriviaState.questions[journeyTriviaState.currentQuestion].options.map(function (optionText) {
+                return "<button onclick='makeChoice(" + (optionText === journeyTriviaState.questions[journeyTriviaState.currentQuestion].correct ? 72 : 73) + ")'>" + optionText + "</button>";
             }).join("") +
+            "<button onclick='makeChoice(70)'>Back to Trivia Menu</button>" +
             "</div>";
-    } else if (currentScene === 67) {
+    } else if (currentScene === 72) {
         storyCard.innerHTML =
             "<h2>Correct!</h2>" +
-            "<p>You remembered the order of your journey correctly.</p>" +
+            "<p>You answered that Ramayana question correctly.</p>" +
             "<div id='choices'>" +
-            "<button onclick='makeChoice(69)'>Next Question</button>" +
+            "<button onclick='makeChoice(74)'>Next Question</button>" +
+            "<button onclick='makeChoice(70)'>Back to Trivia Menu</button>" +
             "</div>";
-    } else if (currentScene === 68) {
+    } else if (currentScene === 73) {
         storyCard.innerHTML =
             "<h2>Not Quite</h2>" +
-            "<p>That was not the right point in your journey order. Try the next one anyway.</p>" +
+            "<p>That answer is incorrect, but you can still recover this run.</p>" +
             "<div id='choices'>" +
-            "<button onclick='makeChoice(69)'>Continue</button>" +
+            "<button onclick='makeChoice(74)'>Continue</button>" +
+            "<button onclick='makeChoice(70)'>Back to Trivia Menu</button>" +
             "</div>";
     } else if (currentScene === 53) {
-        storyCard.innerhtml = 
+        storyCard.innerHTML =
             "<h1>Part 2: The Rescue</h1>" +
             "<h2>The Rescue Begins</h2>" +
             "<p>You cannot undo anything from here on.</p>" +
             "<div id='choices'>" +
             "<button onclick='makeDecision(2)'>Begin The Rescue</button>" +
-            "</div>"
+            "</div>";
         var disableUndo = document.getElementById("undoButton");
-        disableUndo.innerhtml = 
-            "<button title = 'No longer work in this Part.' id='undoButton' onclick='undoChoice()' type='button' style='opacity = 0.6;'>Undo</button>"
+        if (disableUndo) {
+            disableUndo.disabled = true;
+            disableUndo.title = "No longer works in this Part.";
+        }
     } else if (currentScene === 54) {
         
     }
@@ -1645,25 +1840,17 @@ function makeChoice(choice) {
         addChoiceToReceipt("Started the chase mini-game");
     } else if (choice === 59) {
         addChoiceToReceipt("Started the maze mini-game");
-    } else if (choice === 60) {
-        addChoiceToReceipt("Played duel mini-game");
-    } else if (choice === 61) {
-        addChoiceToReceipt("Played brawl mini-game");
-    } else if (choice === 62) {
-        addChoiceToReceipt("Played shooting mini-game");
-    } else if (choice === 63) {
-        addChoiceToReceipt("Played chase mini-game");
-    } else if (choice === 64) {
-        addChoiceToReceipt("Played maze mini-game");
-    } else if (choice === 65) {
+    } else if (choice >= 160 && choice <= 174) {
+        addChoiceToReceipt("Made a mini-game round decision");
+    } else if (choice === 70) {
         addChoiceToReceipt("Started journey trivia mini-game");
-    } else if (choice === 66) {
+    } else if (choice === 71) {
         addChoiceToReceipt("Began journey trivia questions");
-    } else if (choice === 67) {
+    } else if (choice === 72) {
         addChoiceToReceipt("Answered a journey trivia question correctly");
-    } else if (choice === 68) {
+    } else if (choice === 73) {
         addChoiceToReceipt("Answered a journey trivia question incorrectly");
-    } else if (choice === 69) {
+    } else if (choice === 74) {
         addChoiceToReceipt("Advanced to the next journey trivia question");
     } else if (choice === 48) {
         addChoiceToReceipt("Answered Jatayu question 1 correctly");
@@ -1927,89 +2114,86 @@ function makeChoice(choice) {
             currentScene = 58;
         } else if (choice === 59) {
             currentScene = 59;
-        } else if (choice === 65) {
-            currentScene = 65;
+        } else if (choice === 70) {
+            currentScene = 70;
         }
     } else if (currentScene === 55) {
-        if (choice === 60) {
-            if (randomizer() < getChallengeOdds("duel")) {
-                awardPowerup("defense", 1);
-                awardPowerup("weaponMastery", 1);
-                awardPowerup("smarts", 1);
-                alert(awardMiniGameReward("Duel"));
-            }
-
-            currentScene = 47;
+        if (choice === 160) {
+            handleMiniGameRound("duel", 10, "Duel", { defense: 1, weaponMastery: 1, smarts: 1 });
+        } else if (choice === 161) {
+            handleMiniGameRound("duel", 5, "Duel", { defense: 1, weaponMastery: 1, smarts: 1 });
+        } else if (choice === 162) {
+            handleMiniGameRound("duel", -5, "Duel", { defense: 1, weaponMastery: 1, smarts: 1 });
         } else if (choice === 47) {
+            miniGameSession = null;
             currentScene = 47;
         }
     } else if (currentScene === 56) {
-        if (choice === 61) {
-            if (randomizer() < getChallengeOdds("brawl")) {
-                awardPowerup("strength", 1);
-                awardPowerup("stamina", 1);
-                alert(awardMiniGameReward("Brawl"));
-            }
-
-            currentScene = 47;
+        if (choice === 163) {
+            handleMiniGameRound("brawl", 10, "Brawl", { strength: 1, stamina: 1 });
+        } else if (choice === 164) {
+            handleMiniGameRound("brawl", 5, "Brawl", { strength: 1, stamina: 1 });
+        } else if (choice === 165) {
+            handleMiniGameRound("brawl", -5, "Brawl", { strength: 1, stamina: 1 });
         } else if (choice === 47) {
+            miniGameSession = null;
             currentScene = 47;
         }
     } else if (currentScene === 57) {
-        if (choice === 62) {
-            if (randomizer() < getChallengeOdds("shooting")) {
-                awardPowerup("stamina", 1);
-                awardPowerup("weaponMastery", 1);
-                alert(awardMiniGameReward("Shooting Range"));
-            }
-
-            currentScene = 47;
+        if (choice === 166) {
+            handleMiniGameRound("shooting", 10, "Shooting Range", { stamina: 1, weaponMastery: 1 });
+        } else if (choice === 167) {
+            handleMiniGameRound("shooting", 5, "Shooting Range", { stamina: 1, weaponMastery: 1 });
+        } else if (choice === 168) {
+            handleMiniGameRound("shooting", -5, "Shooting Range", { stamina: 1, weaponMastery: 1 });
         } else if (choice === 47) {
+            miniGameSession = null;
             currentScene = 47;
         }
     } else if (currentScene === 58) {
-        if (choice === 63) {
-            if (randomizer() < getChallengeOdds("chase")) {
-                awardPowerup("speedAgility", 1);
-                alert(awardMiniGameReward("Chase"));
-            }
-
-            currentScene = 47;
+        if (choice === 169) {
+            handleMiniGameRound("chase", 10, "Chase", { speedAgility: 1 });
+        } else if (choice === 170) {
+            handleMiniGameRound("chase", 5, "Chase", { speedAgility: 1 });
+        } else if (choice === 171) {
+            handleMiniGameRound("chase", -5, "Chase", { speedAgility: 1 });
         } else if (choice === 47) {
+            miniGameSession = null;
             currentScene = 47;
         }
     } else if (currentScene === 59) {
-        if (choice === 64) {
-            if (randomizer() < getChallengeOdds("maze")) {
-                awardPowerup("speedAgility", 1);
-                awardPowerup("magicalPower", 1);
-                awardPowerup("smarts", 1);
-                alert(awardMiniGameReward("Maze Trivia"));
-            }
-
-            currentScene = 47;
+        if (choice === 172) {
+            handleMiniGameRound("maze", 10, "Maze Trivia", { speedAgility: 1, magicalPower: 1, smarts: 1 });
+        } else if (choice === 173) {
+            handleMiniGameRound("maze", 5, "Maze Trivia", { speedAgility: 1, magicalPower: 1, smarts: 1 });
+        } else if (choice === 174) {
+            handleMiniGameRound("maze", -5, "Maze Trivia", { speedAgility: 1, magicalPower: 1, smarts: 1 });
         } else if (choice === 47) {
+            miniGameSession = null;
             currentScene = 47;
         }
-    } else if (currentScene === 65) {
-        if (choice === 66) {
+    } else if (currentScene === 70) {
+        if (choice === 71) {
             buildJourneyTriviaState();
-            currentScene = 66;
+            currentScene = 71;
         } else if (choice === 47) {
             currentScene = 47;
         }
-    } else if (currentScene === 66) {
-        if (choice === 67) {
+    } else if (currentScene === 71) {
+        if (choice === 72) {
             journeyTriviaState.score += 1;
-            currentScene = 67;
-        } else if (choice === 68) {
-            currentScene = 68;
+            currentScene = 72;
+        } else if (choice === 73) {
+            currentScene = 73;
+        } else if (choice === 70) {
+            currentScene = 70;
         }
-    } else if (currentScene === 67 || currentScene === 68) {
-        if (choice === 69) {
+    } else if (currentScene === 72 || currentScene === 73) {
+        if (choice === 74) {
             journeyTriviaState.currentQuestion += 1;
             if (journeyTriviaState.currentQuestion >= journeyTriviaState.questions.length) {
-                if (journeyTriviaState.score >= 2 || randomizer() < getChallengeOdds("journeyTrivia")) {
+                miniGameScores.journeyTrivia += journeyTriviaState.score;
+                if (journeyTriviaState.score >= 4 || randomizer() < getChallengeOdds("journeyTrivia")) {
                     awardPowerup("smarts", 2);
                     awardPowerup("magicalPower", 1);
                     alert(awardMiniGameReward("Journey Trivia"));
@@ -2017,8 +2201,10 @@ function makeChoice(choice) {
                 journeyTriviaState = null;
                 currentScene = 47;
             } else {
-                currentScene = 66;
+                currentScene = 71;
             }
+        } else if (choice === 70) {
+            currentScene = 70;
         }
     }
     if (previousScene !== currentScene) {
