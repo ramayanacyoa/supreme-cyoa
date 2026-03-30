@@ -565,6 +565,7 @@ function handleTimelineModalBackdrop(event) {
 
 function showScene() {
     var storyCard = document.getElementById("storyCard");
+    var shouldAutoOpenTimeline;
 
     if (currentScene === 1) {
         storyCard.innerHTML =
@@ -998,7 +999,11 @@ function showScene() {
     }
     makeReceipt();
     setUndoButton();
+    shouldAutoOpenTimeline = isTerminalScene(currentScene) && !timelineModalOpen;
     renderTimeline(timelineModalOpen);
+    if (shouldAutoOpenTimeline) {
+        openTimelineModal();
+    }
 }
 
 // scene 2 - banished into exile
