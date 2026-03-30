@@ -112,6 +112,14 @@ body::after {
   padding: 10px 16px;
 }
 
+#playerStatsButton {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 20;
+  padding: 10px 16px;
+}
+
 #undoButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -527,6 +535,62 @@ blockquote,
   box-shadow: var(--shadow);
 }
 
+.stats-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(8, 5, 10, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.stats-modal.open {
+  display: flex;
+}
+
+#playerStatsCard {
+  width: min(560px, 96vw);
+  border-radius: 22px;
+  padding: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 245, 221, 0.08), rgba(255, 245, 221, 0.02)),
+    var(--panel);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow);
+}
+
+.stats-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.stats-close {
+  min-width: 44px;
+  border-radius: 12px;
+  padding: 8px 10px;
+  line-height: 1;
+}
+
+.stats-list {
+  margin: 10px 0 0;
+  padding-left: 22px;
+  text-align: left;
+}
+
+.stats-list li {
+  margin-top: 6px;
+}
+
+.stats-note {
+  margin-top: 14px;
+  font-style: italic;
+}
+
 @media (max-width: 768px) {
   body {
     padding: 22px 12px 36px;
@@ -573,6 +637,12 @@ blockquote,
   #timelineButton {
     top: 10px;
     right: 90px;
+    width: auto;
+  }
+
+  #playerStatsButton {
+    top: 10px;
+    left: 10px;
     width: auto;
   }
 }
