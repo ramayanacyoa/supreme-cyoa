@@ -26,10 +26,26 @@ var playerStats = {
 var inventoryItems = [];
 var maxInventoryItems = 20;
 var rewardItems = [
-    "Sun Sigil", "Moon Sigil", "Forest Sigil", "River Sigil", "Sky Sigil",
-    "Flame Sigil", "Stone Sigil", "Wind Sigil", "Thunder Sigil", "Lotus Sigil",
-    "Lion Sigil", "Eagle Sigil", "Ocean Sigil", "Mountain Sigil", "Dawn Sigil",
-    "Dusk Sigil", "Star Sigil", "Temple Sigil", "Crown Sigil", "Royal Emblem"
+    { name: "Sun Sigil", description: "Inscribed with solar hymns that teach timing, courage, and leadership in battle." },
+    { name: "Moon Sigil", description: "A silver glyph of calm reflection that sharpens judgment during uncertain moments." },
+    { name: "Forest Sigil", description: "Etched with woodland routes and creature lore, improving survival knowledge." },
+    { name: "River Sigil", description: "Carries flowing script about adaptation, helping you solve changing problems faster." },
+    { name: "Sky Sigil", description: "Celestial markings reveal wind signs and distant patterns, boosting strategic insight." },
+    { name: "Flame Sigil", description: "Contains teachings on discipline and focus, tempering quick decisions with clarity." },
+    { name: "Stone Sigil", description: "Ancient carvings on endurance and fortitude that reinforce practical wisdom." },
+    { name: "Wind Sigil", description: "Whispered verses on movement and timing that improve tactical thinking." },
+    { name: "Thunder Sigil", description: "Battle chants about decisive action, training your mind to react intelligently." },
+    { name: "Lotus Sigil", description: "Sacred lessons in patience and purity that strengthen thoughtful decision-making." },
+    { name: "Lion Sigil", description: "Royal maxims on courage and command that raise your confidence and intellect." },
+    { name: "Eagle Sigil", description: "High-watch teachings that help you read situations from a wider perspective." },
+    { name: "Ocean Sigil", description: "Deep-water lore of tides and cycles that expands long-term planning skills." },
+    { name: "Mountain Sigil", description: "Peak inscriptions on perseverance that enhance disciplined problem-solving." },
+    { name: "Dawn Sigil", description: "Morning mantras of renewal that encourage creative, fresh solutions." },
+    { name: "Dusk Sigil", description: "Evening teachings on caution and review that refine careful analysis." },
+    { name: "Star Sigil", description: "Constellation guides that improve memory, navigation, and abstract reasoning." },
+    { name: "Temple Sigil", description: "Priestly records of ethics and law that deepen moral and scholarly knowledge." },
+    { name: "Crown Sigil", description: "Statecraft doctrine that sharpens leadership, diplomacy, and political wisdom." },
+    { name: "Royal Emblem", description: "The final archive of kingship, uniting every lesson into master-level insight." }
 ];
 var titles = {
     king: {
@@ -376,6 +392,30 @@ function unlockTitleIfEligible() {
     }
 }
 
+function getRewardItemByName(itemName) {
+    var i;
+
+    for (i = 0; i < rewardItems.length; i++) {
+        if (rewardItems[i].name === itemName) {
+            return rewardItems[i];
+        }
+    }
+
+    return null;
+}
+
+function readRelicKnowledge(itemName) {
+    var item = getRewardItemByName(itemName);
+
+    if (!item) {
+        return;
+    }
+
+    awardPowerup("smarts", 1);
+    addChoiceToReceipt("Studied " + item.name + " and gained knowledge (+1 Smarts)");
+    updateInventoryCard();
+}
+
 function awardMiniGameReward(gameName) {
     var itemName;
     var unlockedNow = false;
@@ -385,7 +425,7 @@ function awardMiniGameReward(gameName) {
         return "Inventory complete. The royal trials are already finished.";
     }
 
-    itemName = rewardItems[inventoryItems.length];
+    itemName = rewardItems[inventoryItems.length].name;
     inventoryItems.push(itemName);
     addChoiceToReceipt("Won " + gameName + " and earned " + itemName);
     if (inventoryItems.length >= maxInventoryItems && ownedTitles.indexOf("king") === -1) {
@@ -631,24 +671,43 @@ function updateInventoryCard() {
     var body = document.getElementById("inventoryBody");
     var markup = "";
     var i;
+    var safeName;
 
     if (!body) {
         return;
     }
 
-    if (inventoryArtifacts.length === 0) {
+    if (inventoryItems.length === 0 && inventoryArtifacts.length === 0) {
         body.innerHTML = "<p>You have not collected any special artifacts yet.</p>";
         return;
     }
 
-    markup += "<p><strong>Artifacts Collected:</strong></p>";
-    markup += "<ul class='stats-list'>";
+    if (inventoryItems.length > 0) {
+        markup += "<p><strong>Knowledge Relics:</strong></p>";
+        markup += "<ul class='stats-list'>";
 
-    for (i = 0; i < inventoryArtifacts.length; i++) {
-        markup += "<li>" + inventoryArtifacts[i] + "</li>";
+        for (i = 0; i < inventoryItems.length; i++) {
+            safeName = inventoryItems[i].replace(/'/g, "\\'");
+            markup += "<li><strong>" + inventoryItems[i] + "</strong>: " +
+                rewardItems[i].description +
+                " <button type='button' onclick=\"readRelicKnowledge('" + safeName + "')\">Read</button></li>";
+        }
+
+        markup += "</ul>";
+        markup += "<p class='stats-note'>Reading a relic grants +1 Smarts every time.</p>";
     }
 
-    markup += "</ul>";
+    if (inventoryArtifacts.length > 0) {
+        markup += "<p><strong>Artifacts Collected:</strong></p>";
+        markup += "<ul class='stats-list'>";
+
+        for (i = 0; i < inventoryArtifacts.length; i++) {
+            markup += "<li>" + inventoryArtifacts[i] + "</li>";
+        }
+
+        markup += "</ul>";
+    }
+
     body.innerHTML = markup;
 }
 
