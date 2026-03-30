@@ -55,6 +55,11 @@
         <span class="legend-item"><span class="legend-swatch highlight"></span>Your exact route</span>
         <span class="legend-item"><span class="legend-swatch current"></span>Current scene</span>
       </div>
+      <div id="timelineZoomControls" aria-label="Timeline zoom controls">
+        <button type="button" onclick="adjustTimelineZoom(-0.2)" aria-label="Zoom out timeline">−</button>
+        <span id="timelineZoomValue">100%</span>
+        <button type="button" onclick="adjustTimelineZoom(0.2)" aria-label="Zoom in timeline">+</button>
+      </div>
       <div id="timelineFlowchart"></div>
     </section>
   </div>
