@@ -38,5 +38,20 @@
     <!-- this is where the story will be displayed -->
     <div id="choices"></div>
   </div>
+
+  <section id="timelineCard" aria-live="polite">
+    <h2>Timeline</h2>
+    <p>Every possible scene path is shown here. Endings highlight the route you took.</p>
+    <div id="timelineLegend">
+      <span class="legend-item"><span class="legend-swatch"></span>All possible paths</span>
+      <span class="legend-item"><span class="legend-swatch highlight"></span>Your path</span>
+    </div>
+    <div id="timelineFlowchart"></div>
+    <div id="timelineReplayWrapper" class="hidden">
+      <h3>Your Ending Path</h3>
+      <p>This replay timeline highlights the exact route you took before restart.</p>
+      <div id="timelineFlowchartHighlight"></div>
+    </div>
+  </section>
 </body>
 </html>
