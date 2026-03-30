@@ -9,6 +9,7 @@ var oldStates = [];
 var visitedSceneIds = [];
 var takenTransitions = [];
 var timelineModalOpen = false;
+var timelineZoom = 1;
 
 var timelineNodeTitles = {
     1: "The Exile",
@@ -349,6 +350,23 @@ function makeWrappedTextLines(text, maxCharsPerLine) {
     return lines;
 }
 
+
+function updateTimelineZoomLabel() {
+    var label = document.getElementById("timelineZoomValue");
+
+    if (!label) {
+        return;
+    }
+
+    label.textContent = Math.round(timelineZoom * 100) + "%";
+}
+
+function adjustTimelineZoom(change) {
+    timelineZoom = Math.max(0.6, Math.min(1.8, timelineZoom + change));
+    updateTimelineZoomLabel();
+    renderTimeline(timelineModalOpen);
+}
+
 function renderTimeline(showHighlight) {
     var container = document.getElementById("timelineFlowchart");
     var svg = "";
@@ -504,6 +522,13 @@ function renderTimeline(showHighlight) {
 
     svg += "</svg>";
     container.innerHTML = svg;
+
+    var renderedSvg = container.querySelector("svg");
+
+    if (renderedSvg) {
+        renderedSvg.style.width = (timelineZoom * 100) + "%";
+        renderedSvg.style.minWidth = (3600 * timelineZoom) + "px";
+    }
 }
 
 function openTimelineModal() {
@@ -514,6 +539,7 @@ function openTimelineModal() {
     }
 
     timelineModalOpen = true;
+    updateTimelineZoomLabel();
     renderTimeline(true);
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
