@@ -112,6 +112,14 @@ body::after {
   padding: 10px 16px;
 }
 
+#inventoryButton {
+  position: fixed;
+  top: 16px;
+  left: 140px;
+  z-index: 20;
+  padding: 10px 16px;
+}
+
 #playerStatsButton {
   position: fixed;
   top: 16px;
@@ -562,6 +570,17 @@ blockquote,
   box-shadow: var(--shadow);
 }
 
+#inventoryCard {
+  width: min(520px, 96vw);
+  border-radius: 22px;
+  padding: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 245, 221, 0.08), rgba(255, 245, 221, 0.02)),
+    var(--panel);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow);
+}
+
 .stats-modal-header {
   display: flex;
   align-items: center;
@@ -643,6 +662,12 @@ blockquote,
   #playerStatsButton {
     top: 10px;
     left: 10px;
+    width: auto;
+  }
+
+  #inventoryButton {
+    top: 10px;
+    left: 126px;
     width: auto;
   }
 }
