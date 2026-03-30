@@ -6,6 +6,168 @@ var wentAlone = false;
 var receiptScenes = [];
 var receiptChoices = [];
 var oldStates = [];
+var visitedSceneIds = [];
+var takenTransitions = [];
+
+var timelineNodeTitles = {
+    1: "The Exile",
+    2: "Exile Begins",
+    3: "Argue Back",
+    4: "Accept Exile",
+    5: "Go Alone",
+    6: "Go With Them",
+    7: "Surphanaka Encounter",
+    8: "Surphanaka Encounter (Alone)",
+    9: "Fight Surphanaka",
+    10: "Protect Sita",
+    11: "Negotiate",
+    12: "Accept Proposal",
+    13: "Reject Proposal",
+    14: "Victory",
+    15: "Negotiation Fails",
+    16: "Meet Ravana",
+    17: "Evil King Ending",
+    18: "Game Over",
+    19: "Golden Deer",
+    20: "Bring Lakshmana?",
+    21: "Ignore Deer Ending",
+    22: "Track Deer (Together)",
+    23: "Track Deer (Alone)",
+    24: "Shoot Deer",
+    25: "Maricha's Cry",
+    26: "Ravana's Chance",
+    27: "Lakshmana Line",
+    28: "Ravana's Trick",
+    29: "Sita Abducted",
+    30: "Jatayu Sees Ravana",
+    31: "Sita Taken",
+    32: "Jatayu Rescue Quiz",
+    33: "Jatayu Rescues Sita",
+    34: "Jatayu Falls",
+    35: "Jatayu Falls",
+    36: "Fight Ravana",
+    37: "Sita Taken",
+    38: "Forest Duel Ending",
+    39: "Lakshmana Saves Sita",
+    40: "Meet Sugriva",
+    41: "Sugriva's Plea",
+    42: "Exile Vow",
+    43: "Vali Challenge",
+    44: "Vali Falls",
+    45: "Missed Shot",
+    46: "Missed Shot",
+    47: "Meet Hanuman",
+    48: "Jatayu Quiz 2",
+    49: "Jatayu Quiz 3",
+    50: "Final Struggle",
+    51: "Fate Decision",
+    52: "Peaceful Ending",
+    53: "Part 2 Intro",
+    54: "Part 2 Start"
+};
+
+var timelineLevels = [
+    [1, 2],
+    [3],
+    [4],
+    [5, 6],
+    [7, 8],
+    [9, 10, 11, 12, 13],
+    [14, 15, 16, 52, 18],
+    [17, 19],
+    [20, 21],
+    [22, 23],
+    [24],
+    [25],
+    [26, 27],
+    [28],
+    [29, 39],
+    [30],
+    [31, 32],
+    [48, 34, 35],
+    [49],
+    [50],
+    [33, 37],
+    [36, 40],
+    [38, 41],
+    [42],
+    [43],
+    [44, 45, 46],
+    [47],
+    [53],
+    [54]
+];
+
+var timelineEdges = [
+    { from: 1, to: 3, label: "Argue back" },
+    { from: 1, to: 4, label: "Accept exile" },
+    { from: 2, to: 3, label: "Argue back" },
+    { from: 2, to: 4, label: "Accept exile" },
+    { from: 3, to: 4, label: "Continue" },
+    { from: 4, to: 5, label: "Go alone" },
+    { from: 4, to: 6, label: "Go with them" },
+    { from: 5, to: 8, label: "Continue" },
+    { from: 6, to: 7, label: "Continue" },
+    { from: 7, to: 12, label: "Accept marriage" },
+    { from: 7, to: 9, label: "Fight" },
+    { from: 7, to: 10, label: "Protect Sita" },
+    { from: 7, to: 11, label: "Negotiate" },
+    { from: 8, to: 12, label: "Accept" },
+    { from: 8, to: 13, label: "Reject" },
+    { from: 13, to: 9, label: "Fight" },
+    { from: 11, to: 15, label: "Try again" },
+    { from: 11, to: 9, label: "Prepare to fight" },
+    { from: 15, to: 9, label: "Fight" },
+    { from: 9, to: 14, label: "Fight (win w/party)", type: "chance" },
+    { from: 9, to: 52, label: "Fight (win alone)", type: "chance" },
+    { from: 9, to: 18, label: "Fight (lose)", type: "chance" },
+    { from: 10, to: 19, label: "Continue" },
+    { from: 14, to: 19, label: "Continue" },
+    { from: 12, to: 16, label: "Meet Ravana" },
+    { from: 16, to: 17, label: "Claim throne" },
+    { from: 19, to: 20, label: "Chase deer" },
+    { from: 19, to: 21, label: "Ignore deer" },
+    { from: 20, to: 22, label: "Bring Lakshmana" },
+    { from: 20, to: 23, label: "Leave with Sita" },
+    { from: 22, to: 24, label: "Keep following" },
+    { from: 23, to: 24, label: "Keep following" },
+    { from: 24, to: 25, label: "Continue" },
+    { from: 25, to: 26, label: "Lakshmana came" },
+    { from: 25, to: 27, label: "Lakshmana stayed" },
+    { from: 26, to: 29, label: "Continue" },
+    { from: 27, to: 28, label: "Continue" },
+    { from: 28, to: 29, label: "Ravana succeeds", type: "chance" },
+    { from: 28, to: 39, label: "Lakshmana returns", type: "chance" },
+    { from: 29, to: 30, label: "Continue" },
+    { from: 30, to: 31, label: "Do nothing" },
+    { from: 30, to: 32, label: "Try rescue" },
+    { from: 32, to: 48, label: "Q1 right" },
+    { from: 32, to: 34, label: "Q1 wrong" },
+    { from: 32, to: 35, label: "Q1 wrong" },
+    { from: 48, to: 49, label: "Q2 right" },
+    { from: 48, to: 34, label: "Q2 wrong" },
+    { from: 48, to: 35, label: "Q2 wrong" },
+    { from: 49, to: 50, label: "Q3 right" },
+    { from: 49, to: 34, label: "Q3 wrong" },
+    { from: 49, to: 35, label: "Q3 wrong" },
+    { from: 50, to: 33, label: "Fate win", type: "chance" },
+    { from: 50, to: 34, label: "Fate lose", type: "chance" },
+    { from: 33, to: 36, label: "Go after Ravana" },
+    { from: 36, to: 38, label: "Fight Ravana" },
+    { from: 34, to: 37, label: "Continue" },
+    { from: 35, to: 37, label: "Continue" },
+    { from: 31, to: 40, label: "Continue search" },
+    { from: 37, to: 40, label: "Continue search" },
+    { from: 40, to: 41, label: "Hear request" },
+    { from: 41, to: 42, label: "Consider plan" },
+    { from: 42, to: 43, label: "Set trap" },
+    { from: 43, to: 44, label: "Correct answer" },
+    { from: 43, to: 45, label: "Wrong answer" },
+    { from: 43, to: 46, label: "Wrong answer" },
+    { from: 44, to: 47, label: "Meet Hanuman" },
+    { from: 47, to: 53, label: "Continue" },
+    { from: 53, to: 54, label: "Begin rescue" }
+];
 
 
 function randomizer() {
@@ -34,7 +196,9 @@ function saveOldState() {
         broughtLakshmana: broughtLakshmana,
         wentAlone: wentAlone,
         receiptScenes: receiptScenes.slice(),
-        receiptChoices: receiptChoices.slice()
+        receiptChoices: receiptChoices.slice(),
+        visitedSceneIds: visitedSceneIds.slice(),
+        takenTransitions: takenTransitions.slice()
     });
     setUndoButton();
 }
@@ -53,9 +217,12 @@ function undoChoice() {
     wentAlone = oldState.wentAlone;
     receiptScenes = oldState.receiptScenes;
     receiptChoices = oldState.receiptChoices;
+    visitedSceneIds = oldState.visitedSceneIds;
+    takenTransitions = oldState.takenTransitions;
 
     if (currentScene === 0) {
         clearStoryCard();
+        renderTimeline(false);
         setUndoButton();
         return;
     }
@@ -124,7 +291,10 @@ function restart() {
     receiptScenes = [];
     receiptChoices = [];
     oldStates = [];
+    visitedSceneIds = [];
+    takenTransitions = [];
     clearStoryCard();
+    renderTimeline(false);
     setUndoButton();
 }
 
@@ -137,8 +307,136 @@ function startAdventure() {
     }
 
     oldStates = [];
+    visitedSceneIds = [];
+    takenTransitions = [];
     currentScene = 1;
     showScene();
+}
+
+function isTerminalScene(sceneId) {
+    return sceneId === 17 || sceneId === 18 || sceneId === 21 || sceneId === 38 ||
+        sceneId === 39 || sceneId === 45 || sceneId === 46 || sceneId === 52;
+}
+
+function renderTimeline(showHighlight) {
+    var container = document.getElementById("timelineFlowchart");
+    var svg = "";
+    var nodeWidth = 140;
+    var nodeHeight = 54;
+    var levelGap = 170;
+    var rowGap = 98;
+    var marginX = 36;
+    var marginY = 34;
+    var width = marginX * 2 + (timelineLevels.length - 1) * levelGap + nodeWidth;
+    var maxRows = 0;
+    var height;
+    var coords = {};
+    var edgeKeyMap = {};
+    var i;
+    var j;
+    var levelNodes;
+    var yStart;
+    var nodeId;
+    var edge;
+    var fromNode;
+    var toNode;
+    var fromX;
+    var fromY;
+    var toX;
+    var toY;
+    var ctrlX1;
+    var ctrlX2;
+    var pathClass;
+    var labelX;
+    var labelY;
+
+    if (!container) {
+        return;
+    }
+
+    for (i = 0; i < timelineLevels.length; i++) {
+        if (timelineLevels[i].length > maxRows) {
+            maxRows = timelineLevels[i].length;
+        }
+    }
+
+    height = marginY * 2 + (maxRows - 1) * rowGap + nodeHeight;
+
+    for (i = 0; i < timelineLevels.length; i++) {
+        levelNodes = timelineLevels[i];
+        yStart = marginY + ((maxRows - levelNodes.length) * rowGap) / 2;
+
+        for (j = 0; j < levelNodes.length; j++) {
+            nodeId = levelNodes[j];
+            coords[nodeId] = {
+                x: marginX + i * levelGap,
+                y: yStart + j * rowGap
+            };
+        }
+    }
+
+    if (showHighlight) {
+        for (i = 0; i < takenTransitions.length; i++) {
+            edgeKeyMap[takenTransitions[i]] = true;
+        }
+    }
+
+    svg += "<svg viewBox='0 0 " + width + " " + height + "' role='img' aria-label='Story timeline flowchart'>";
+
+    for (i = 0; i < timelineEdges.length; i++) {
+        edge = timelineEdges[i];
+        fromNode = coords[edge.from];
+        toNode = coords[edge.to];
+
+        if (!fromNode || !toNode) {
+            continue;
+        }
+
+        fromX = fromNode.x + nodeWidth;
+        fromY = fromNode.y + nodeHeight / 2;
+        toX = toNode.x;
+        toY = toNode.y + nodeHeight / 2;
+        ctrlX1 = fromX + 52;
+        ctrlX2 = toX - 52;
+        pathClass = "timeline-edge";
+
+        if (edge.type === "chance") {
+            pathClass += " chance";
+        }
+
+        if (edgeKeyMap[edge.from + "->" + edge.to]) {
+            pathClass += " active";
+        }
+
+        svg += "<path class='" + pathClass + "' d='M " + fromX + " " + fromY +
+            " C " + ctrlX1 + " " + fromY + ", " + ctrlX2 + " " + toY + ", " + toX + " " + toY + "' />";
+
+        labelX = (fromX + toX) / 2;
+        labelY = (fromY + toY) / 2 - 6;
+        svg += "<text class='edge-label' x='" + labelX + "' y='" + labelY + "'>" + edge.label + "</text>";
+    }
+
+    for (i = 0; i < timelineLevels.length; i++) {
+        levelNodes = timelineLevels[i];
+
+        for (j = 0; j < levelNodes.length; j++) {
+            nodeId = levelNodes[j];
+            pathClass = "timeline-node";
+
+            if (showHighlight && visitedSceneIds.indexOf(nodeId) !== -1) {
+                pathClass += " active";
+            }
+
+            svg += "<rect class='" + pathClass + "' x='" + coords[nodeId].x + "' y='" + coords[nodeId].y +
+                "' rx='12' ry='12' width='" + nodeWidth + "' height='" + nodeHeight + "'></rect>";
+            svg += "<text class='node-id' x='" + (coords[nodeId].x + 10) + "' y='" + (coords[nodeId].y + 18) + "'>S" + nodeId + "</text>";
+            svg += "<text class='node-title' x='" + (coords[nodeId].x + 10) + "' y='" + (coords[nodeId].y + 37) + "'>" +
+                (timelineNodeTitles[nodeId] || "Scene") + "</text>";
+        }
+    }
+
+    svg += "</svg>";
+    container.innerHTML = svg;
 }
 
 function showScene() {
@@ -571,8 +869,12 @@ function showScene() {
     }
 
     addSceneToReceipt();
+    if (visitedSceneIds.indexOf(currentScene) === -1) {
+        visitedSceneIds.push(currentScene);
+    }
     makeReceipt();
     setUndoButton();
+    renderTimeline(isTerminalScene(currentScene));
 }
 
 // scene 2 - banished into exile
@@ -590,6 +892,7 @@ function showScene() {
 
 function makeChoice(choice) {
     saveOldState();
+    var previousScene = currentScene;
 
     if (choice === 3) {
         addChoiceToReceipt("Argued back against the exile");
@@ -867,6 +1170,10 @@ function makeChoice(choice) {
             currentScene = 47;
         }
     }
+    if (previousScene !== currentScene) {
+        takenTransitions.push(previousScene + "->" + currentScene);
+    }
+
     showScene();
 }
 
@@ -876,4 +1183,9 @@ function makeDecision(decision){
     } else if (decision === 2){
         currentScene = 54; // begin the rescue
     }
+    showScene();
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    renderTimeline(false);
+});
