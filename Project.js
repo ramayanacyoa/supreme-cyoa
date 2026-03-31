@@ -2383,10 +2383,6 @@ function makeChoice(choice) {
         addChoiceToReceipt("Met Ravana");
     } else if (choice === 17) {
         addChoiceToReceipt("Claimed the throne beside Ravana");
-    } else if (choice === 44) {
-        addChoiceToReceipt("Answered Sugriva's question correctly");
-    } else if (choice === 45 || choice === 46) {
-        addChoiceToReceipt("Answered Sugriva's question incorrectly");
     }
 
     if (choice === 75 && miniGamesUnlocked && currentScene >= 53 &&
@@ -2791,7 +2787,7 @@ function makeChoice(choice) {
             journeyTriviaState.currentQuestion += 1;
             if (journeyTriviaState.currentQuestion >= journeyTriviaState.questions.length) {
                 miniGameScores.journeyTrivia += journeyTriviaState.score;
-                if (journeyTriviaState.score >= 5) {
+                if (journeyTriviaState.score >= 4) {
                     awardPowerup("smarts", 2);
                     awardPowerup("magicalPower", 1);
                     awardPowerup("luck", 1);
