@@ -362,12 +362,28 @@ p {
   border-radius: 18px;
   background: rgba(12, 8, 14, 0.35);
   border: 1px solid rgba(255, 225, 169, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(255, 225, 169, 0.06);
 }
 
 #timelineFlowchart svg {
   width: 100%;
   min-width: 3600px;
   height: auto;
+  filter: drop-shadow(0 14px 26px rgba(4, 3, 8, 0.35));
+}
+
+#timelineFlowchart::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+#timelineFlowchart::-webkit-scrollbar-thumb {
+  background: rgba(255, 223, 165, 0.28);
+  border-radius: 999px;
+}
+
+#timelineFlowchart::-webkit-scrollbar-track {
+  background: rgba(12, 8, 14, 0.5);
 }
 
 .timeline-column-label {
@@ -380,6 +396,7 @@ p {
   fill: none;
   stroke: rgba(255, 222, 168, 0.26);
   stroke-width: 3;
+  opacity: 0.9;
 }
 
 .timeline-edge.chance {
@@ -401,6 +418,7 @@ p {
   fill: rgba(36, 24, 31, 0.9);
   stroke: rgba(255, 225, 169, 0.24);
   stroke-width: 2;
+  transition: fill 0.2s ease, stroke 0.2s ease;
 }
 
 .timeline-node.visited {
