@@ -30,6 +30,15 @@ var playerStats = {
 var playerGold = 0;
 var inventoryItems = [];
 var inventoryArtifacts = [];
+var artifactLoreCatalog = {
+    "Maricha's Gleaming Horn Fragment": "A shard said to come from Maricha's illusion. It is used in folk retellings to explain how maya (deception) can mimic beauty so perfectly.",
+    "Forest Hermit's Palm-Leaf Note": "A short teaching from forest sages: desire without discernment invites danger. This side tradition expands on Lakshmana's warning about the golden deer.",
+    "Jatayu's Wind-Sworn Plume": "Some Ramayana traditions honor Jatayu as the model of fearless dharma in old age. This plume symbolizes duty over survival.",
+    "Jatayu's Feather": "The feather represents Jatayu's sacrifice while trying to stop Ravana's chariot in the sky.",
+    "Rama's Sandals (Paduka)": "In many retellings, Bharata places Rama's sandals on the throne as a symbol that Rama remains the rightful ruler.",
+    "Sugriva Alliance Oath": "A memory-token of Rama and Sugriva's pact: help restore Sugriva's kingdom, and gain vanara aid for the search for Sita.",
+    "Kishkindha Cave Mural Tablet": "Vanara cave art in later traditions depicts Hanuman's leap as a vow of devotion long before the ocean crossing begins."
+};
 var ownedTitles = [];
 var equippedTitle = "";
 var miniGameScores = { journeyTrivia: 0 };
@@ -385,6 +394,17 @@ function readRelicKnowledge(itemName) {
 
     awardPowerup("smarts", 1);
     addChoiceToReceipt("Studied " + item.name + " and gained knowledge (+1 Smarts)");
+    updateInventoryCard();
+}
+
+function getArtifactLoreByName(artifactName) {
+    return artifactLoreCatalog[artifactName] || "A mysterious Ramayana artifact. Its full lore is still unknown.";
+}
+
+function readArtifactLore(artifactName) {
+    awardPowerup("smarts", 1);
+    addChoiceToReceipt("Studied artifact lore for " + artifactName + " (+1 Smarts)");
+    alert(getArtifactLoreByName(artifactName));
     updateInventoryCard();
 }
 
@@ -866,10 +886,14 @@ function updateInventoryCard() {
         markup += "<ul class='stats-list'>";
 
         for (i = 0; i < inventoryArtifacts.length; i++) {
-            markup += "<li>" + inventoryArtifacts[i] + "</li>";
+            safeName = inventoryArtifacts[i].replace(/'/g, "\\'");
+            markup += "<li><strong>" + inventoryArtifacts[i] + "</strong>: " +
+                getArtifactLoreByName(inventoryArtifacts[i]) +
+                " <button type='button' onclick=\"readArtifactLore('" + safeName + "')\">Read</button></li>";
         }
 
         markup += "</ul>";
+        markup += "<p class='stats-note'>Reading an artifact also grants +1 Smarts.</p>";
     }
 
     body.innerHTML = markup;
@@ -1589,8 +1613,19 @@ function showScene() {
             "<p>She asks you to catch it for her, but Lakshmana warns that such a creature may be a trick. Unknown to you, the golden deer is actually the demon Maricha in disguise.</p>" +
             "<p>What do you do?</p>" +
             "<div id='choices'>" +
+            "<button onclick='makeChoice(95)'>Investigate a strange glimmer nearby</button>" +
             "<button onclick='makeChoice(20)'>Chase the deer</button>" +
             "<button onclick='makeChoice(21)'>Ignore it</button>" +
+            "</div>";
+    } else if (currentScene === 95) {
+        storyCard.innerHTML =
+            "<h2>Artifact Found: Maricha's Gleaming Horn Fragment</h2>" +
+            "<p>Near a tree root, you find a splinter that flashes with unnatural gold. A forest hermit whispers that illusions can be touched, but never trusted.</p>" +
+            "<p><em>Extra Lore:</em> Some retellings use this scene to teach that maya can imitate truth closely enough to fool even the noble-hearted.</p>" +
+            "<p>What do you do next?</p>" +
+            "<div id='choices'>" +
+            "<button onclick='makeChoice(20)'>Chase the deer anyway</button>" +
+            "<button onclick='makeChoice(21)'>Ignore the deer and stay alert</button>" +
             "</div>";
     } else if (currentScene === 20) {
         storyCard.innerHTML =
@@ -1670,6 +1705,17 @@ function showScene() {
             "<h2>Jatayu Sees Ravana</h2>" +
             "<p>Jatayu, the aged vulture king, sees Ravana carrying Sita away through the sky. He knows he may be too old for battle, but he cannot ignore her cries.</p>" +
             "<p>What does Jatayu do?</p>" +
+            "<div id='choices'>" +
+            "<button onclick='makeChoice(96)'>Examine the sky-swept feathers first</button>" +
+            "<button onclick='makeChoice(31)'>Do nothing</button>" +
+            "<button onclick='makeChoice(32)'>Try to rescue Sita</button>" +
+            "</div>";
+    } else if (currentScene === 96) {
+        storyCard.innerHTML =
+            "<h2>Artifact Found: Jatayu's Wind-Sworn Plume</h2>" +
+            "<p>You recover a plume marked with claw-lines from Jatayu's first clash with Ravana's chariot.</p>" +
+            "<p><em>Extra Lore:</em> Commentarial traditions praise Jatayu as proof that age does not reduce one's duty to protect the innocent.</p>" +
+            "<p>How should Jatayu act now?</p>" +
             "<div id='choices'>" +
             "<button onclick='makeChoice(31)'>Do nothing</button>" +
             "<button onclick='makeChoice(32)'>Try to rescue Sita</button>" +
@@ -1811,7 +1857,16 @@ function showScene() {
             "<p>As you and Lakshmana search for Sita, you come upon Sugriva, a vanara prince hiding in fear. He has been driven from his home by his powerful brother, Vali.</p>" +
             "<p>Sugriva offers friendship and help in your search if you will help him in return.</p>" +
             "<div id='choices'>" +
+            "<button onclick='makeChoice(97)'>Inspect the cave mural nearby</button>" +
             "<button onclick='makeChoice(41)'>Hear Sugriva's request</button>" +
+            "</div>";
+    } else if (currentScene === 97) {
+        storyCard.innerHTML =
+            "<h2>Artifact Found: Kishkindha Cave Mural Tablet</h2>" +
+            "<p>Painted stone scenes show vanara heroes leaping impossible distances in service of dharma. The art predates your arrival, as if awaiting Hanuman's future deed.</p>" +
+            "<p><em>Extra Lore:</em> Regional oral retellings often include cave murals as memory archives for vanara clans.</p>" +
+            "<div id='choices'>" +
+            "<button onclick='makeChoice(41)'>Return to Sugriva's request</button>" +
             "</div>";
     } else if (currentScene === 41) {
         storyCard.innerHTML =
@@ -2200,6 +2255,8 @@ function makeChoice(choice) {
         addChoiceToReceipt("Started journey trivia mini-game");
     } else if (choice === 93) {
         addChoiceToReceipt("Started the guessing mini-game");
+    } else if (choice === 95 || choice === 96 || choice === 97) {
+        addChoiceToReceipt("Discovered a hidden Ramayana story artifact");
     } else if (choice === 94) {
         addChoiceToReceipt("Started the exploration mini-game");
     } else if (choice === 133) {
@@ -2344,6 +2401,17 @@ function makeChoice(choice) {
             currentScene = 17;
         }
     } else if (currentScene === 19) {
+        if (choice === 95) {
+            addArtifact("Maricha's Gleaming Horn Fragment");
+            addArtifact("Forest Hermit's Palm-Leaf Note");
+            currentScene = 95;
+        } else if (choice === 20) {
+            currentScene = 20;
+            broughtLakshmana = false;
+        } else if (choice === 21) {
+            currentScene = 21;
+        }
+    } else if (currentScene === 95) {
         if (choice === 20) {
             currentScene = 20;
             broughtLakshmana = false;
@@ -2395,6 +2463,16 @@ function makeChoice(choice) {
             currentScene = 30;
         }
     } else if (currentScene === 30) {
+        if (choice === 96) {
+            addArtifact("Jatayu's Wind-Sworn Plume");
+            currentScene = 96;
+        } else if (choice === 31) {
+            currentScene = 31;
+        } else if (choice === 32) {
+            addArtifact("Jatayu's Feather");
+            currentScene = 32;
+        }
+    } else if (currentScene === 96) {
         if (choice === 31) {
             currentScene = 31;
         } else if (choice === 32) {
@@ -2465,6 +2543,14 @@ function makeChoice(choice) {
             currentScene = 40;
         }
     } else if (currentScene === 40) {
+        if (choice === 97) {
+            addArtifact("Kishkindha Cave Mural Tablet");
+            currentScene = 97;
+        } else if (choice === 41) {
+            addArtifact("Sugriva Alliance Oath");
+            currentScene = 41;
+        }
+    } else if (currentScene === 97) {
         if (choice === 41) {
             addArtifact("Sugriva Alliance Oath");
             currentScene = 41;
