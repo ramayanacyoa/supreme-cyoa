@@ -2845,6 +2845,20 @@ document.addEventListener("DOMContentLoaded", function () {
     renderTimeline(timelineModalOpen);
     updatePlayerStatsCard();
     updateInventoryCard();
+    var startButton = document.getElementById("startBtn");
+    var playerNameInput = document.getElementById("playerName");
+
+    if (startButton) {
+        startButton.addEventListener("click", startAdventure);
+    }
+
+    if (playerNameInput) {
+        playerNameInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                startAdventure();
+            }
+        });
+    }
 
     document.addEventListener("keydown", function (event) {
         if (event.key === "Escape") {
