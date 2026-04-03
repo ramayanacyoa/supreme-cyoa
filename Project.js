@@ -34,6 +34,9 @@ var soundtrackMap = {
     }
 };
 
+var autoplayPreferenceKey = "ramayanaAutoplayMode";
+var autoplayMode = "browser";
+
 var ramayanaTriviaFacts = [
     ["Who wrote the Ramayana, according to tradition?", "Valmiki", ["Vyasa", "Kalidasa", "Tulsidas"]],
     ["Who is Rama's wife?", "Sita", ["Mandodari", "Draupadi", "Tara"]],
@@ -782,11 +785,50 @@ function restart() {
     updateInventoryCard();
 }
 
+function detectBrowserAutoplayMode() {
+    var userAgent = navigator.userAgent.toLowerCase();
+    var isSafari = userAgent.indexOf("safari") !== -1 && userAgent.indexOf("chrome") === -1 && userAgent.indexOf("android") === -1;
+    var isIOS = /iphone|ipad|ipod/.test(userAgent);
+
+    if (isSafari || isIOS) {
+        return "muted";
+    }
+
+    return "unmuted";
+}
+
+function readAutoplayMode() {
+    var savedMode = window.localStorage.getItem(autoplayPreferenceKey);
+
+    if (savedMode === "muted" || savedMode === "unmuted" || savedMode === "browser") {
+        autoplayMode = savedMode;
+    } else {
+        autoplayMode = "browser";
+    }
+
+    return autoplayMode;
+}
+
+function setAutoplayMode(mode) {
+    autoplayMode = mode;
+    window.localStorage.setItem(autoplayPreferenceKey, mode);
+}
+
+function getEffectiveAutoplayMode() {
+    if (autoplayMode === "browser") {
+        return detectBrowserAutoplayMode();
+    }
+
+    return autoplayMode;
+}
+
 function syncBackgroundMusic() {
     var audio = document.getElementById("backgroundMusic");
     var trackName = document.getElementById("currentTrackName");
     var selectedTrack = hasReachedWarCouncil ? soundtrackMap.warCouncil : soundtrackMap.exile;
     var selectedSrc;
+    var effectiveMode;
+    var playPromise;
 
     if (!audio) {
         return;
@@ -801,16 +843,21 @@ function syncBackgroundMusic() {
 
     audio.loop = true;
     audio.autoplay = true;
+    effectiveMode = getEffectiveAutoplayMode();
+    audio.muted = effectiveMode === "muted";
 
     if (trackName) {
         trackName.textContent = selectedTrack.label;
     }
 
-    var playPromise = audio.play();
+    playPromise = audio.play();
 
     if (playPromise && typeof playPromise.catch === "function") {
         playPromise.catch(function () {
-            /* Autoplay can be blocked until user interaction. */
+            if (!audio.muted) {
+                audio.muted = true;
+                audio.play();
+            }
         });
     }
 }
@@ -2154,9 +2201,20 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    var autoplayModeSelect = document.getElementById("autoplayModeSelect");
     renderTimeline(timelineModalOpen);
     updatePlayerStatsCard();
     updateInventoryCard();
+    readAutoplayMode();
+
+    if (autoplayModeSelect) {
+        autoplayModeSelect.value = autoplayMode;
+        autoplayModeSelect.addEventListener("change", function () {
+            setAutoplayMode(autoplayModeSelect.value);
+            syncBackgroundMusic();
+        });
+    }
+
     syncBackgroundMusic();
     var startButton = document.getElementById("startBtn");
     var playerNameInput = document.getElementById("playerName");

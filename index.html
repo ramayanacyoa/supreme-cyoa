@@ -19,6 +19,12 @@
   <div id="soundtrackBadge" role="status" aria-live="polite">
     <span class="soundtrack-label">Now Playing</span>
     <span id="currentTrackName">Sacred Path Of Rama</span>
+    <label class="soundtrack-mode-label" for="autoplayModeSelect">Autoplay</label>
+    <select id="autoplayModeSelect" aria-label="Audio autoplay preference">
+      <option value="browser">Browser default</option>
+      <option value="muted">Always muted</option>
+      <option value="unmuted">Always unmuted</option>
+    </select>
   </div>
   <button id="undoButton" onclick="undoChoice()" type="button" disabled>Undo</button>
   <button id="timelineButton" onclick="openTimelineModal()" type="button">Timeline</button>

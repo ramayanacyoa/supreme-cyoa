@@ -142,6 +142,29 @@ body::after {
   text-shadow: 0 0 12px rgba(255, 204, 112, 0.28);
 }
 
+.soundtrack-mode-label {
+  margin-top: 6px;
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(255, 235, 194, 0.72);
+}
+
+#autoplayModeSelect {
+  width: 100%;
+  font-size: 0.78rem;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 221, 164, 0.38);
+  background: rgba(33, 18, 41, 0.78);
+  color: #ffecc7;
+}
+
+#autoplayModeSelect:focus {
+  outline: 2px solid rgba(255, 214, 133, 0.68);
+  outline-offset: 2px;
+}
+
 #undoButton {
   position: fixed;
   top: 16px;
