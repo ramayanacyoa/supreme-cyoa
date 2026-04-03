@@ -22,6 +22,7 @@ var trainingCharacters = ["Hanuman", "Sugriva", "Lakshmana", "Angada"];
 var characterConversationState = null;
 var guessGameState = null;
 var hasReachedWarCouncil = false;
+var inventoryModalOpen = false;
 var musicAutoplayRetryBound = false;
 
 var soundtrackMap = {
@@ -266,6 +267,16 @@ var timelineNodeTitles = {
     97: "Kishkindha Lore Artifact"
 };
 
+artifactLoreCatalog = {
+    "Maricha's Gleaming Horn Fragment": "A polished shard from Maricha's illusory golden deer. It reminds you that dazzling beauty can conceal grave danger.",
+    "Forest Hermit's Palm-Leaf Note": "A weathered leaf manuscript warning travelers to trust dharma over appearances when the forest turns strangely silent.",
+    "Jatayu's Wind-Sworn Plume": "A strong feather from Jatayu's wings, honoring the bird-king's courage in challenging Ravana to protect Sita.",
+    "Jatayu's Feather": "A fallen feather from the battlefield in the sky, preserved as a vow to remember sacrifice in the face of tyranny.",
+    "Rama's Sandals (Paduka)": "The sacred Paduka symbolizing rightful rule, duty, and Bharata's pledge to govern Ayodhya only in Rama's name.",
+    "Kishkindha Cave Mural Tablet": "A carved tablet showing old vanara heroes. Its scenes teach alliance, strategy, and patience before war.",
+    "Sugriva Alliance Oath": "A signed oath of friendship and mutual duty between Rama and Sugriva, sealed under witness of fire and honor."
+};
+
 var timelineLevels = [
     [1, 2],
     [3],
@@ -468,7 +479,7 @@ function getArtifactLoreByName(artifactName) {
 }
 
 function readArtifactLore(artifactName) {
-    return;
+    return getArtifactLoreByName(artifactName);
 }
 
 function beginGuessingRound() {
@@ -619,19 +630,63 @@ function closePlayerStatsModal() {
 }
 
 function updateInventoryCard() {
-    return;
+    var inventoryButton = document.getElementById("inventoryButton");
+
+    if (!inventoryButton) {
+        return;
+    }
+
+    inventoryButton.textContent = "Inventory (" + inventoryArtifacts.length + ")";
 }
 
 function openInventoryModal() {
-    return;
+    var modal = document.getElementById("inventoryModal");
+    var inventoryList = document.getElementById("inventoryList");
+    var emptyMessage = document.getElementById("inventoryEmpty");
+    var i;
+    var listHtml = "";
+    var artifactName;
+
+    if (!modal || !inventoryList || !emptyMessage) {
+        return;
+    }
+
+    if (inventoryArtifacts.length === 0) {
+        emptyMessage.style.display = "block";
+        inventoryList.innerHTML = "";
+    } else {
+        emptyMessage.style.display = "none";
+        for (i = 0; i < inventoryArtifacts.length; i++) {
+            artifactName = inventoryArtifacts[i];
+            listHtml += "<li class='inventory-item'>" +
+                "<h4>" + escapeHtml(artifactName) + "</h4>" +
+                "<p>" + escapeHtml(getArtifactLoreByName(artifactName)) + "</p>" +
+                "</li>";
+        }
+        inventoryList.innerHTML = listHtml;
+    }
+
+    inventoryModalOpen = true;
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
 }
 
 function closeInventoryModal() {
-    return;
+    var modal = document.getElementById("inventoryModal");
+
+    if (!modal) {
+        return;
+    }
+
+    inventoryModalOpen = false;
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
 }
 
 function handleInventoryModalBackdrop(event) {
-    return;
+    if (event.target && event.target.id === "inventoryModal") {
+        closeInventoryModal();
+    }
 }
 
 function handlePlayerStatsModalBackdrop(event) {
@@ -643,7 +698,11 @@ function awardPowerup(statName, amount) {
 }
 
 function addArtifact(artifactName) {
-    return;
+    if (inventoryArtifacts.indexOf(artifactName) === -1) {
+        inventoryArtifacts.push(artifactName);
+    }
+
+    updateInventoryCard();
 }
 
 function clearStoryCard() {
