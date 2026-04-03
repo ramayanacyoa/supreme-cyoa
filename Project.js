@@ -249,6 +249,7 @@ var timelineNodeTitles = {
     52: "Peaceful Ending",
     53: "Part 2 Intro",
     54: "Part 2 Start",
+    55: "Part 2: The Rescue",
     65: "Search for Sita",
     66: "Bharata's Plea",
     67: "Ayodhya Return Ending",
@@ -296,7 +297,7 @@ var timelineLevels = [
     [44, 45, 46],
     [47, 69, 95, 96, 97],
     [70, 93, 77, 53],
-    [71, 72, 73, 54]
+    [71, 72, 73, 54, 55]
 ];
 
 var timelineEdges = [
@@ -397,7 +398,20 @@ var timelineEdges = [
     { from: 47, to: 53, label: "Continue main story" },
     { from: 53, to: 54, label: "Begin rescue" },
     { from: 54, to: 47, label: "Return to camp" },
+    { from: 54, to: 55, label: "Lead the next story mission" },
+    { from: 69, to: 47, label: "Remain with the rescue campaign" },
+    { from: 72, to: 47, label: "Session complete" },
+    { from: 73, to: 47, label: "Session complete" },
 ];
+
+timelineEdges = timelineEdges.map(function (edge) {
+    return {
+        from: edge.from,
+        to: edge.to,
+        label: timelineNodeTitles[edge.to] || ("Scene " + edge.to),
+        type: edge.type
+    };
+});
 
 
 function randomizer() {
@@ -2238,6 +2252,8 @@ function makeChoice(choice) {
 }
 
 function makeDecision(decision){
+    var previousScene = currentScene;
+
     if (decision === 1){
             currentScene = 53;
     } else if (decision === 2){
@@ -2245,6 +2261,11 @@ function makeDecision(decision){
     } else if (decision === 3){
         currentScene = 55; // lead the next story mission
     }
+
+    if (previousScene !== currentScene) {
+        takenTransitions.push(previousScene + "->" + currentScene);
+    }
+
     updateWarCouncilMusicProgress(currentScene);
     showScene();
 }
