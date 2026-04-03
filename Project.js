@@ -888,8 +888,8 @@ function syncBackgroundMusic() {
 
     audio.loop = true;
     audio.autoplay = true;
-    audio.defaultMuted = true;
-    audio.muted = true;
+    audio.defaultMuted = false;
+    audio.muted = false;
     audio.playsInline = true;
 
     if (volumeControl) {
@@ -921,11 +921,17 @@ function toggleMusicPlayback() {
     }
 
     if (audio.paused) {
-        audio.play();
-    } else {
-        audio.pause();
+        audio.muted = false;
+        audio.defaultMuted = false;
+        audio.play().then(function () {
+            updateMusicControls();
+        }).catch(function () {
+            updateMusicControls();
+        });
+        return;
     }
 
+    audio.pause();
     updateMusicControls();
 }
 
@@ -965,7 +971,8 @@ function bindMusicAutoplayRetry() {
             return;
         }
 
-        audio.muted = true;
+        audio.muted = false;
+        audio.defaultMuted = false;
         playPromise = audio.play();
 
         if (playPromise && typeof playPromise.then === "function") {
