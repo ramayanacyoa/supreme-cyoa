@@ -2199,7 +2199,7 @@ function makeDecision(decision){
     } else if (decision === 2){
         currentScene = 54; // begin the rescue 1
     } else if (decision === 3){
-        currentScene = 54; // lead the next story mission
+        currentScene = 55; // lead the next story mission
     }
     updateWarCouncilMusicProgress(currentScene);
     showScene();
