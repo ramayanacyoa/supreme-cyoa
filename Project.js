@@ -117,10 +117,13 @@ function updateBackgroundMusicForScene() {
     var trackName = document.getElementById("currentTrackName");
     var targetTrack;
     var changedTrack = false;
+    var shouldPlayAfterUpdate;
 
     if (!backgroundMusic) {
         return;
     }
+
+    shouldPlayAfterUpdate = backgroundMusic.paused || !backgroundMusic.currentSrc;
 
     if (currentScene === 0) {
         rescueSoundtrackMode = false;
@@ -136,9 +139,10 @@ function updateBackgroundMusicForScene() {
         backgroundMusic.src = targetTrack;
         backgroundMusic.load();
         changedTrack = true;
+        shouldPlayAfterUpdate = true;
     }
 
-    if (changedTrack) {
+    if (shouldPlayAfterUpdate || changedTrack) {
         backgroundMusic.play().catch(function () {
             return null;
         });
