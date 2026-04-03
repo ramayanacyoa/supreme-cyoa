@@ -13,9 +13,13 @@
   <link rel="manifest" href="favicon_io/site.webmanifest">
 </head>
 <body>
-<audio controls autoplay loop id="backgroundMusic">
+<audio id="backgroundMusic" autoplay loop preload="auto" controlslist="nodownload noplaybackrate" disablepictureinpicture disableremoteplayback aria-hidden="true">
   <source src="Sacred Path Of Rama.mp3" type="audio/mpeg">
 </audio>
+  <div id="soundtrackBadge" role="status" aria-live="polite">
+    <span class="soundtrack-label">Now Playing</span>
+    <span id="currentTrackName">Sacred Path Of Rama</span>
+  </div>
   <button id="undoButton" onclick="undoChoice()" type="button" disabled>Undo</button>
   <button id="timelineButton" onclick="openTimelineModal()" type="button">Timeline</button>
 

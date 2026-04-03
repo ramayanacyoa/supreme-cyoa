@@ -21,6 +21,18 @@ var artifactLoreCatalog = {};
 var trainingCharacters = ["Hanuman", "Sugriva", "Lakshmana", "Angada"];
 var characterConversationState = null;
 var guessGameState = null;
+var hasReachedWarCouncil = false;
+
+var soundtrackMap = {
+    exile: {
+        file: "Sacred Path Of Rama.mp3",
+        label: "Sacred Path Of Rama"
+    },
+    warCouncil: {
+        file: "Lanka Burns At Dawn.mp3",
+        label: "Lanka Burns At Dawn"
+    }
+};
 
 var ramayanaTriviaFacts = [
     ["Who wrote the Ramayana, according to tradition?", "Valmiki", ["Vyasa", "Kalidasa", "Tulsidas"]],
@@ -757,6 +769,7 @@ function restart() {
     dasharathaStoryUnlocked = false;
     characterConversationState = null;
     guessGameState = null;
+    hasReachedWarCouncil = false;
     receiptScenes = [];
     receiptChoices = [];
     oldStates = [];
@@ -767,6 +780,39 @@ function restart() {
     setUndoButton();
     updatePlayerStatsCard();
     updateInventoryCard();
+}
+
+function syncBackgroundMusic() {
+    var audio = document.getElementById("backgroundMusic");
+    var trackName = document.getElementById("currentTrackName");
+    var selectedTrack = hasReachedWarCouncil ? soundtrackMap.warCouncil : soundtrackMap.exile;
+    var selectedSrc;
+
+    if (!audio) {
+        return;
+    }
+
+    selectedSrc = selectedTrack.file;
+
+    if (!audio.getAttribute("src") || audio.getAttribute("src") !== selectedSrc) {
+        audio.setAttribute("src", selectedSrc);
+        audio.load();
+    }
+
+    audio.loop = true;
+    audio.autoplay = true;
+
+    if (trackName) {
+        trackName.textContent = selectedTrack.label;
+    }
+
+    var playPromise = audio.play();
+
+    if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(function () {
+            /* Autoplay can be blocked until user interaction. */
+        });
+    }
 }
 
 function startAdventure() {
@@ -782,6 +828,7 @@ function startAdventure() {
     takenTransitions = [];
     characterConversationState = null;
     guessGameState = null;
+    hasReachedWarCouncil = false;
     currentScene = 1;
     updatePlayerStatsCard();
     showScene();
@@ -1702,6 +1749,11 @@ function showScene() {
             "</div>";
     }
 
+    if (currentScene === 54) {
+        hasReachedWarCouncil = true;
+    }
+
+    syncBackgroundMusic();
     addSceneToReceipt();
     renderTimeline(timelineModalOpen);
     setUndoButton();
@@ -2100,6 +2152,7 @@ document.addEventListener("DOMContentLoaded", function () {
     renderTimeline(timelineModalOpen);
     updatePlayerStatsCard();
     updateInventoryCard();
+    syncBackgroundMusic();
     var startButton = document.getElementById("startBtn");
     var playerNameInput = document.getElementById("playerName");
 
@@ -2114,6 +2167,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    document.addEventListener("contextmenu", function (event) {
+        if (event.target && event.target.id === "backgroundMusic") {
+            event.preventDefault();
+        }
+    });
 
     document.addEventListener("keydown", function (event) {
         if (event.key === "Escape") {
