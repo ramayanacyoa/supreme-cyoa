@@ -134,6 +134,13 @@ body::after {
   filter: drop-shadow(0 4px 8px rgba(8, 2, 12, 0.35));
 }
 
+/* Hide native audio volume controls so only the JS-driven volume select is used. */
+#backgroundMusic::-webkit-media-controls-mute-button,
+#backgroundMusic::-webkit-media-controls-volume-slider,
+#backgroundMusic::-webkit-media-controls-volume-control-container {
+  display: none !important;
+}
+
 #musicVolume {
   width: min(220px, 52vw);
   padding: 7px 10px;
