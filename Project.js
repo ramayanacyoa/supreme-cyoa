@@ -1037,20 +1037,14 @@ function updateTimelineRevealButton() {
     }
 
     if (timelineRevealAll) {
-        revealButton.textContent = "Revealed";
-        revealButton.disabled = true;
+        revealButton.textContent = "Unreveal";
     } else {
         revealButton.textContent = "Reveal";
-        revealButton.disabled = false;
     }
 }
 
 function revealTimelinePossibilities() {
-    if (timelineRevealAll) {
-        return;
-    }
-
-    timelineRevealAll = true;
+    timelineRevealAll = !timelineRevealAll;
     updateTimelineRevealButton();
     renderTimeline(timelineModalOpen);
 }
