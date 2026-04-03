@@ -32,14 +32,38 @@ var routableSceneIds = [
     52, 53, 54, 55, 65, 66, 67, 68, 69, 70, 71, 72, 73, 77, 93, 95, 96, 97
 ];
 
-function parseSceneFromHash() {
-    var match = window.location.hash.match(/^#scene-(\d+)$/);
+function parseRouteFromHash() {
+    var hash = window.location.hash || "";
+    var route = {
+        sceneId: null,
+        timelineOpen: false
+    };
+    var sceneMatch;
 
-    if (!match) {
-        return null;
+    if (!hash) {
+        return route;
     }
 
-    return parseInt(match[1], 10);
+    sceneMatch = hash.match(/^#scene-(\d+)(\?timeline=1)?$/);
+    if (sceneMatch) {
+        route.sceneId = parseInt(sceneMatch[1], 10);
+        route.timelineOpen = !!sceneMatch[2];
+        return route;
+    }
+
+    if (hash === "#timeline") {
+        route.timelineOpen = true;
+    }
+
+    return route;
+}
+
+function buildHashRoute(sceneId, isTimelineOpen) {
+    if (sceneId > 0) {
+        return "#scene-" + sceneId + (isTimelineOpen ? "?timeline=1" : "");
+    }
+
+    return isTimelineOpen ? "#timeline" : "";
 }
 
 function isRoutableScene(sceneId) {
@@ -47,7 +71,7 @@ function isRoutableScene(sceneId) {
 }
 
 function syncHashWithCurrentScene() {
-    var nextHash = currentScene === 0 ? "" : "#scene-" + currentScene;
+    var nextHash = buildHashRoute(currentScene, timelineModalOpen);
 
     if (applyingSceneRoute) {
         return;
@@ -59,24 +83,32 @@ function syncHashWithCurrentScene() {
 }
 
 function applySceneFromHash() {
-    var routeScene = parseSceneFromHash();
+    var route = parseRouteFromHash();
+    var routeScene = route.sceneId;
     var playerNameInput;
-
-    if (routeScene === null || !isRoutableScene(routeScene) || routeScene === currentScene) {
-        return;
-    }
-
-    playerNameInput = document.getElementById("playerName");
-    if (!playerName && playerNameInput) {
-        playerName = playerNameInput.value.trim();
-    }
-    if (!playerName) {
-        playerName = "Traveler";
-    }
+    var shouldOpenTimeline = route.timelineOpen;
 
     applyingSceneRoute = true;
-    currentScene = routeScene;
-    showScene();
+
+    if (routeScene !== null && isRoutableScene(routeScene) && routeScene !== currentScene) {
+        playerNameInput = document.getElementById("playerName");
+        if (!playerName && playerNameInput) {
+            playerName = playerNameInput.value.trim();
+        }
+        if (!playerName) {
+            playerName = "Traveler";
+        }
+
+        currentScene = routeScene;
+        showScene();
+    }
+
+    if (shouldOpenTimeline && !timelineModalOpen) {
+        openTimelineModal();
+    } else if (!shouldOpenTimeline && timelineModalOpen) {
+        closeTimelineModal();
+    }
+
     applyingSceneRoute = false;
 }
 
@@ -1058,10 +1090,10 @@ function revealTimelinePossibilities() {
 function renderTimeline(showHighlight) {
     var container = document.getElementById("timelineFlowchart");
     var svg = "";
-    var nodeWidth = 260;
-    var nodeHeight = 100;
-    var levelGap = 390;
-    var rowGap = 230;
+    var nodeWidth = 280;
+    var nodeHeight = 112;
+    var levelGap = 430;
+    var rowGap = 260;
     var marginX = 70;
     var marginY = 80;
     var width = marginX * 2 + (timelineLevels.length - 1) * levelGap + nodeWidth;
@@ -1101,6 +1133,7 @@ function renderTimeline(showHighlight) {
     var columnLabel;
     var columnStartX;
     var edgeLabelPositions = [];
+    var nodeBoxes = [];
     var laneOffset;
     var midX;
     var labelWidth;
@@ -1132,6 +1165,12 @@ function renderTimeline(showHighlight) {
                 x: marginX + i * levelGap,
                 y: yStart + j * rowGap
             };
+            nodeBoxes.push({
+                x: coords[nodeId].x,
+                y: coords[nodeId].y,
+                w: nodeWidth,
+                h: nodeHeight
+            });
         }
     }
 
@@ -1194,13 +1233,36 @@ function renderTimeline(showHighlight) {
 
         do {
             collisionFound = false;
+
             for (k = 0; k < edgeLabelPositions.length; k++) {
                 if (Math.abs(edgeLabelPositions[k].x - labelX) < (labelWidth / 2 + edgeLabelPositions[k].w / 2 + 12) &&
                     Math.abs(edgeLabelPositions[k].y - labelY) < (labelHeight + 8)) {
-                    labelY += 18;
+                    labelY += 20;
+                    labelX += ((k % 2) === 0 ? 20 : -20);
                     collisionFound = true;
                     break;
                 }
+            }
+
+            if (!collisionFound) {
+                for (k = 0; k < nodeBoxes.length; k++) {
+                    if (labelX + labelWidth / 2 > nodeBoxes[k].x - 6 &&
+                        labelX - labelWidth / 2 < nodeBoxes[k].x + nodeBoxes[k].w + 6 &&
+                        labelY - labelHeight < nodeBoxes[k].y + nodeBoxes[k].h + 6 &&
+                        labelY > nodeBoxes[k].y - 6) {
+                        labelY += 22;
+                        labelX += ((k % 2) === 0 ? 18 : -18);
+                        collisionFound = true;
+                        break;
+                    }
+                }
+            }
+
+            if (labelX < marginX + 20) {
+                labelX = marginX + 20;
+            }
+            if (labelX > width - marginX - 20) {
+                labelX = width - marginX - 20;
             }
         } while (collisionFound);
 
@@ -1252,7 +1314,7 @@ function renderTimeline(showHighlight) {
 
     if (renderedSvg) {
         renderedSvg.style.width = (timelineZoom * 100) + "%";
-        renderedSvg.style.minWidth = (3600 * timelineZoom) + "px";
+        renderedSvg.style.minWidth = (4300 * timelineZoom) + "px";
     }
 }
 
@@ -1270,6 +1332,7 @@ function openTimelineModal() {
     renderTimeline(true);
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
+    syncHashWithCurrentScene();
 }
 
 function closeTimelineModal() {
@@ -1282,6 +1345,7 @@ function closeTimelineModal() {
     timelineModalOpen = false;
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden", "true");
+    syncHashWithCurrentScene();
 }
 
 function handleTimelineModalBackdrop(event) {
