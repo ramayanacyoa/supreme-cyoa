@@ -941,7 +941,7 @@ function updateMusicVolume() {
 }
 
 function updateWarCouncilMusicProgress(sceneId) {
-    if (sceneId >= 53) {
+    if (sceneId >= 54) {
         hasReachedWarCouncil = true;
     }
 }
