@@ -397,6 +397,13 @@ p {
   fill: rgba(248, 241, 228, 0.75);
   font-size: 14px;
   text-anchor: middle;
+  dominant-baseline: alphabetic;
+}
+
+.edge-label-bg {
+  fill: rgba(12, 8, 14, 0.88);
+  stroke: rgba(255, 225, 169, 0.22);
+  stroke-width: 1;
 }
 
 .timeline-node {

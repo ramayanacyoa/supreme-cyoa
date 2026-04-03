@@ -893,8 +893,8 @@ function renderTimeline(showHighlight) {
     var svg = "";
     var nodeWidth = 260;
     var nodeHeight = 100;
-    var levelGap = 330;
-    var rowGap = 180;
+    var levelGap = 390;
+    var rowGap = 230;
     var marginX = 70;
     var marginY = 80;
     var width = marginX * 2 + (timelineLevels.length - 1) * levelGap + nodeWidth;
@@ -924,8 +924,6 @@ function renderTimeline(showHighlight) {
     var fromY;
     var toX;
     var toY;
-    var ctrlX1;
-    var ctrlX2;
     var pathClass;
     var nodeClass;
     var labelX;
@@ -935,6 +933,15 @@ function renderTimeline(showHighlight) {
     var k;
     var columnLabel;
     var columnStartX;
+    var edgeLabelPositions = [];
+    var laneOffset;
+    var midX;
+    var labelWidth;
+    var labelHeight;
+    var labelPaddingX = 8;
+    var labelPaddingY = 5;
+    var labelText;
+    var collisionFound;
 
     if (!container) {
         return;
@@ -993,8 +1000,8 @@ function renderTimeline(showHighlight) {
         fromY = fromNode.y + nodeHeight / 2;
         toX = toNode.x;
         toY = toNode.y + nodeHeight / 2;
-        ctrlX1 = fromX + 90;
-        ctrlX2 = toX - 90;
+        laneOffset = Math.max(-120, Math.min(120, (toY - fromY) * 0.35)) + ((i % 3) - 1) * 24;
+        midX = fromX + ((toX - fromX) / 2) + laneOffset;
         pathClass = "timeline-edge";
 
         if (edge.type === "chance") {
@@ -1006,11 +1013,33 @@ function renderTimeline(showHighlight) {
         }
 
         svg += "<path class='" + pathClass + "' d='M " + fromX + " " + fromY +
-            " C " + ctrlX1 + " " + fromY + ", " + ctrlX2 + " " + toY + ", " + toX + " " + toY + "' />";
+            " H " + midX + " V " + toY + " H " + toX + "' />";
 
-        labelX = (fromX + toX) / 2;
-        labelY = (fromY + toY) / 2 - 6;
-        svg += "<text class='edge-label' x='" + labelX + "' y='" + labelY + "'>" + edge.label + "</text>";
+        labelText = escapeHtml(edge.label || "");
+        labelX = midX;
+        labelY = ((fromY + toY) / 2) - 8 + ((i % 4) - 1.5) * 8;
+        labelWidth = Math.max(56, labelText.length * 7 + labelPaddingX * 2);
+        labelHeight = 22;
+
+        do {
+            collisionFound = false;
+            for (k = 0; k < edgeLabelPositions.length; k++) {
+                if (Math.abs(edgeLabelPositions[k].x - labelX) < (labelWidth / 2 + edgeLabelPositions[k].w / 2 + 12) &&
+                    Math.abs(edgeLabelPositions[k].y - labelY) < (labelHeight + 8)) {
+                    labelY += 18;
+                    collisionFound = true;
+                    break;
+                }
+            }
+        } while (collisionFound);
+
+        edgeLabelPositions.push({ x: labelX, y: labelY, w: labelWidth });
+
+        svg += "<g class='edge-label-group'>";
+        svg += "<rect class='edge-label-bg' x='" + (labelX - labelWidth / 2) + "' y='" + (labelY - labelHeight + labelPaddingY) +
+            "' width='" + labelWidth + "' height='" + labelHeight + "' rx='8' ry='8'></rect>";
+        svg += "<text class='edge-label' x='" + labelX + "' y='" + labelY + "'>" + labelText + "</text>";
+        svg += "</g>";
     }
 
     for (i = 0; i < timelineLevels.length; i++) {
