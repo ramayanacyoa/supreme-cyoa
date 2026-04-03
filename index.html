@@ -50,7 +50,7 @@
       <div class="timeline-modal-header">
         <div>
           <h2>Timeline Flowchart</h2>
-          <p>Complete map of all scenes. Your route is always highlighted in bright teal.</p>
+          <p>By default this only shows your experienced route. Press <strong>Reveal</strong> to see other possibilities.</p>
         </div>
         <button type="button" class="timeline-close" onclick="closeTimelineModal()" aria-label="Close timeline">✕</button>
       </div>
@@ -63,6 +63,7 @@
         <button type="button" onclick="adjustTimelineZoom(-0.2)" aria-label="Zoom out timeline">−</button>
         <span id="timelineZoomValue">100%</span>
         <button type="button" onclick="adjustTimelineZoom(0.2)" aria-label="Zoom in timeline">+</button>
+        <button type="button" id="timelineRevealButton" onclick="revealTimelinePossibilities()" aria-label="Reveal other timeline possibilities">Reveal</button>
       </div>
       <div id="timelineFlowchart"></div>
     </section>
