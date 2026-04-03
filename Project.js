@@ -14,12 +14,9 @@ var journeyTriviaState = null;
 var perfectTriviaSessionsInRow = 0;
 var dasharathaStoryUnlocked = false;
 var playerStats = {};
-var playerGold = 0;
 var inventoryItems = [];
 var inventoryArtifacts = [];
 var artifactLoreCatalog = {};
-var ownedTitles = [];
-var equippedTitle = "";
 var trainingCharacters = ["Hanuman", "Sugriva", "Lakshmana", "Angada"];
 var characterConversationState = null;
 var guessGameState = null;
@@ -430,10 +427,6 @@ function getAllOddsSummary() {
     };
 }
 
-function unlockTitleIfEligible() {
-    return;
-}
-
 function getRewardItemByName(itemName) {
     return null;
 }
@@ -448,19 +441,6 @@ function getArtifactLoreByName(artifactName) {
 
 function readArtifactLore(artifactName) {
     return;
-}
-
-function grantGold(amount, reason) {
-    playerGold += amount;
-    addChoiceToReceipt("Earned " + amount + " gold" + (reason ? " (" + reason + ")" : ""));
-}
-
-function trySpendGold(amount) {
-    if (playerGold < amount) {
-        return false;
-    }
-    playerGold -= amount;
-    return true;
 }
 
 function beginGuessingRound() {
@@ -564,14 +544,6 @@ function resolveCharacterFight() {
     }
 }
 
-function equipTitle(titleKey) {
-    return;
-}
-
-function unequipTitle() {
-    return;
-}
-
 function sampleChoicesExcluding(correctValue) {
     var pool = receiptChoices.filter(function (choiceText) {
         return choiceText !== correctValue;
@@ -670,12 +642,9 @@ function saveOldState() {
         inventoryArtifacts: inventoryArtifacts.slice(),
         playerStats: JSON.parse(JSON.stringify(playerStats)),
         inventoryItems: inventoryItems.slice(),
-        ownedTitles: ownedTitles.slice(),
-        equippedTitle: equippedTitle,
         journeyTriviaState: journeyTriviaState ? JSON.parse(JSON.stringify(journeyTriviaState)) : null,
         perfectTriviaSessionsInRow: perfectTriviaSessionsInRow,
         dasharathaStoryUnlocked: dasharathaStoryUnlocked,
-        playerGold: playerGold,
         characterConversationState: characterConversationState ? JSON.parse(JSON.stringify(characterConversationState)) : null,
         guessGameState: guessGameState ? JSON.parse(JSON.stringify(guessGameState)) : null,
         receiptScenes: receiptScenes.slice(),
@@ -701,12 +670,9 @@ function undoChoice() {
     inventoryArtifacts = oldState.inventoryArtifacts;
     playerStats = oldState.playerStats;
     inventoryItems = oldState.inventoryItems || [];
-    ownedTitles = oldState.ownedTitles || [];
-    equippedTitle = oldState.equippedTitle || "";
     journeyTriviaState = oldState.journeyTriviaState || null;
     perfectTriviaSessionsInRow = oldState.perfectTriviaSessionsInRow || 0;
     dasharathaStoryUnlocked = !!oldState.dasharathaStoryUnlocked;
-    playerGold = oldState.playerGold || 0;
     characterConversationState = oldState.characterConversationState || null;
     guessGameState = oldState.guessGameState || null;
     receiptScenes = oldState.receiptScenes;
@@ -785,12 +751,9 @@ function restart() {
     inventoryArtifacts = [];
     playerStats = {};
     inventoryItems = [];
-    ownedTitles = [];
-    equippedTitle = "";
     journeyTriviaState = null;
     perfectTriviaSessionsInRow = 0;
     dasharathaStoryUnlocked = false;
-    playerGold = 0;
     characterConversationState = null;
     guessGameState = null;
     receiptScenes = [];
@@ -1118,7 +1081,6 @@ function showScene() {
     var shouldAutoOpenTimeline;
     var choicesContainer;
 
-    unlockTitleIfEligible();
 
     if (currentScene === 1) {
         storyCard.innerHTML =
@@ -1694,7 +1656,6 @@ function showScene() {
             "<h2>Training Grounds Conversation: " + (characterConversationState ? characterConversationState.character : "Companion") + "</h2>" +
             "<p>" + (characterConversationState ? characterConversationState.opener : "You begin a conversation.") + "</p>" +
             "<p>" + (characterConversationState && characterConversationState.followUp ? characterConversationState.followUp : "Choose a reply style. Responses are different every time.") + "</p>" +
-            "<p><strong>Gold:</strong> " + playerGold + "</p>" +
             "<div id='choices'>" +
             "<button onclick='makeChoice(84)'>Reply Humbly</button>" +
             "<button onclick='makeChoice(85)'>Reply Boldly</button>" +
@@ -1780,7 +1741,6 @@ function makeChoice(choice) {
                     currentScene = 52;
                 } else {
                     currentScene = 14;
-                    grantGold(30, "defeated Surphanaka");
                 }
             } else {
                 currentScene = 18;
@@ -1974,7 +1934,6 @@ function makeChoice(choice) {
     } else if (currentScene === 43) {
         if (choice === 44) {
             currentScene = 44;
-            grantGold(45, "helped Sugriva defeat Vali");
         } else if (choice === 45) {
             currentScene = 45;
         } else if (choice === 46) {
