@@ -10,6 +10,7 @@ var visitedSceneIds = [];
 var takenTransitions = [];
 var timelineModalOpen = false;
 var timelineZoom = 1;
+var timelineRevealAll = false;
 var journeyTriviaState = null;
 var perfectTriviaSessionsInRow = 0;
 var dasharathaStoryUnlocked = false;
@@ -851,6 +852,32 @@ function adjustTimelineZoom(change) {
     renderTimeline(timelineModalOpen);
 }
 
+function updateTimelineRevealButton() {
+    var revealButton = document.getElementById("timelineRevealButton");
+
+    if (!revealButton) {
+        return;
+    }
+
+    if (timelineRevealAll) {
+        revealButton.textContent = "Revealed";
+        revealButton.disabled = true;
+    } else {
+        revealButton.textContent = "Reveal";
+        revealButton.disabled = false;
+    }
+}
+
+function revealTimelinePossibilities() {
+    if (timelineRevealAll) {
+        return;
+    }
+
+    timelineRevealAll = true;
+    updateTimelineRevealButton();
+    renderTimeline(timelineModalOpen);
+}
+
 function renderTimeline(showHighlight) {
     var container = document.getElementById("timelineFlowchart");
     var svg = "";
@@ -959,6 +986,10 @@ function renderTimeline(showHighlight) {
             continue;
         }
 
+        if (!timelineRevealAll && !edgeKeyMap[edge.from + "->" + edge.to]) {
+            continue;
+        }
+
         fromX = fromNode.x + nodeWidth;
         fromY = fromNode.y + nodeHeight / 2;
         toX = toNode.x;
@@ -1020,6 +1051,10 @@ function renderTimeline(showHighlight) {
                 nodeClass += " active";
             }
 
+            if (!timelineRevealAll && visitedSceneIds.indexOf(nodeId) === -1 && nodeId !== currentScene) {
+                continue;
+            }
+
             svg += "<rect class='" + nodeClass + "' x='" + coords[nodeId].x + "' y='" + coords[nodeId].y +
                 "' rx='12' ry='12' width='" + nodeWidth + "' height='" + nodeHeight + "'></rect>";
             svg += "<text class='node-id' x='" + (coords[nodeId].x + 16) + "' y='" + (coords[nodeId].y + 30) + "'>S" + nodeId + "</text>";
@@ -1052,7 +1087,9 @@ function openTimelineModal() {
     }
 
     timelineModalOpen = true;
+    timelineRevealAll = false;
     updateTimelineZoomLabel();
+    updateTimelineRevealButton();
     renderTimeline(true);
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
