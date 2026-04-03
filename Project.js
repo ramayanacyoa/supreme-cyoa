@@ -1673,7 +1673,36 @@ function showScene() {
             ((characterConversationState && characterConversationState.fightOffered) ? "<button onclick='makeChoice(87)'>Accept Sparring Fight</button><button onclick='makeChoice(88)'>Decline Fight</button>" : "") +
             "<button onclick='makeChoice(47)'>Back to Training Hub</button>" +
             "</div>";
-    } else if (currentScene === 1 || currentScene === 2) {
+    }
+
+    addSceneToReceipt();
+    renderTimeline(timelineModalOpen);
+    setUndoButton();
+    updatePlayerStatsCard();
+    updateInventoryCard();
+    makeReceipt();
+}
+
+function makeChoice(choice) {
+    var previousScene = currentScene;
+    var selectedButton;
+    var choices = document.querySelectorAll("#storyCard #choices button");
+    var i;
+
+    for (i = 0; i < choices.length; i++) {
+        if (choices[i].getAttribute("onclick") === "makeChoice(" + choice + ")") {
+            selectedButton = choices[i];
+            break;
+        }
+    }
+
+    if (selectedButton) {
+        addChoiceToReceipt(selectedButton.textContent.trim());
+    }
+
+    saveOldState();
+
+    if (currentScene === 1 || currentScene === 2) {
         if (choice === 3) {
             currentScene = 3;
         } else if (choice === 4) {
