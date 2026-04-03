@@ -126,6 +126,12 @@ body::after {
   color: rgba(255, 235, 194, 0.78);
 }
 
+.soundtrack-track-name {
+  margin: -2px 0 0;
+  font-size: 0.88rem;
+  color: #fff3d4;
+}
+
 #backgroundMusic {
   width: min(320px, 60vw);
   height: 34px;

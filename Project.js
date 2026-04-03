@@ -24,25 +24,96 @@ var guessGameState = null;
 var inventoryModalOpen = false;
 var defaultSoundtrackSrc = "Sacred Path Of Rama.mp3";
 var lankaSoundtrackSrc = "Lanka Burns At Dawn.mp3";
+var rescueSoundtrackMode = false;
+var applyingSceneRoute = false;
+var routableSceneIds = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+    27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+    52, 53, 54, 55, 65, 66, 67, 68, 69, 70, 71, 72, 73, 77, 93, 95, 96, 97
+];
+
+function parseSceneFromHash() {
+    var match = window.location.hash.match(/^#scene-(\d+)$/);
+
+    if (!match) {
+        return null;
+    }
+
+    return parseInt(match[1], 10);
+}
+
+function isRoutableScene(sceneId) {
+    return routableSceneIds.indexOf(sceneId) !== -1;
+}
+
+function syncHashWithCurrentScene() {
+    var nextHash = currentScene === 0 ? "" : "#scene-" + currentScene;
+
+    if (applyingSceneRoute) {
+        return;
+    }
+
+    if (window.location.hash !== nextHash) {
+        history.replaceState(null, "", nextHash || window.location.pathname + window.location.search);
+    }
+}
+
+function applySceneFromHash() {
+    var routeScene = parseSceneFromHash();
+    var playerNameInput;
+
+    if (routeScene === null || !isRoutableScene(routeScene) || routeScene === currentScene) {
+        return;
+    }
+
+    playerNameInput = document.getElementById("playerName");
+    if (!playerName && playerNameInput) {
+        playerName = playerNameInput.value.trim();
+    }
+    if (!playerName) {
+        playerName = "Traveler";
+    }
+
+    applyingSceneRoute = true;
+    currentScene = routeScene;
+    showScene();
+    applyingSceneRoute = false;
+}
 
 function updateBackgroundMusicForScene() {
     var backgroundMusic = document.getElementById("backgroundMusic");
-    var targetTrack = currentScene === 54 ? lankaSoundtrackSrc : defaultSoundtrackSrc;
+    var trackName = document.getElementById("currentTrackName");
+    var targetTrack;
+    var changedTrack = false;
 
     if (!backgroundMusic) {
         return;
     }
 
+    if (currentScene === 0) {
+        rescueSoundtrackMode = false;
+    }
+
+    if (currentScene === 54 || currentScene === 55) {
+        rescueSoundtrackMode = true;
+    }
+
+    targetTrack = rescueSoundtrackMode ? lankaSoundtrackSrc : defaultSoundtrackSrc;
+
     if (!backgroundMusic.src || backgroundMusic.src.indexOf(targetTrack) === -1) {
         backgroundMusic.src = targetTrack;
         backgroundMusic.load();
+        changedTrack = true;
     }
 
-    if (currentScene === 54) {
-        backgroundMusic.currentTime = 0;
+    if (changedTrack) {
         backgroundMusic.play().catch(function () {
             return null;
         });
+    }
+
+    if (trackName) {
+        trackName.textContent = targetTrack.replace(".mp3", "");
     }
 }
 
@@ -779,6 +850,7 @@ function undoChoice() {
 
     if (currentScene === 0) {
         clearStoryCard();
+        syncHashWithCurrentScene();
         renderTimeline(timelineModalOpen);
         setUndoButton();
         return;
@@ -858,7 +930,9 @@ function restart() {
     oldStates = [];
     visitedSceneIds = [];
     takenTransitions = [];
+    rescueSoundtrackMode = false;
     clearStoryCard();
+    syncHashWithCurrentScene();
     renderTimeline(timelineModalOpen);
     setUndoButton();
     updatePlayerStatsCard();
@@ -876,6 +950,7 @@ function startAdventure() {
     oldStates = [];
     visitedSceneIds = [];
     takenTransitions = [];
+    rescueSoundtrackMode = false;
     characterConversationState = null;
     guessGameState = null;
     currentScene = 1;
@@ -1805,6 +1880,7 @@ function showScene() {
     }
 
     addSceneToReceipt();
+    syncHashWithCurrentScene();
     renderTimeline(timelineModalOpen);
     setUndoButton();
     updatePlayerStatsCard();
@@ -2237,6 +2313,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    applySceneFromHash();
+    window.addEventListener("hashchange", applySceneFromHash);
 
     document.addEventListener("contextmenu", function (event) {
         if (event.target && event.target.id === "backgroundMusic") {
