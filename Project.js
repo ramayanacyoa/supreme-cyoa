@@ -93,10 +93,106 @@ function buildRamayanaTriviaBank() {
 var ramayanaTriviaBank = buildRamayanaTriviaBank();
 
 var ramayanaGuessPool = [
-    "Rama", "Sita", "Lakshmana", "Hanuman", "Ravana", "Dasharatha", "Bharata", "Shatrughna", "Kaikeyi", "Kausalya",
-    "Sumitra", "Janaka", "Vibhishana", "Kumbhakarna", "Indrajit", "Meghanada", "Sugriva", "Vali", "Angada", "Jatayu",
-    "Shabari", "Surpanakha", "Trijata", "Mandodari", "Maricha", "Ayodhya", "Lanka", "Mithila", "Kishkindha", "Panchavati",
-    "Dandaka Forest", "Ashoka Vatika", "Rama Setu", "Pushpaka Vimana", "Sarayu River", "Chitrakoot"
+    { answer: "Rama", type: "Person", clues: ["Prince of Ayodhya exiled for 14 years.", "Wields the Kodanda bow against Ravana.", "Seventh avatar of Vishnu in this epic."] },
+    { answer: "Sita", type: "Person", clues: ["Found in a furrow and raised in Mithila.", "Kidnapped and held in Ashoka Vatika.", "Wife of Rama and daughter of Janaka."] },
+    { answer: "Lakshmana", type: "Person", clues: ["Follows his elder brother into exile.", "Draws a protective boundary near the hut.", "Brother of Rama known for fierce loyalty."] },
+    { answer: "Hanuman", type: "Person", clues: ["Leaps across the ocean to scout Lanka.", "Carries a mountain to save Lakshmana.", "Devoted vanara hero and messenger of Rama."] },
+    { answer: "Ravana", type: "Person", clues: ["Scholar-king of a golden island kingdom.", "Kidnaps Sita through deception.", "Ten-headed ruler and main antagonist."] },
+    { answer: "Dasharatha", type: "Person", clues: ["A king bound by an old promise.", "Father of four princes including Rama.", "Ruler of Ayodhya before the exile crisis."] },
+    { answer: "Bharata", type: "Person", clues: ["Refuses to take the throne in full.", "Rules in his brother's name using symbolic footwear.", "Brother who keeps Rama's place in Ayodhya."] },
+    { answer: "Shatrughna", type: "Person", clues: ["Youngest son in the royal family.", "Closely associated with Bharata.", "Brother of Rama less prominent in forest episodes."] },
+    { answer: "Kaikeyi", type: "Person", clues: ["Requests two boons at a crucial court moment.", "Sends Rama to the forest through her demand.", "Queen and mother of Bharata."] },
+    { answer: "Kausalya", type: "Person", clues: ["Senior queen in Ayodhya's palace.", "Mother of the eldest prince.", "Maternal figure who grieves the exile deeply."] },
+    { answer: "Sumitra", type: "Person", clues: ["Wise queen known for calm counsel.", "Mother of Lakshmana and Shatrughna.", "Encourages duty over comfort."] },
+    { answer: "Janaka", type: "Person", clues: ["Philosopher-king of Mithila.", "Adopts the child found in the earth.", "Father of Sita."] },
+    { answer: "Vibhishana", type: "Person", clues: ["Counsels righteousness in a hostile court.", "Leaves Lanka to join Rama's side.", "Ravana's brother who chooses dharma."] },
+    { answer: "Kumbhakarna", type: "Person", clues: ["Known for legendary sleep cycles.", "A giant warrior in Lanka's army.", "Brother of Ravana awakened for battle."] },
+    { answer: "Indrajit", type: "Person", clues: ["Earned a name after defeating Indra.", "Master of illusion and celestial weapons.", "Son of Ravana also called Meghanada."] },
+    { answer: "Meghanada", type: "Person", clues: ["Alternative name of Lanka's great prince.", "Uses serpentine and magical astras in war.", "Another title of Indrajit."] },
+    { answer: "Sugriva", type: "Person", clues: ["Exiled vanara leader who seeks an alliance.", "Regains his throne with Rama's help.", "Monkey king allied with Rama."] },
+    { answer: "Vali", type: "Person", clues: ["Powerful vanara king with immense combat strength.", "Brother-rival of Sugriva.", "Defeated in the Kishkindha episode."] },
+    { answer: "Angada", type: "Person", clues: ["Young prince among the vanaras.", "Sent as envoy before the final war.", "Son of Vali."] },
+    { answer: "Jatayu", type: "Person", clues: ["Aged bird-king who intervenes mid-abduction.", "Falls heroically after fighting Ravana.", "Ally who gives Rama crucial clues."] },
+    { answer: "Shabari", type: "Person", clues: ["Devotee waiting years for Rama's arrival.", "Offers forest berries with love.", "Ascetic woman famous for bhakti hospitality."] },
+    { answer: "Surpanakha", type: "Person", clues: ["Rakshasi whose encounter sparks major conflict.", "Proposes marriage and faces rejection.", "Sister of Ravana linked to the forest turning point."] },
+    { answer: "Trijata", type: "Person", clues: ["Compassionate figure among Lanka's women.", "Comforts Sita in captivity.", "Rakshasi who dreams of Rama's victory."] },
+    { answer: "Mandodari", type: "Person", clues: ["Voice of restraint in Lanka's palace.", "Wife of Ravana.", "Queen who warns against adharma."] },
+    { answer: "Maricha", type: "Person", clues: ["Rakshasa used in a deceptive hunt.", "Takes the form of a shimmering animal.", "Creates the golden deer diversion."] },
+    { answer: "Nala", type: "Person", clues: ["Engineer among the vanara forces.", "Helps build a path over the sea.", "Associated with constructing Rama Setu."] },
+    { answer: "Nila", type: "Person", clues: ["Vanara commander in the southern campaign.", "Works with Nala on bridge operations.", "Warrior-chief in Rama's monkey army."] },
+    { answer: "Jambavan", type: "Person", clues: ["Ancient wise ally in the vanara camp.", "Reminds Hanuman of his latent power.", "Bear-king strategist."] },
+    { answer: "Tara", type: "Person", clues: ["Known for political wisdom in Kishkindha.", "Connected to both Vali and Sugriva courts.", "Vanara queen with sharp counsel."] },
+    { answer: "Urmila", type: "Person", clues: ["Princess of Mithila and royal bride.", "Married to Lakshmana.", "Sita's sister who remains in Ayodhya."] },
+    { answer: "Ahalya", type: "Person", clues: ["Freed from a curse during Rama's journey.", "Wife of sage Gautama.", "Early episode of redemption in the epic."] },
+    { answer: "Vishwamitra", type: "Person", clues: ["Sage who trains Rama in divine weapons.", "Takes princes to protect yajnas.", "Rishi connected to early heroic quests."] },
+    { answer: "Vasistha", type: "Person", clues: ["Royal preceptor in Ayodhya.", "Guides courtly and dharmic decisions.", "Family guru of the Ikshvaku line."] },
+    { answer: "Agastya", type: "Person", clues: ["Revered southern sage encountered in exile.", "Blesses Rama with spiritual guidance.", "Rishi associated with Dandaka region."] },
+    { answer: "Guha", type: "Person", clues: ["Forest chieftain and boat ally.", "Helps Rama near the river crossing.", "Nishada king loyal to Rama."] },
+    { answer: "Sumantra", type: "Person", clues: ["Trusted charioteer and court servant.", "Accompanies Rama at the start of exile.", "Messenger figure from Ayodhya palace."] },
+    { answer: "Shrutakirti", type: "Person", clues: ["Princess tied to Ayodhya through marriage.", "Wife of Shatrughna.", "One of Janaka's extended family connections."] },
+    { answer: "Mandavi", type: "Person", clues: ["Royal bride in the Ayodhya-Mithila alliance.", "Wife of Bharata.", "Known from the four-couple wedding set."] },
+    { answer: "Atikaya", type: "Person", clues: ["Powerful warrior on Ravana's side.", "Part of Lanka's later war defense.", "Rakshasa prince defeated in battle."] },
+    { answer: "Akshayakumara", type: "Person", clues: ["Young son sent to stop Hanuman.", "Falls during Lanka reconnaissance conflict.", "Prince of Ravana defeated early in the war."] },
+    { answer: "Prahasta", type: "Person", clues: ["Senior military commander of Lanka.", "Leads rakshasa forces in war.", "General serving Ravana."] },
+    { answer: "Ayodhya", type: "Place", clues: ["Capital of the Kosala kingdom.", "City Rama leaves at the start of exile.", "Homeland of Dasharatha's dynasty."] },
+    { answer: "Lanka", type: "Place", clues: ["Island fortress ruled by Ravana.", "Destination of Hanuman's giant leap.", "Main battlefield of the final war."] },
+    { answer: "Mithila", type: "Place", clues: ["Kingdom ruled by Janaka.", "Hosts the great bow challenge.", "Birthplace-home of Sita."] },
+    { answer: "Kishkindha", type: "Place", clues: ["Vanara kingdom in the southern forests.", "Scene of Sugriva-Vali rivalry.", "Alliance base before searching for Sita."] },
+    { answer: "Panchavati", type: "Place", clues: ["Forest dwelling area during exile.", "Golden deer episode unfolds here.", "Location tied to Surpanakha encounter."] },
+    { answer: "Dandaka Forest", type: "Place", clues: ["Vast wilderness traversed in exile years.", "Home to many sages and dangers.", "Major forest region of the epic journey."] },
+    { answer: "Ashoka Vatika", type: "Place", clues: ["Garden in Lanka where Sita is kept.", "Hanuman secretly meets Sita here.", "Captivity grove central to the rescue plot."] },
+    { answer: "Chitrakoot", type: "Place", clues: ["Early exile refuge amid hills and rivers.", "Bharata visits Rama here.", "Peaceful forest location before deeper wanderings."] },
+    { answer: "Sarayu River", type: "Place", clues: ["River associated with Ayodhya.", "Symbolic flow through Rama's homeland.", "Sacred waterway of Kosala."] },
+    { answer: "Godavari River", type: "Place", clues: ["River region near Panchavati.", "Linked with key exile events.", "Southern river in forest chapters."] },
+    { answer: "Rameshwaram", type: "Place", clues: ["Coastal launch point toward Lanka.", "Associated with bridge preparations.", "Pilgrimage site tied to Rama's sea crossing."] },
+    { answer: "Setubandha", type: "Place", clues: ["Name linked to the ocean bridge zone.", "Where vanaras connect shore to island.", "Bridge-building front toward Lanka."] },
+    { answer: "Nandigrama", type: "Place", clues: ["Site where Bharata waits in austerity.", "Symbolic regency base outside Ayodhya.", "Place tied to sandals and vow."] },
+    { answer: "Kosala", type: "Place", clues: ["Ancient kingdom whose capital is Ayodhya.", "Dynastic realm of Dasharatha.", "Region ruled by Rama's family."] },
+    { answer: "Tamasa River", type: "Place", clues: ["River crossed at an early exile stage.", "Marks emotional departure from citizens.", "Waypoint soon after leaving Ayodhya."] },
+    { answer: "Sringaverapura", type: "Place", clues: ["Settlement linked to Guha's support.", "Near key river crossing in exile.", "Nishada-associated location."] },
+    { answer: "Pampa Lake", type: "Place", clues: ["Scenic area near Kishkindha episodes.", "Linked to meetings with vanara allies.", "Water body in southern search arc."] },
+    { answer: "Prasravana", type: "Place", clues: ["Mountain area used as a monsoon halt.", "Strategic wait before campaign advances.", "Highland shelter in Kishkindha phase."] },
+    { answer: "Suvela Mountain", type: "Place", clues: ["Elevated vantage near Lanka campaign.", "Used before final assault planning.", "Hill from which enemy city is viewed."] },
+    { answer: "Nikumbhila", type: "Place", clues: ["Sacrificial ground tied to Indrajit.", "Battle event triggers here.", "Lanka-site of a crucial ritual interruption."] },
+    { answer: "Rama Setu", type: "Thing", clues: ["Massive structure across the sea.", "Built with vanara effort and devotion.", "Bridge used to reach Lanka."] },
+    { answer: "Pushpaka Vimana", type: "Thing", clues: ["Mythic aerial vehicle.", "Used for royal travel after victory.", "Flying chariot associated with Lanka's king."] },
+    { answer: "Kodanda Bow", type: "Thing", clues: ["Weapon carried by Rama.", "Symbol of righteous warfare.", "Famous bow linked to the hero-prince."] },
+    { answer: "Shiva Dhanush", type: "Thing", clues: ["Gigantic bow in Sita's swayamvara.", "Lifted and broken by Rama.", "Trial object proving worth in Mithila."] },
+    { answer: "Brahmastra", type: "Thing", clues: ["Supreme celestial weapon.", "Used with caution due to destructive force.", "Divine missile invoked by mantra."] },
+    { answer: "Agneyastra", type: "Thing", clues: ["Astral weapon of fire.", "One among many divine missiles.", "Represents elemental flame in battle."] },
+    { answer: "Nagapasha", type: "Thing", clues: ["Serpent-binding weapon.", "Used to immobilize opponents.", "Mystic noose formed by snake power."] },
+    { answer: "Sanjivani Herb", type: "Thing", clues: ["Life-restoring medicinal plant.", "Sought urgently to save a fallen warrior.", "Reason Hanuman carried a mountain."] },
+    { answer: "Ring of Rama", type: "Thing", clues: ["Token proving Hanuman's authenticity.", "Given to Sita in captivity.", "Small royal emblem used as a message."] },
+    { answer: "Chudamani", type: "Thing", clues: ["Personal ornament sent as proof to Rama.", "Given by Sita to Hanuman.", "Jewel that confirms contact in Lanka."] },
+    { answer: "Lakshmana Rekha", type: "Thing", clues: ["Protective boundary near the hut.", "Crossing it triggers danger.", "Mythic safety line drawn by Lakshmana."] },
+    { answer: "Sandals of Rama", type: "Thing", clues: ["Placed on throne in symbolic regency.", "Represents rightful sovereignty during exile.", "Footwear revered by Bharata."] },
+    { answer: "Crown of Ayodhya", type: "Thing", clues: ["Symbol of kingship and duty.", "Delayed due to exile events.", "Royal headpiece tied to succession."] },
+    { answer: "Golden Deer", type: "Thing", clues: ["Dazzling lure in the forest.", "Actually a demon's illusion.", "Object that splits Rama and Lakshmana from Sita."] },
+    { answer: "Ocean Crossing", type: "Thing", clues: ["Major challenge before reaching Lanka.", "Solved through alliance and engineering.", "Strategic passage over the sea."] },
+    { answer: "Vanara Banner", type: "Thing", clues: ["War standard of monkey allies.", "Raised during march to Lanka.", "Army symbol in the southern campaign."] },
+    { answer: "Boon of Kaikeyi", type: "Thing", clues: ["Two promises once granted by a king.", "Invoked to alter royal succession.", "Political trigger of Rama's exile."] },
+    { answer: "Exile Vow", type: "Thing", clues: ["Commitment to fulfill a hard promise.", "Accepted without rebellion.", "Fourteen-year duty embraced by Rama."] },
+    { answer: "Dharma", type: "Thing", clues: ["Moral order guiding difficult choices.", "Theme behind sacrifices in the epic.", "Righteous duty central to Rama's decisions."] },
+    { answer: "Bhakti", type: "Thing", clues: ["Devotional love shown by figures like Hanuman.", "Expressed through service and surrender.", "Spiritual theme of heartfelt devotion."] },
+    { answer: "Yajna", type: "Thing", clues: ["Sacred ritual needing protection from demons.", "Reason young princes accompany a sage.", "Vedic fire ceremony."] },
+    { answer: "Arrow of Rama", type: "Thing", clues: ["Precision weapon used in decisive duels.", "Represents focused righteous force.", "Projectile from the hero's bow."] },
+    { answer: "Mace", type: "Thing", clues: ["Blunt weapon favored by many warriors.", "Common in epic combat scenes.", "Heavy club used in melee battles."] },
+    { answer: "Conch Signal", type: "Thing", clues: ["Sound cue used in martial settings.", "Calls troops to order.", "Shell instrument for battlefield signaling."] },
+    { answer: "War Drum", type: "Thing", clues: ["Beating rhythm before clashes.", "Used to raise morale and cadence.", "Percussion instrument of marching armies."] },
+    { answer: "Royal Chariot", type: "Thing", clues: ["Vehicle for kings and nobles.", "Connected to court departures and returns.", "Wheeled carriage of epic warfare."] },
+    { answer: "Hermitage Hut", type: "Thing", clues: ["Simple forest dwelling of sages.", "Frequent refuge during exile travels.", "Leaf-and-wood shelter in the wilderness."] },
+    { answer: "Forest Berries", type: "Thing", clues: ["Offered with devotion by a humble host.", "Small fruit gift with great emotional weight.", "Shabari's famous offering."] },
+    { answer: "Sacred Fire", type: "Thing", clues: ["Witness to vows and rituals.", "Represents purity and divine presence.", "Central flame of Vedic ceremony."] },
+    { answer: "Celestial Chariot", type: "Thing", clues: ["Divine transport seen in epic warfare.", "Different from ordinary war carriages.", "Heavenly vehicle used by gods or heroes."] },
+    { answer: "Bridge Stones", type: "Thing", clues: ["Materials assembled for the sea crossing.", "Linked to collective vanara labor.", "Foundational blocks of Rama Setu."] },
+    { answer: "Messenger Scroll", type: "Thing", clues: ["Written communication across camps.", "Carries strategy and assurance.", "Portable document for wartime messaging."] },
+    { answer: "Healing Salve", type: "Thing", clues: ["Battlefield remedy for injuries.", "Supports warriors between clashes.", "Medicinal paste used in camp treatment."] },
+    { answer: "Quiver", type: "Thing", clues: ["Container for arrows.", "Essential accessory for archers.", "Back-worn case in bow combat."] },
+    { answer: "Battle Armor", type: "Thing", clues: ["Protective gear in major conflicts.", "Worn by elite warriors and commanders.", "Defensive outfit for war scenes."] },
+    { answer: "Royal Seal", type: "Thing", clues: ["Mark of authority in governance.", "Used to validate orders and claims.", "Emblem proving official command."] },
+    { answer: "Victory Garland", type: "Thing", clues: ["Ceremonial wreath for honor.", "Given after achievements or alliances.", "Floral token of triumph."] },
+    { answer: "Temple Bell", type: "Thing", clues: ["Rung for ritual timing and reverence.", "Echoes through sacred spaces.", "Metal instrument in worship settings."] },
+    { answer: "Prayer Mala", type: "Thing", clues: ["Beads counted in devotion.", "Used by sages and devotees.", "Meditative counting string."] }
 ];
 
 var timelineNodeTitles = {
@@ -474,12 +570,45 @@ function registerTrade() {
     return;
 }
 
-function runGuessingGame(guess) {
-    var secret = randomFrom(ramayanaGuessPool);
-    if (guess && guess.toLowerCase() === secret.toLowerCase()) {
-        return "Correct! The hidden answer was " + secret + ".";
+function beginGuessingRound() {
+    guessGameState = guessGameState || { solved: 0, attempted: 0 };
+    guessGameState.current = randomFrom(ramayanaGuessPool);
+    guessGameState.clueIndex = 0;
+}
+
+function getGuessingClueText() {
+    if (!guessGameState || !guessGameState.current) {
+        beginGuessingRound();
     }
-    return "Not quite. The hidden answer was " + secret + ".";
+    return guessGameState.current.clues.slice(0, guessGameState.clueIndex + 1).join(" ");
+}
+
+function normalizeGuessText(value) {
+    return (value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function runGuessingGame(guess) {
+    var normalizedGuess;
+    var normalizedAnswer;
+
+    if (!guessGameState || !guessGameState.current) {
+        beginGuessingRound();
+    }
+
+    guessGameState.attempted += 1;
+    normalizedGuess = normalizeGuessText(guess);
+    normalizedAnswer = normalizeGuessText(guessGameState.current.answer);
+
+    if (normalizedGuess === normalizedAnswer) {
+        var solvedAnswer = guessGameState.current.answer;
+        var solvedType = guessGameState.current.type;
+        guessGameState.solved += 1;
+        beginGuessingRound();
+        return "Correct! It was " + solvedAnswer + " (" + solvedType + "). New round started.";
+    }
+
+    guessGameState.clueIndex = Math.min(guessGameState.clueIndex + 1, guessGameState.current.clues.length - 1);
+    return "Not quite. Category: " + guessGameState.current.type + ". Hint: " + getGuessingClueText();
 }
 
 function applyExplorationPowerup(powerupName) {
@@ -1825,13 +1954,19 @@ function showScene() {
             "<button onclick='makeChoice(47)'>Back to Hanuman</button>" +
             "</div>";
     } else if (currentScene === 93) {
+        if (!guessGameState || !guessGameState.current) {
+            beginGuessingRound();
+        }
         storyCard.innerHTML =
-            "<h2>Game: Ramayana Guessing</h2>" +
-            "<p>Guess a hidden Ramayana answer (character, place, or object).</p>" +
-            "<p>Examples: Rama, Lanka, Pushpaka Vimana, Ayodhya.</p>" +
+            "<h2>Game: Ramayana Guessing (100 Answer Types)</h2>" +
+            "<p>Each round gives stronger clues. Categories are <strong>Person</strong>, <strong>Place</strong>, or <strong>Thing</strong>.</p>" +
+            "<p><strong>Category:</strong> " + guessGameState.current.type + "</p>" +
+            "<p><strong>Clues:</strong> " + getGuessingClueText() + "</p>" +
+            "<p><strong>Solved:</strong> " + guessGameState.solved + " / <strong>Attempts:</strong> " + guessGameState.attempted + "</p>" +
             "<input id='guessInput' type='text' placeholder='Type your guess here' />" +
             "<div id='choices'>" +
             "<button onclick='makeChoice(130)'>Submit Guess</button>" +
+            "<button onclick='makeChoice(175)'>Skip & New Puzzle</button>" +
             "<button onclick='makeChoice(47)'>Back to Hanuman</button>" +
             "</div>";
     } else if (currentScene === 94) {
@@ -2507,6 +2642,9 @@ function makeChoice(choice) {
             } else {
                 alert(runGuessingGame(userGuess));
             }
+        } else if (choice === 175) {
+            beginGuessingRound();
+            alert("New guessing puzzle loaded.");
         } else if (choice === 47) {
             currentScene = 47;
         }
