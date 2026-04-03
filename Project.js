@@ -15,30 +15,11 @@ var perfectTriviaSessionsInRow = 0;
 var dasharathaStoryUnlocked = false;
 var miniGameReturnScene = null;
 var miniGamesUnlocked = false;
-var playerStats = {
-    strength: 0,
-    defense: 0,
-    stamina: 0,
-    speedAgility: 0,
-    magicalPower: 0,
-    weaponMastery: 0,
-    smarts: 0,
-    luck: 0,
-    esteem: 0,
-    prosperity: 0
-};
+var playerStats = {};
 var playerGold = 0;
 var inventoryItems = [];
 var inventoryArtifacts = [];
-var artifactLoreCatalog = {
-    "Maricha's Gleaming Horn Fragment": "A shard said to come from Maricha's illusion. It is used in folk retellings to explain how maya (deception) can mimic beauty so perfectly.",
-    "Forest Hermit's Palm-Leaf Note": "A short teaching from forest sages: desire without discernment invites danger. This side tradition expands on Lakshmana's warning about the golden deer.",
-    "Jatayu's Wind-Sworn Plume": "Some Ramayana traditions honor Jatayu as the model of fearless dharma in old age. This plume symbolizes duty over survival.",
-    "Jatayu's Feather": "The feather represents Jatayu's sacrifice while trying to stop Ravana's chariot in the sky.",
-    "Rama's Sandals (Paduka)": "In many retellings, Bharata places Rama's sandals on the throne as a symbol that Rama remains the rightful ruler.",
-    "Sugriva Alliance Oath": "A memory-token of Rama and Sugriva's pact: help restore Sugriva's kingdom, and gain vanara aid for the search for Sita.",
-    "Kishkindha Cave Mural Tablet": "Vanara cave art in later traditions depicts Hanuman's leap as a vow of devotion long before the ocean crossing begins."
-};
+var artifactLoreCatalog = {};
 var ownedTitles = [];
 var equippedTitle = "";
 var miniGameScores = { journeyTrivia: 0 };
@@ -362,20 +343,7 @@ function clampOdds(value) {
 }
 
 function getEffectiveStats() {
-    var effective = JSON.parse(JSON.stringify(playerStats));
-    var bonuses;
-    var statName;
-
-    if (equippedTitle && titles[equippedTitle]) {
-        bonuses = titles[equippedTitle].bonuses;
-        for (statName in bonuses) {
-            if (bonuses.hasOwnProperty(statName) && effective.hasOwnProperty(statName)) {
-                effective[statName] += bonuses[statName];
-            }
-        }
-    }
-
-    return effective;
+    return {};
 }
 
 function getMiniGameTacticBonus(challengeType) {
@@ -420,34 +388,15 @@ function getAllOddsSummary() {
 }
 
 function unlockTitleIfEligible() {
-    if (inventoryItems.length >= rewardItems.length && ownedTitles.indexOf("king") === -1) {
-        ownedTitles.push("king");
-        alert("Title unlocked: King. Equip it in Player Stats.");
-    }
+    return;
 }
 
 function getRewardItemByName(itemName) {
-    var i;
-
-    for (i = 0; i < rewardItems.length; i++) {
-        if (rewardItems[i].name === itemName) {
-            return rewardItems[i];
-        }
-    }
-
     return null;
 }
 
 function readRelicKnowledge(itemName) {
-    var item = getRewardItemByName(itemName);
-
-    if (!item) {
-        return;
-    }
-
-    awardPowerup("smarts", 1);
-    addChoiceToReceipt("Studied " + item.name + " and gained knowledge (+1 Smarts)");
-    updateInventoryCard();
+    return;
 }
 
 function getArtifactLoreByName(artifactName) {
@@ -455,32 +404,11 @@ function getArtifactLoreByName(artifactName) {
 }
 
 function readArtifactLore(artifactName) {
-    awardPowerup("smarts", 1);
-    addChoiceToReceipt("Studied artifact lore for " + artifactName + " (+1 Smarts)");
-    alert(getArtifactLoreByName(artifactName));
-    updateInventoryCard();
+    return;
 }
 
 function awardMiniGameReward(gameName) {
-    var itemName;
-    var unlockedNow = false;
-
-    if (inventoryItems.length >= maxInventoryItems) {
-        unlockTitleIfEligible();
-        return "Inventory complete. The royal trials are already finished.";
-    }
-
-    itemName = rewardItems[inventoryItems.length].name;
-    inventoryItems.push(itemName);
-    addSigilToSatchel(itemName, 1);
-    grantGold(25, gameName + " mini-game reward");
-    addChoiceToReceipt("Won " + gameName + " and earned " + itemName);
-    if (inventoryItems.length >= maxInventoryItems && ownedTitles.indexOf("king") === -1) {
-        unlockedNow = true;
-    }
-    unlockTitleIfEligible();
-    return "Victory! You earned: " + itemName + ". (" + inventoryItems.length + "/" + maxInventoryItems + ")" +
-        (unlockedNow ? " You unlocked the King title! Equip it in Player Stats." : "");
+    return "Victory!";
 }
 
 function addSigilToSatchel(sigilName, amount) {
@@ -543,15 +471,7 @@ function removeGoodsFromShop(itemName, amount) {
 }
 
 function registerTrade() {
-    tradeCount += 1;
-    if (tradeCount >= 10 && ownedTitles.indexOf("prosperousLeader") === -1) {
-        ownedTitles.push("prosperousLeader");
-        awardPowerup("smarts", 2);
-        awardPowerup("luck", 2);
-        awardPowerup("esteem", 2);
-        awardPowerup("prosperity", 2);
-        alert("Title unlocked: Prosperous Leader! Your leadership and fortune grow.");
-    }
+    return;
 }
 
 function runGuessingGame(guess) {
@@ -563,15 +483,7 @@ function runGuessingGame(guess) {
 }
 
 function applyExplorationPowerup(powerupName) {
-    if (powerupName === "Powerup: Titan Tonic") {
-        awardPowerup("strength", 2);
-    } else if (powerupName === "Powerup: Guardian Elixir") {
-        awardPowerup("defense", 2);
-    } else if (powerupName === "Powerup: Oracle Dust") {
-        awardPowerup("smarts", 2);
-    } else if (powerupName === "Powerup: Fortune Feather") {
-        awardPowerup("luck", 2);
-    }
+    return;
 }
 
 function runExplorationMiniGame() {
@@ -599,20 +511,7 @@ function runExplorationMiniGame() {
 }
 
 function maybeGrantStoryPowerup() {
-    var luckOdds = 7 + (playerStats.luck * 2);
-    if (randomizer() > clampOdds(luckOdds)) {
-        return "";
-    }
-
-    var boon = randomFrom([
-        { text: "You discover a hidden blessing shrine. +1 Strength.", stat: "strength" },
-        { text: "A wandering sage gifts you arcane fire. +1 Magical Power.", stat: "magicalPower" },
-        { text: "You uncover a forgotten battle manual. +1 Weapon Mastery.", stat: "weaponMastery" },
-        { text: "You find a lucky totem in the road dust. +1 Luck.", stat: "luck" }
-    ]);
-    awardPowerup(boon.stat, 1);
-    addArtifact("Story Powerup: " + boon.text);
-    return "<p><strong>Lucky Encounter:</strong> " + boon.text + "</p>";
+    return "";
 }
 
 function randomFrom(list) {
@@ -677,15 +576,11 @@ function resolveCharacterFight() {
 }
 
 function equipTitle(titleKey) {
-    if (ownedTitles.indexOf(titleKey) !== -1) {
-        equippedTitle = titleKey;
-        updatePlayerStatsCard();
-    }
+    return;
 }
 
 function unequipTitle() {
-    equippedTitle = "";
-    updatePlayerStatsCard();
+    return;
 }
 
 function setMiniGameTactic(gameType, tactic) {
@@ -815,194 +710,43 @@ function buildJourneyTriviaState() {
 }
 
 function updatePlayerStatsCard() {
-    var body = document.getElementById("playerStatsBody");
-    var odds;
-    var effectiveStats;
-    var titleLabel = equippedTitle && titles[equippedTitle] ? titles[equippedTitle].label : "None";
-    var i;
-    var titleButtons = "";
-
-    if (!body) {
-        return;
-    }
-
-    odds = getAllOddsSummary();
-    effectiveStats = getEffectiveStats();
-
-    for (i = 0; i < ownedTitles.length; i++) {
-        titleButtons += "<button type='button' onclick=\"equipTitle('" + ownedTitles[i] + "')\">Equip " +
-            titles[ownedTitles[i]].label + "</button> ";
-    }
-
-    body.innerHTML =
-        "<p><strong>Traveler:</strong> " + (playerName || "Unknown") + "</p>" +
-        "<p><strong>Equipped Title:</strong> " + titleLabel + "</p>" +
-        "<ul class='stats-list'>" +
-        "<li><strong>Strength:</strong> " + playerStats.strength + " <span>(effective: " + effectiveStats.strength + ")</span></li>" +
-        "<li><strong>Defense:</strong> " + playerStats.defense + " <span>(effective: " + effectiveStats.defense + ")</span></li>" +
-        "<li><strong>Stamina:</strong> " + playerStats.stamina + " <span>(effective: " + effectiveStats.stamina + ")</span></li>" +
-        "<li><strong>Speed & Agility:</strong> " + playerStats.speedAgility + " <span>(effective: " + effectiveStats.speedAgility + ")</span></li>" +
-        "<li><strong>Magical Power:</strong> " + playerStats.magicalPower + " <span>(effective: " + effectiveStats.magicalPower + ")</span></li>" +
-        "<li><strong>Weapon Mastery:</strong> " + playerStats.weaponMastery + " <span>(effective: " + effectiveStats.weaponMastery + ")</span></li>" +
-        "<li><strong>Smarts:</strong> " + playerStats.smarts + " <span>(effective: " + effectiveStats.smarts + ")</span></li>" +
-        "<li><strong>Luck:</strong> " + playerStats.luck + " <span>(effective: " + effectiveStats.luck + ")</span></li>" +
-        "<li><strong>Esteem:</strong> " + playerStats.esteem + " <span>(effective: " + effectiveStats.esteem + ")</span></li>" +
-        "<li><strong>Prosperity:</strong> " + playerStats.prosperity + " <span>(effective: " + effectiveStats.prosperity + ")</span></li>" +
-        "</ul>" +
-        "<h4>Inventory</h4>" +
-        "<p><strong>Gold:</strong> " + playerGold + "</p>" +
-        "<p><strong>Total Trades:</strong> " + tradeCount + "/10</p>" +
-        "<p><strong>Sigil Satchel:</strong> " + getSatchelSummary() + "</p>" +
-        "<p><strong>Relics:</strong> " + inventoryItems.length + "/" + maxInventoryItems + "</p>" +
-        "<p>" + (inventoryItems.length ? inventoryItems.join(", ") : "No relics yet. Win mini-games to collect them.") + "</p>" +
-        "<h4>Titles</h4>" +
-        "<p>Owned titles: " + (ownedTitles.length ? ownedTitles.map(function (titleKey) { return titles[titleKey].label; }).join(", ") : "None yet") + "</p>" +
-        "<p>" + titleButtons + (equippedTitle ? "<button type='button' onclick='unequipTitle()'>Unequip Title</button>" : "") + "</p>" +
-        "<h4>Current Win Odds</h4>" +
-        "<ul class='stats-list odds-list'>" +
-        "<li>Fight: " + odds.fight + "%</li>" +
-        "<li>Duel: " + odds.duel + "%</li>" +
-        "<li>Brawl: " + odds.brawl + "%</li>" +
-        "<li>Shooting Range: " + odds.shooting + "%</li>" +
-        "<li>Chase: " + odds.chase + "%</li>" +
-        "<li>Maze Trivia: " + odds.maze + "%</li>" +
-        "<li>Journey Trivia: " + odds.journeyTrivia + "%</li>" +
-        "<li>Guessing Game: " + odds.guessing + "%</li>" +
-        "<li>Exploration: " + odds.exploration + "%</li>" +
-        "</ul>" +
-        "<p class='stats-note'>" + (miniGamesUnlocked ?
-            "Mini-games unlocked. Keep training with Hanuman to boost your stats." :
-            "Mini-games unlock after meeting Hanuman.") + "</p>";
+    return;
 }
 
 function openPlayerStatsModal() {
-    var modal = document.getElementById("playerStatsModal");
-
-    if (!modal) {
-        return;
-    }
-
-    playerStatsModalOpen = true;
-    updatePlayerStatsCard();
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
+    return;
 }
 
 function closePlayerStatsModal() {
-    var modal = document.getElementById("playerStatsModal");
-
-    if (!modal) {
-        return;
-    }
-
-    playerStatsModalOpen = false;
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
+    return;
 }
 
 function updateInventoryCard() {
-    var body = document.getElementById("inventoryBody");
-    var markup = "";
-    var i;
-    var safeName;
-
-    if (!body) {
-        return;
-    }
-
-    if (inventoryItems.length === 0 && inventoryArtifacts.length === 0) {
-        body.innerHTML = "<p>You have not collected any special artifacts yet.</p>";
-        return;
-    }
-
-    if (inventoryItems.length > 0) {
-        markup += "<p><strong>Knowledge Relics:</strong></p>";
-        markup += "<ul class='stats-list'>";
-
-        for (i = 0; i < inventoryItems.length; i++) {
-            var rewardInfo = getRewardItemByName(inventoryItems[i]);
-            safeName = inventoryItems[i].replace(/'/g, "\\'");
-            markup += "<li><strong>" + inventoryItems[i] + "</strong>: " +
-                (rewardInfo ? rewardInfo.description : "Unknown relic lore.") +
-                " <button type='button' onclick=\"readRelicKnowledge('" + safeName + "')\">Read</button></li>";
-        }
-
-        markup += "</ul>";
-        markup += "<p class='stats-note'>Reading a relic grants +1 Smarts every time.</p>";
-    }
-
-    markup += "<p><strong>Gold:</strong> " + playerGold + "</p>";
-    markup += "<p><strong>Sigil Satchel:</strong> " + getSatchelSummary() + "</p>";
-
-    if (inventoryArtifacts.length > 0) {
-        markup += "<p><strong>Artifacts Collected:</strong></p>";
-        markup += "<ul class='stats-list'>";
-
-        for (i = 0; i < inventoryArtifacts.length; i++) {
-            safeName = inventoryArtifacts[i].replace(/'/g, "\\'");
-            markup += "<li><strong>" + inventoryArtifacts[i] + "</strong>: " +
-                getArtifactLoreByName(inventoryArtifacts[i]) +
-                " <button type='button' onclick=\"readArtifactLore('" + safeName + "')\">Read</button></li>";
-        }
-
-        markup += "</ul>";
-        markup += "<p class='stats-note'>Reading an artifact also grants +1 Smarts.</p>";
-    }
-
-    body.innerHTML = markup;
+    return;
 }
 
 function openInventoryModal() {
-    var modal = document.getElementById("inventoryModal");
-
-    if (!modal) {
-        return;
-    }
-
-    inventoryModalOpen = true;
-    updateInventoryCard();
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
+    return;
 }
 
 function closeInventoryModal() {
-    var modal = document.getElementById("inventoryModal");
-
-    if (!modal) {
-        return;
-    }
-
-    inventoryModalOpen = false;
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
+    return;
 }
 
 function handleInventoryModalBackdrop(event) {
-    if (event.target && event.target.id === "inventoryModal") {
-        closeInventoryModal();
-    }
+    return;
 }
 
 function handlePlayerStatsModalBackdrop(event) {
-    if (event.target && event.target.id === "playerStatsModal") {
-        closePlayerStatsModal();
-    }
+    return;
 }
 
 function awardPowerup(statName, amount) {
-    if (!playerStats.hasOwnProperty(statName)) {
-        return;
-    }
-
-    playerStats[statName] += amount;
-    updatePlayerStatsCard();
+    return;
 }
 
 function addArtifact(artifactName) {
-    if (inventoryArtifacts.indexOf(artifactName) === -1) {
-        inventoryArtifacts.push(artifactName);
-        updateInventoryCard();
-    }
+    return;
 }
 
 function clearStoryCard() {
@@ -1163,18 +907,7 @@ function restart() {
     wentAlone = false;
     miniGamesUnlocked = false;
     inventoryArtifacts = [];
-    playerStats = {
-        strength: 0,
-        defense: 0,
-        stamina: 0,
-        speedAgility: 0,
-        magicalPower: 0,
-        weaponMastery: 0,
-        smarts: 0,
-        luck: 0,
-        esteem: 0,
-        prosperity: 0
-    };
+    playerStats = {};
     inventoryItems = [];
     ownedTitles = [];
     equippedTitle = "";
