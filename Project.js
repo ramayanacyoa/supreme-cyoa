@@ -22,6 +22,7 @@ var trainingCharacters = ["Hanuman", "Sugriva", "Lakshmana", "Angada"];
 var characterConversationState = null;
 var guessGameState = null;
 var hasReachedWarCouncil = false;
+var musicAutoplayRetryBound = false;
 
 var soundtrackMap = {
     exile: {
@@ -800,7 +801,6 @@ function syncBackgroundMusic() {
     var selectedTrack = hasReachedWarCouncil ? soundtrackMap.warCouncil : soundtrackMap.exile;
     var selectedSrc;
     var playPromise;
-    var changedTrack = false;
 
     if (!audio) {
         return;
@@ -811,12 +811,13 @@ function syncBackgroundMusic() {
     if (!audio.getAttribute("src") || audio.getAttribute("src") !== selectedSrc) {
         audio.setAttribute("src", selectedSrc);
         audio.load();
-        changedTrack = true;
     }
 
     audio.loop = true;
     audio.autoplay = true;
+    audio.defaultMuted = true;
     audio.muted = true;
+    audio.playsInline = true;
 
     if (volumeControl) {
         audio.volume = Number(volumeControl.value);
@@ -830,9 +831,6 @@ function syncBackgroundMusic() {
 
     if (playPromise && typeof playPromise.catch === "function") {
         playPromise.then(function () {
-            if (changedTrack) {
-                alert("Now playing: " + selectedTrack.label + ". It starts muted—unmute it to hear the new song.");
-            }
             updateMusicControls();
         }).catch(function () {
             updateMusicControls();
@@ -870,8 +868,47 @@ function updateMusicVolume() {
 }
 
 function updateWarCouncilMusicProgress(sceneId) {
-    if (sceneId === 54) {
+    if (sceneId >= 53) {
         hasReachedWarCouncil = true;
+    }
+}
+
+function bindMusicAutoplayRetry() {
+    var retryEvents;
+    var i;
+
+    if (musicAutoplayRetryBound) {
+        return;
+    }
+
+    musicAutoplayRetryBound = true;
+    retryEvents = ["pointerdown", "keydown", "touchstart"];
+
+    function retryPlayback() {
+        var audio = document.getElementById("backgroundMusic");
+        var playPromise;
+
+        if (!audio || !audio.paused) {
+            return;
+        }
+
+        audio.muted = true;
+        playPromise = audio.play();
+
+        if (playPromise && typeof playPromise.then === "function") {
+            playPromise.then(function () {
+                var j;
+                for (j = 0; j < retryEvents.length; j++) {
+                    document.removeEventListener(retryEvents[j], retryPlayback);
+                }
+            }).catch(function () {
+                updateMusicControls();
+            });
+        }
+    }
+
+    for (i = 0; i < retryEvents.length; i++) {
+        document.addEventListener(retryEvents[i], retryPlayback);
     }
 }
 
@@ -2221,6 +2258,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateInventoryCard();
 
     syncBackgroundMusic();
+    bindMusicAutoplayRetry();
     updateMusicControls();
 
     if (musicToggleButton) {
