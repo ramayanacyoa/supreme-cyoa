@@ -24,7 +24,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  padding: 40px 18px 56px;
+  padding: 98px 18px 56px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -97,9 +97,49 @@ body::after {
 }
 
 
-#soundtrackBadge {
+#topNavbar {
   position: fixed;
   top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 223, 162, 0.42);
+  background: linear-gradient(120deg, rgba(95, 39, 51, 0.82), rgba(42, 22, 47, 0.85));
+  box-shadow: 0 12px 28px rgba(14, 6, 20, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#aboutButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 223, 162, 0.4);
+  color: #fff3d4;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  background: rgba(35, 18, 34, 0.72);
+}
+
+#aboutButton:hover,
+#aboutButton:focus-visible {
+  background: rgba(243, 201, 120, 0.18);
+  outline: none;
+}
+
+
+#soundtrackBadge {
+  position: fixed;
+  top: 64px;
   left: 16px;
   z-index: 20;
   display: flex;
@@ -160,7 +200,7 @@ body::after {
 
 #undoButton {
   position: fixed;
-  top: 16px;
+  top: 64px;
   right: 16px;
   z-index: 20;
   padding: 10px 16px;
@@ -168,7 +208,7 @@ body::after {
 
 #timelineButton {
   position: fixed;
-  top: 16px;
+  top: 64px;
   right: 102px;
   z-index: 20;
   padding: 10px 16px;
@@ -176,7 +216,7 @@ body::after {
 
 #inventoryButton {
   position: fixed;
-  top: 16px;
+  top: 64px;
   right: 220px;
   z-index: 20;
   padding: 10px 16px;
