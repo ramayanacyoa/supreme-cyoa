@@ -21,6 +21,9 @@ var artifactLoreCatalog = {};
 var trainingCharacters = ["Hanuman", "Sugriva", "Lakshmana", "Angada"];
 var characterConversationState = null;
 var guessGameState = null;
+var storytellingGameState = null;
+var triviaSessionCount = 0;
+var triviaSessionQuestionLimit = 10;
 var inventoryModalOpen = false;
 var defaultSoundtrackSrc = "Sacred Path Of Rama.mp3";
 var lankaSoundtrackSrc = "Lanka Burns At Dawn.mp3";
@@ -30,7 +33,7 @@ var applyingSceneRoute = false;
 var routableSceneIds = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
     27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-    52, 53, 54, 55, 65, 66, 67, 68, 69, 70, 71, 72, 73, 77, 93, 95, 96, 97
+    52, 53, 54, 55, 65, 66, 67, 68, 69, 70, 71, 72, 73, 77, 93, 95, 96, 97, 98, 99, 100
 ];
 
 function parseRouteFromHash() {
@@ -377,7 +380,10 @@ var timelineNodeTitles = {
     93: "Guessing Game",
     95: "Deer Lore Artifact",
     96: "Jatayu Lore Artifact",
-    97: "Kishkindha Lore Artifact"
+    97: "Kishkindha Lore Artifact",
+    98: "Negotiation Duel",
+    99: "Storytelling Game",
+    100: "Storytelling Result"
 };
 
 artifactLoreCatalog = {
@@ -387,7 +393,9 @@ artifactLoreCatalog = {
     "Jatayu's Feather": "A fallen feather from the battlefield in the sky, preserved as a vow to remember sacrifice in the face of tyranny.",
     "Rama's Sandals (Paduka)": "The sacred Paduka symbolizing rightful rule, duty, and Bharata's pledge to govern Ayodhya only in Rama's name.",
     "Kishkindha Cave Mural Tablet": "A carved tablet showing old vanara heroes. Its scenes teach alliance, strategy, and patience before war.",
-    "Sugriva Alliance Oath": "A signed oath of friendship and mutual duty between Rama and Sugriva, sealed under witness of fire and honor."
+    "Sugriva Alliance Oath": "A signed oath of friendship and mutual duty between Rama and Sugriva, sealed under witness of fire and honor.",
+    "Camp Story Scroll": "A strategy scroll from Hanuman's camp, recording how stories carry morale across long campaigns.",
+    "Ocean Wind Compass": "A brass compass tuned by vanara navigators to keep rescue teams coordinated near Lanka's coast."
 };
 
 var timelineLevels = [
@@ -421,7 +429,7 @@ var timelineLevels = [
     [44, 45, 46],
     [47, 69, 95, 96, 97],
     [70, 93, 77, 53],
-    [71, 72, 73, 54, 55]
+    [71, 72, 73, 54, 55, 98, 99, 100]
 ];
 
 var timelineEdges = [
@@ -442,7 +450,9 @@ var timelineEdges = [
     { from: 8, to: 13, label: "Reject" },
     { from: 13, to: 9, label: "Fight" },
     { from: 11, to: 15, label: "Try again" },
-    { from: 11, to: 9, label: "Prepare to fight" },
+    { from: 11, to: 98, label: "Negotiate then duel" },
+    { from: 98, to: 14, label: "Win duel", type: "chance" },
+    { from: 98, to: 18, label: "Lose duel", type: "chance" },
     { from: 15, to: 9, label: "Fight" },
     { from: 9, to: 14, label: "Fight (win w/party)", type: "chance" },
     { from: 9, to: 52, label: "Fight (win alone)", type: "chance" },
@@ -506,6 +516,10 @@ var timelineEdges = [
     { from: 47, to: 69, label: "Unlock new storyline" },
     { from: 47, to: 70, label: "Journey trivia" },
     { from: 47, to: 93, label: "Guessing game" },
+    { from: 47, to: 99, label: "Storytelling game" },
+    { from: 99, to: 100, label: "Submit story answer" },
+    { from: 100, to: 99, label: "Next story question" },
+    { from: 100, to: 47, label: "Back to hub" },
     { from: 47, to: 77, label: "Talk to ally" },
     { from: 77, to: 47, label: "Back to hub" },
     { from: 69, to: 67, label: "Return and rule" },
@@ -593,6 +607,54 @@ function getArtifactLoreByName(artifactName) {
 
 function readArtifactLore(artifactName) {
     return getArtifactLoreByName(artifactName);
+}
+
+var storytellingQuestions = [
+    {
+        prompt: "Why does Rama leave Ayodhya at the start of exile?",
+        expectedKeywords: ["kaikeyi", "boon", "dasharatha", "exile"],
+        modelAnswer: "Rama accepts exile to honor Dasharatha's promise to Kaikeyi and uphold dharma."
+    },
+    {
+        prompt: "How does Hanuman prove himself in Lanka?",
+        expectedKeywords: ["sita", "ring", "leap", "lanka"],
+        modelAnswer: "Hanuman leaps to Lanka, finds Sita, and gives Rama's ring as proof of hope."
+    },
+    {
+        prompt: "What is the turning point of the rescue campaign?",
+        expectedKeywords: ["alliance", "sugriva", "setu", "bridge"],
+        modelAnswer: "The alliance with Sugriva and the building of Rama Setu turn the campaign toward victory."
+    }
+];
+
+function beginStorytellingGame() {
+    storytellingGameState = {
+        index: 0,
+        score: 0
+    };
+}
+
+function scoreStorytellingAnswer(answerText) {
+    var question;
+    var normalized;
+    var matched;
+
+    if (!storytellingGameState) {
+        beginStorytellingGame();
+    }
+
+    question = storytellingQuestions[storytellingGameState.index % storytellingQuestions.length];
+    normalized = (answerText || "").toLowerCase();
+    matched = question.expectedKeywords.filter(function (keyword) {
+        return normalized.indexOf(keyword) !== -1;
+    }).length;
+
+    if (matched >= 2) {
+        storytellingGameState.score += 1;
+        return "Great storytelling! You connected key events clearly.";
+    }
+
+    return "Good effort. Include key story anchors like names, motives, and outcomes.";
 }
 
 function beginGuessingRound() {
@@ -724,9 +786,10 @@ function buildJourneyTriviaState() {
         askedCount: 0,
         score: 0,
         wrong: 0,
+        questionLimit: triviaSessionQuestionLimit,
         questions: ramayanaTriviaBank.slice().sort(function () {
             return Math.random() - 0.5;
-        })
+        }).slice(0, triviaSessionQuestionLimit)
     };
 }
 
@@ -820,7 +883,17 @@ function addArtifact(artifactName) {
 
 function clearStoryCard() {
     document.getElementById("storyCard").innerHTML =
-        "<!-- this is where the story will be displayed --><div id='choices'></div>";
+        "<div id='storyCardToolbar'><button id='undoButton' onclick='undoChoice()' type='button' disabled aria-label='Undo last choice'><svg viewBox='0 0 24 24' role='img' aria-hidden='true' focusable='false'><path d='M9 7H4V2'/><path d='M4 7l5-5'/><path d='M4 7h9a7 7 0 1 1 0 14h-2'/></svg><span>Undo</span></button></div><!-- this is where the story will be displayed --><div id='choices'></div>";
+}
+
+
+function ensureStoryCardToolbar() {
+    var storyCard = document.getElementById("storyCard");
+    if (!storyCard || storyCard.querySelector("#storyCardToolbar")) {
+        return;
+    }
+
+    storyCard.insertAdjacentHTML("afterbegin", "<div id='storyCardToolbar'><button id='undoButton' onclick='undoChoice()' type='button' disabled aria-label='Undo last choice'><svg viewBox='0 0 24 24' role='img' aria-hidden='true' focusable='false'><path d='M9 7H4V2'/><path d='M4 7l5-5'/><path d='M4 7h9a7 7 0 1 1 0 14h-2'/></svg><span>Undo</span></button></div>");
 }
 
 function setUndoButton() {
@@ -957,6 +1030,8 @@ function restart() {
     dasharathaStoryUnlocked = false;
     characterConversationState = null;
     guessGameState = null;
+    storytellingGameState = null;
+    triviaSessionCount = 0;
     receiptScenes = [];
     receiptChoices = [];
     oldStates = [];
@@ -985,6 +1060,8 @@ function startAdventure() {
     rescueSoundtrackMode = false;
     characterConversationState = null;
     guessGameState = null;
+    storytellingGameState = null;
+    triviaSessionCount = 0;
     currentScene = 1;
     updatePlayerStatsCard();
     showScene();
@@ -1826,11 +1903,12 @@ function showScene() {
         storyCard.innerHTML =
             "<h2>Meeting Hanuman</h2>" +
             "<p>Grateful for your help, Sugriva brings forward his wisest and most loyal companion: Hanuman. Hanuman bows before you and offers his strength in the search for Sita.</p>" +
-            "<p>The war-camp is focused now: conversation, sparring, and two knowledge challenges to sharpen your mind.</p>" +
+            "<p>The war-camp is focused now: conversation, sparring, and three knowledge challenges to sharpen your mind.</p>" +
             "<p><strong>Trivia streak (perfect sessions in a row):</strong> " + perfectTriviaSessionsInRow + "/20</p>" +
             "<div id='choices'>" +
             "<button onclick='makeChoice(70)'>Journey Trivia</button>" +
             "<button onclick='makeChoice(93)'>Guessing Game</button>" +
+            "<button onclick='makeChoice(99)'>Storytelling Game</button>" +
             "<button onclick='makeChoice(80)'>Talk to Hanuman</button>" +
             "<button onclick='makeChoice(81)'>Talk to Sugriva</button>" +
             "<button onclick='makeChoice(82)'>Talk to Lakshmana</button>" +
@@ -1840,9 +1918,9 @@ function showScene() {
             "</div>";
     } else if (currentScene === 70) {
         storyCard.innerHTML =
-            "<h2>Game: Ramayana Trivia (100 Questions)</h2>" +
-            "<p>Each session draws from a 100-question bank. The session continues until you get <strong>3 wrong</strong>.</p>" +
-            "<p><strong>Perfect streak:</strong> " + perfectTriviaSessionsInRow + "/20 sessions with zero wrong answers.</p>" +
+            "<h2>Game: Journey Trivia Sessions</h2>" +
+            "<p>Each session is <strong>10 questions</strong> max and still ends early at <strong>3 wrong</strong> answers.</p>" +
+            "<p><strong>Sessions played:</strong> " + triviaSessionCount + " | <strong>Perfect streak:</strong> " + perfectTriviaSessionsInRow + "/20.</p>" +
             "<div id='choices'>" +
             "<button onclick='makeChoice(71)'>Start Trivia Session</button>" +
             "<button onclick='makeChoice(47)'>Back to Hanuman</button>" +
@@ -1870,7 +1948,7 @@ function showScene() {
         storyCard.innerHTML =
             "<h2>Journey Trivia Question " + (journeyTriviaState.currentQuestion + 1) + "</h2>" +
             "<p><strong>" + journeyTriviaState.questions[journeyTriviaState.currentQuestion].prompt + "</strong></p>" +
-            "<p><strong>Correct:</strong> " + journeyTriviaState.score + " | <strong>Wrong:</strong> " + journeyTriviaState.wrong + "/3</p>" +
+            "<p><strong>Correct:</strong> " + journeyTriviaState.score + " | <strong>Wrong:</strong> " + journeyTriviaState.wrong + "/3 | <strong>Question:</strong> " + (journeyTriviaState.currentQuestion + 1) + "/" + journeyTriviaState.questionLimit + "</p>" +
             "<div id='choices'>" +
             journeyTriviaState.questions[journeyTriviaState.currentQuestion].options.map(function (optionText) {
                 return "<button onclick='makeChoice(" + (optionText === journeyTriviaState.questions[journeyTriviaState.currentQuestion].correct ? 72 : 73) + ")'>" + optionText + "</button>";
@@ -1936,28 +2014,65 @@ function showScene() {
             ((characterConversationState && characterConversationState.fightOffered) ? "<button onclick='makeChoice(87)'>Accept Sparring Fight</button><button onclick='makeChoice(88)'>Decline Fight</button>" : "") +
             "<button onclick='makeChoice(47)'>Back to Training Hub</button>" +
             "</div>";
-    } else if (currentScene === 55){
+    } else if (currentScene === 55) {
+        addArtifact("Ocean Wind Compass");
         storyCard.innerHTML =
-            "<h2>The Journey Across The Ocean</h2>" +
-            "<p>The rescue council all strategize on how to save Sita. The bear king, Jambavan, suggests Hanuman uses his powers and fly to Lanka to save Sita. Do you agree?</p>" +
-            "<button onclick = makeDecision(4)>Agree</button>" +
-            "<button onclick = makeDecision(5)>Disagree</button>" +
-             "</div>";
-    } else if (currentScene === 56){
+            "<h2>The Journey Across the Ocean</h2>" +
+            "<p>The rescue council debates how to reach Lanka quickly. Jambavan proposes Hanuman's leap as the opening move.</p>" +
+            "<div id='choices'>" +
+            "<button onclick='makeDecision(4)'>Agree with the leap plan</button>" +
+            "<button onclick='makeDecision(5)'>Question the risk first</button>" +
+            "</div>";
+    } else if (currentScene === 56) {
         storyCard.innerHTML =
             "<h2>Hanuman's Leap</h2>" +
-            "<p>Hanuman makes the leap across the ocean to Lanka. He takes a running start and soars into the sky, flying higher and farther than anyone has ever seen.</p>" +
-            "<button onclick = makeDecision(6)>Continue</button>" +
-             "</div>";
-    } else if (currentScene === 57){
+            "<p>Hanuman launches across the ocean, carrying your hopes and strategy to Lanka's gates.</p>" +
+            "<div id='choices'>" +
+            "<button onclick='makeChoice(54)'>Return to War Council</button>" +
+            "<button onclick='makeChoice(47)'>Back to Camp Hub</button>" +
+            "</div>";
+    } else if (currentScene === 57) {
         storyCard.innerHTML =
-            "<h2>You disagree./h2>" +
-            "<p>You claim it is too dangerous of a journey. But Hanuman disagrees.</p>" +
-            "<P><q> " + playerName +", you must trust me. If we don't have trust in each other, then this alliance will not work out.</q></p>"
-            "<button onclick = makeDecision(7)>Continue</button>" +
-             "</div>";
+            "<h2>You Raise Concerns</h2>" +
+            "<p>You call the mission dangerous, but Hanuman steadies the room and asks for trust in coordinated teamwork.</p>" +
+            "<p><q>" + playerName + ", strategy without faith breaks alliances. Let us move as one.</q></p>" +
+            "<div id='choices'>" +
+            "<button onclick='makeDecision(7)'>Accept and proceed</button>" +
+            "</div>";
+    } else if (currentScene === 98) {
+        storyCard.innerHTML =
+            "<h2>Negotiation Collapses into a Duel</h2>" +
+            "<p>Your attempt to negotiate with Surphanaka buys a moment, but she lashes out anyway. You are now ready for a tighter duel.</p>" +
+            "<p><strong>Refined duel odds:</strong> " + clampOdds(getChallengeOdds("fight") + 8) + "%</p>" +
+            "<div id='choices'>" +
+            "<button onclick='makeChoice(140)'>Fight after negotiation</button>" +
+            "</div>";
+    } else if (currentScene === 99) {
+        if (!storytellingGameState) {
+            beginStorytellingGame();
+        }
+        storyCard.innerHTML =
+            "<h2>Game: Ramayana Storytelling</h2>" +
+            "<p>Answer in your own words. Strong answers mention characters, motivation, and consequence.</p>" +
+            "<p><strong>Prompt:</strong> " + storytellingQuestions[storytellingGameState.index % storytellingQuestions.length].prompt + "</p>" +
+            "<p><strong>Score:</strong> " + storytellingGameState.score + " / " + storytellingGameState.index + "</p>" +
+            "<textarea id='storyAnswerInput' rows='4' placeholder='Type your short story answer...'></textarea>" +
+            "<div id='choices'>" +
+            "<button onclick='makeChoice(190)'>Submit Story Answer</button>" +
+            "<button onclick='makeChoice(47)'>Back to Hanuman</button>" +
+            "</div>";
+    } else if (currentScene === 100) {
+        storyCard.innerHTML =
+            "<h2>Storytelling Feedback</h2>" +
+            "<p>" + (storytellingGameState ? storytellingGameState.lastFeedback : "Keep practicing your retellings.") + "</p>" +
+            "<p><strong>Model answer:</strong> " + (storytellingGameState ? storytellingGameState.lastModelAnswer : "") + "</p>" +
+            "<div id='choices'>" +
+            "<button onclick='makeChoice(191)'>Next Story Prompt</button>" +
+            "<button onclick='makeChoice(47)'>Back to Hanuman</button>" +
+            "</div>";
     }
 
+    ensureStoryCardToolbar();
     addSceneToReceipt();
     syncHashWithCurrentScene();
     renderTimeline(timelineModalOpen);
@@ -2044,7 +2159,7 @@ function makeChoice(choice) {
         if (choice === 15) {
             currentScene = 15;
         } else if (choice === 9) {
-            currentScene = 9;
+            currentScene = 98;
         }
     } else if (currentScene === 10 || currentScene === 14) {
         if (choice === 19) {
@@ -2242,6 +2357,8 @@ function makeChoice(choice) {
             currentScene = 70;
         } else if (choice === 93) {
             currentScene = 93;
+        } else if (choice === 99) {
+            currentScene = 99;
         } else if (choice === 80 || choice === 81 || choice === 82 || choice === 83) {
             beginCharacterConversation(trainingCharacters[choice - 80]);
             currentScene = 77;
@@ -2291,6 +2408,33 @@ function makeChoice(choice) {
         } else if (choice === 47) {
             currentScene = 47;
         }
+    } else if (currentScene === 98) {
+        if (choice === 140) {
+            if (randomizer() < clampOdds(getChallengeOdds("fight") + 8)) {
+                addArtifact("Camp Story Scroll");
+                currentScene = 14;
+            } else {
+                currentScene = 18;
+            }
+        }
+    } else if (currentScene === 99) {
+        if (choice === 190) {
+            var storyInput = document.getElementById("storyAnswerInput");
+            var storyAnswer = storyInput ? storyInput.value.trim() : "";
+            var question = storytellingQuestions[storytellingGameState.index % storytellingQuestions.length];
+            storytellingGameState.lastFeedback = scoreStorytellingAnswer(storyAnswer);
+            storytellingGameState.lastModelAnswer = question.modelAnswer;
+            storytellingGameState.index += 1;
+            currentScene = 100;
+        } else if (choice === 47) {
+            currentScene = 47;
+        }
+    } else if (currentScene === 100) {
+        if (choice === 191) {
+            currentScene = 99;
+        } else if (choice === 47) {
+            currentScene = 47;
+        }
     } else if (currentScene === 71) {
         if (choice === 72) {
             journeyTriviaState.score += 1;
@@ -2305,7 +2449,8 @@ function makeChoice(choice) {
         if (choice === 74) {
             journeyTriviaState.askedCount += 1;
             journeyTriviaState.currentQuestion += 1;
-            if (journeyTriviaState.wrong >= 3 || journeyTriviaState.currentQuestion >= journeyTriviaState.questions.length) {
+            if (journeyTriviaState.wrong >= 3 || journeyTriviaState.currentQuestion >= journeyTriviaState.questionLimit || journeyTriviaState.currentQuestion >= journeyTriviaState.questions.length) {
+                triviaSessionCount += 1;
                 if (journeyTriviaState.wrong === 0) {
                     perfectTriviaSessionsInRow += 1;
                 } else {
@@ -2360,10 +2505,8 @@ function makeDecision(decision){
         }
     } else if (currentScene === 57 && decision === 7){
         currentScene = 56;
-    // } else if (currentScene === 56){
-    //     else if (decision === 8){}
-    //     else if (decision === 9){}
-    // }
+    }
+
     if (previousScene !== currentScene) {
         takenTransitions.push(previousScene + "->" + currentScene);
     }
@@ -2396,13 +2539,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (backgroundMusic && musicVolume) {
         backgroundMusic.volume = parseFloat(musicVolume.value);
+        backgroundMusic.muted = parseFloat(musicVolume.value) === 0;
+        activeSoundtrackSrc = defaultSoundtrackSrc;
         musicVolume.addEventListener("change", function () {
             var selectedVolume = parseFloat(musicVolume.value);
             if (!isNaN(selectedVolume)) {
                 backgroundMusic.volume = selectedVolume;
                 backgroundMusic.muted = selectedVolume === 0;
+                if (!backgroundMusic.paused) {
+                    return;
+                }
+                backgroundMusic.play().catch(function () {
+                    return null;
+                });
             }
         });
+
+        document.addEventListener("click", function () {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play().catch(function () {
+                    return null;
+                });
+            }
+        }, { once: true });
     }
 
     applySceneFromHash();
