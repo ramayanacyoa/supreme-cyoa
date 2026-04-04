@@ -14,10 +14,13 @@
 </head>
 <body>
   <nav id="topNavbar" aria-label="Site navigation">
-    <a id="aboutButton" href="https://arjun-singh.com/" target="_blank" rel="noopener noreferrer">About</a>
-  </nav>
+    <div id="navLinks">
+      <a id="aboutButton" href="https://arjun-singh.com/" target="_blank" rel="noopener noreferrer">About</a>
+      <button id="timelineButton" onclick="openTimelineModal()" type="button">Timeline</button>
+      <button id="inventoryButton" onclick="openInventoryModal()" type="button">Inventory (0)</button>
+    </div>
 
-  <div id="soundtrackBadge">
+    <div id="soundtrackBadge">
     <label for="backgroundMusic" class="soundtrack-label">Background Music</label>
     <p id="currentTrackName" class="soundtrack-track-name">Sacred Path Of Rama</p>
     <audio id="backgroundMusic" controls autoplay muted loop preload="metadata" controlslist="nodownload noplaybackrate" disablepictureinpicture disableremoteplayback>
@@ -25,17 +28,15 @@
     </audio>
     <label for="musicVolume" class="soundtrack-label">Volume</label>
     <select id="musicVolume" aria-label="Select background music volume">
-      <option value="0">Muted (0%)</option>
+      <option value="0" selected>Muted (0%)</option>
       <option value="0.2">Low (20%)</option>
-      <option value="0.4" selected>Medium (40%)</option>
+      <option value="0.4">Medium (40%)</option>
       <option value="0.6">High (60%)</option>
       <option value="0.8">Very High (80%)</option>
       <option value="1">Max (100%)</option>
     </select>
   </div>
-  <button id="undoButton" onclick="undoChoice()" type="button" disabled>Undo</button>
-  <button id="timelineButton" onclick="openTimelineModal()" type="button">Timeline</button>
-  <button id="inventoryButton" onclick="openInventoryModal()" type="button">Inventory (0)</button>
+  </nav>
 
   <div id="titleContainer">
     <header>
@@ -59,6 +60,16 @@
   </div>
 
   <div id="storyCard">
+    <div id="storyCardToolbar">
+      <button id="undoButton" onclick="undoChoice()" type="button" disabled aria-label="Undo last choice">
+        <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+          <path d="M9 7H4V2"/>
+          <path d="M4 7l5-5"/>
+          <path d="M4 7h9a7 7 0 1 1 0 14h-2"/>
+        </svg>
+        <span>Undo</span>
+      </button>
+    </div>
     <!-- this is where the story will be displayed -->
     <div id="choices"></div>
   </div>
