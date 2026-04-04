@@ -2360,10 +2360,10 @@ function makeDecision(decision){
         }
     } else if (currentScene === 57 && decision === 7){
         currentScene = 56;
-    } else if (currentScene === 56){
-        else if (decision === 8){}
-        else if (decision === 9){}
-    }
+    // } else if (currentScene === 56){
+    //     else if (decision === 8){}
+    //     else if (decision === 9){}
+    // }
     if (previousScene !== currentScene) {
         takenTransitions.push(previousScene + "->" + currentScene);
     }
