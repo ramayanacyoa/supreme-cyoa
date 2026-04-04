@@ -25,6 +25,7 @@ var inventoryModalOpen = false;
 var defaultSoundtrackSrc = "Sacred Path Of Rama.mp3";
 var lankaSoundtrackSrc = "Lanka Burns At Dawn.mp3";
 var rescueSoundtrackMode = false;
+var activeSoundtrackSrc = "";
 var applyingSceneRoute = false;
 var routableSceneIds = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
@@ -116,33 +117,28 @@ function updateBackgroundMusicForScene() {
     var backgroundMusic = document.getElementById("backgroundMusic");
     var trackName = document.getElementById("currentTrackName");
     var targetTrack;
-    var changedTrack = false;
-    var shouldPlayAfterUpdate;
 
     if (!backgroundMusic) {
         return;
     }
 
-    shouldPlayAfterUpdate = backgroundMusic.paused || !backgroundMusic.currentSrc;
-
     if (currentScene === 0) {
         rescueSoundtrackMode = false;
     }
 
-    if (currentScene === 54 || currentScene === 55) {
+    if (currentScene === 54) {
         rescueSoundtrackMode = true;
     }
 
     targetTrack = rescueSoundtrackMode ? lankaSoundtrackSrc : defaultSoundtrackSrc;
 
-    if (!backgroundMusic.src || backgroundMusic.src.indexOf(targetTrack) === -1) {
+    if (activeSoundtrackSrc !== targetTrack) {
         backgroundMusic.src = targetTrack;
         backgroundMusic.load();
-        changedTrack = true;
-        shouldPlayAfterUpdate = true;
+        activeSoundtrackSrc = targetTrack;
     }
 
-    if (shouldPlayAfterUpdate || changedTrack) {
+    if (backgroundMusic.paused) {
         backgroundMusic.play().catch(function () {
             return null;
         });
