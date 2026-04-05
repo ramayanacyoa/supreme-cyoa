@@ -773,14 +773,16 @@ blockquote,
 
 @media (max-width: 768px) {
   body {
-    padding: 132px 10px 24px;
+    min-height: 100dvh;
+    padding: 132px 10px calc(24px + env(safe-area-inset-bottom));
     gap: 16px;
     background-position: center top, center top, center, center, center;
   }
 
   #titleContainer,
   #storyCard,
-  #timelineCard {
+  #timelineCard,
+  #inventoryCard {
     border-radius: 20px;
     border-color: rgba(162, 255, 233, 0.32);
     background:
@@ -814,8 +816,24 @@ blockquote,
     border-color: rgba(116, 255, 225, 0.28);
   }
 
+  #storyCard {
+    max-height: none;
+    overflow-y: visible;
+    padding: 22px 14px;
+  }
+
+  #storyCardToolbar {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    margin: -8px -4px 12px;
+    padding: 8px 4px 10px;
+    background: linear-gradient(180deg, rgba(12, 20, 34, 0.96), rgba(12, 20, 34, 0.56), transparent);
+  }
+
   #storyCard h2 {
     font-size: clamp(1.55rem, 7vw, 2.1rem);
+    line-height: 1.26;
   }
 
   #choices {
@@ -836,13 +854,80 @@ blockquote,
     min-width: 1800px;
   }
 
+  #timelineModal,
+  #inventoryModal {
+    align-items: flex-end;
+    padding: 8px;
+  }
+
+  #timelineCard,
+  #inventoryCard {
+    width: min(100%, 100vw - 16px);
+    max-height: min(88dvh, 820px);
+    border-radius: 18px 18px 14px 14px;
+    padding: 18px 12px calc(14px + env(safe-area-inset-bottom));
+  }
+
+  .timeline-modal-header {
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .timeline-close {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 8px;
+  }
+
   #timelineCard h2,
-  #timelineCard > p {
+  #timelineCard > p,
+  #inventoryCard h2,
+  #inventoryCard > p {
     text-align: center;
   }
 
   #timelineLegend {
     justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .legend-item {
+    font-size: 0.82rem;
+    padding: 5px 8px;
+    gap: 6px;
+  }
+
+  .legend-swatch {
+    width: 14px;
+    height: 8px;
+  }
+
+  #timelineZoomControls {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    padding: 8px;
+    border-radius: 14px;
+  }
+
+  #timelineZoomControls button {
+    min-width: 0;
+    padding: 9px 8px;
+    font-size: 0.92rem;
+  }
+
+  #timelineZoomValue {
+    width: 100%;
+    min-width: 0;
+    align-self: stretch;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    border: 1px solid rgba(116, 255, 225, 0.35);
+    background: rgba(10, 22, 34, 0.5);
   }
 
   button,
@@ -857,9 +942,12 @@ blockquote,
   }
 
   #topNavbar {
-    top: 6px;
-    width: calc(100vw - 12px);
+    top: max(6px, env(safe-area-inset-top));
+    width: calc(100vw - 10px);
     justify-content: center;
+    border-radius: 14px;
+    padding: 7px;
+    gap: 8px;
   }
 
   #navLinks,
@@ -868,26 +956,68 @@ blockquote,
     justify-content: center;
   }
 
+  #navLinks {
+    gap: 8px;
+  }
+
   #topNavbar button {
     width: auto;
   }
 
   #soundtrackBadge {
     padding: 6px;
+    gap: 6px;
+  }
+
+  .soundtrack-label {
+    letter-spacing: 0.08em;
+    font-size: 0.6rem;
+  }
+
+  .soundtrack-track-name {
+    width: 100%;
+    text-align: center;
+    font-size: 0.74rem;
   }
 
   #backgroundMusic {
     width: min(220px, calc(100vw - 44px));
+    height: 28px;
   }
 
   #musicVolume {
     width: min(145px, calc(45vw));
+    min-width: 112px;
+  }
+
+  #updateBadge {
+    top: auto;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: 8px;
+    font-size: 0.7rem;
+    padding: 5px 10px;
+    letter-spacing: 0.04em;
+  }
+
+  #storyAnswerInput,
+  #playerName {
+    width: 100%;
+  }
+
+  #inventoryList {
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .inventory-item {
+    padding: 12px 10px;
+    border-radius: 12px;
   }
 }
 
 @media (max-width: 480px) {
   body {
-    padding: 132px 8px 20px;
+    padding: 130px 8px calc(18px + env(safe-area-inset-bottom));
   }
 
   #titleContainer {
@@ -896,10 +1026,52 @@ blockquote,
 
   #timelineCard {
     width: calc(100vw - 16px);
-    padding: 18px 10px 14px;
+    padding: 16px 9px calc(12px + env(safe-area-inset-bottom));
   }
 
   #timelineFlowchart svg {
     min-width: 1400px;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 12vw, 2.8rem);
+  }
+
+  .subtitle {
+    margin-top: 8px;
+    font-size: 0.88rem;
+    letter-spacing: 0.12em;
+  }
+
+  #description {
+    margin-top: 14px;
+  }
+
+  #topNavbar button,
+  #aboutButton {
+    padding: 7px 10px;
+    font-size: 0.75rem;
+  }
+
+  #timelineLegend {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 2px;
+  }
+
+  #timelineZoomControls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #timelineZoomValue {
+    grid-column: span 2;
+    min-height: 38px;
+  }
+
+  #updateBadge {
+    left: 6px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    font-size: 0.64rem;
   }
 }
