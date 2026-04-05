@@ -22,7 +22,7 @@ This wiki documents the game exactly as it exists in the repository right now, i
 
 ## Snapshot
 
-- Current visible update badge in app UI: **Update 13**
+- Current visible update badge in app UI: **Update 14**
 - Main entry page: `index.html`
 - Story logic file: `Project.js`
 - Styling file: `Project.css`

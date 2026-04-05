@@ -913,46 +913,6 @@ timelineEdges = timelineEdges.map(function (edge) {
     };
 });
 
-function getAmbientDialogueForScene(sceneId) {
-    return "<strong>Companion Dialogue:</strong> Sita says, \"Let every choice carry compassion.\" Lakshmana replies, \"And let every step carry courage.\"";
-}
-
-function addAmbientDialogueAndChoice(storyCard) {
-    var choicesContainer;
-    var existingButton;
-    var reflectionButton;
-    var heading;
-
-    if (!storyCard || currentScene <= 0 || currentScene === 61 || currentScene === 62 || currentScene === 63) {
-        return;
-    }
-
-    if (!storyCard.querySelector(".ambient-dialogue")) {
-        heading = storyCard.querySelector("h2, h1");
-        if (heading) {
-            heading.insertAdjacentHTML("afterend", "<p class='ambient-dialogue'>" + getAmbientDialogueForScene(currentScene) + "</p>");
-        } else {
-            storyCard.insertAdjacentHTML("afterbegin", "<p class='ambient-dialogue'>" + getAmbientDialogueForScene(currentScene) + "</p>");
-        }
-    }
-
-    choicesContainer = storyCard.querySelector("#choices");
-    if (!choicesContainer) {
-        return;
-    }
-
-    existingButton = choicesContainer.querySelector("button[data-ambient-dialogue='1']");
-    if (!existingButton) {
-        reflectionButton = document.createElement("button");
-        reflectionButton.setAttribute("type", "button");
-        reflectionButton.setAttribute("data-ambient-dialogue", "1");
-        reflectionButton.setAttribute("onclick", "makeChoice(300)");
-        reflectionButton.textContent = "Pause for companion dialogue";
-        choicesContainer.appendChild(reflectionButton);
-    }
-}
-
-
 function randomizer() {
     return Math.floor(Math.random() * 101);
 }
@@ -2570,7 +2530,6 @@ function showScene() {
             "</div>";
     }
 
-    addAmbientDialogueAndChoice(storyCard);
     ensureStoryCardToolbar();
     addSceneToReceipt();
     syncHashWithCurrentScene();
