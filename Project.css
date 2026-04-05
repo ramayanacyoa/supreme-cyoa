@@ -158,6 +158,41 @@ body::after {
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.26);
 }
 
+#updateBadge::after {
+  content: " • " attr(data-resolution-label);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255, 239, 198, 0.9);
+}
+
+body[data-resolution-tier="hd"] {
+  --bg-top: #203362;
+  --bg-mid: #6e2b47;
+  --bg-bottom: #f2c88f;
+  --panel-border: rgba(166, 214, 255, 0.28);
+}
+
+body[data-resolution-tier="fhd"] {
+  --bg-top: #2e1a4a;
+  --bg-mid: #7b2f2f;
+  --bg-bottom: #f1d2a6;
+  --panel-border: rgba(255, 225, 169, 0.24);
+}
+
+body[data-resolution-tier="qhd"] {
+  --bg-top: #183f5a;
+  --bg-mid: #2f5c7b;
+  --bg-bottom: #d2f0f1;
+  --panel-border: rgba(174, 247, 255, 0.3);
+}
+
+body[data-resolution-tier="uhd"] {
+  --bg-top: #111b3f;
+  --bg-mid: #283a7d;
+  --bg-bottom: #9bc0ff;
+  --panel-border: rgba(206, 227, 255, 0.34);
+}
+
 #navLinks {
   display: flex;
   align-items: center;

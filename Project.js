@@ -32,6 +32,7 @@ var rescueSoundtrackMode = false;
 var activeSoundtrackSrc = "";
 var applyingSceneRoute = false;
 var scrollRevealObserver = null;
+var resolutionTier = "hd";
 var routableSceneIds = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
     27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
@@ -152,6 +153,46 @@ function updateBackgroundMusicForScene() {
 
     if (trackName) {
         trackName.textContent = targetTrack.replace(".mp3", "");
+    }
+}
+
+function getResolutionTier() {
+    var screenWidth = window.screen && window.screen.width ? window.screen.width : window.innerWidth;
+    var screenHeight = window.screen && window.screen.height ? window.screen.height : window.innerHeight;
+    var pixelArea = screenWidth * screenHeight;
+
+    if (pixelArea >= 7900000) {
+        return "uhd";
+    }
+
+    if (pixelArea >= 3600000) {
+        return "qhd";
+    }
+
+    if (pixelArea >= 2000000) {
+        return "fhd";
+    }
+
+    return "hd";
+}
+
+function applyResolutionTierStyling() {
+    var nextTier = getResolutionTier();
+    var body = document.body;
+    var badge = document.getElementById("updateBadge");
+    var tierChanged = resolutionTier !== nextTier;
+
+    if (!body) {
+        return;
+    }
+
+    if (tierChanged) {
+        resolutionTier = nextTier;
+        body.setAttribute("data-resolution-tier", nextTier);
+    }
+
+    if (badge) {
+        badge.setAttribute("data-resolution-label", nextTier.toUpperCase());
     }
 }
 
@@ -2672,6 +2713,8 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    document.body.setAttribute("data-resolution-tier", resolutionTier);
+    applyResolutionTierStyling();
     renderTimeline(timelineModalOpen);
     updatePlayerStatsCard();
     updateInventoryCard();
@@ -2740,6 +2783,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     window.addEventListener("resize", function () {
+        applyResolutionTierStyling();
         if (currentScene > 0) {
             focusStoryCard();
         }
