@@ -33,7 +33,7 @@ var activeSoundtrackSrc = "";
 var applyingSceneRoute = false;
 var scrollRevealObserver = null;
 var resolutionTier = "hd";
-var appUpdateVersion = 15;
+var appUpdateVersion = 16;
 var epicSagaStartId = 103;
 var sceneSequenceValidation = {
     isValid: true,
@@ -939,29 +939,6 @@ timelineEdges = timelineEdges.map(function (edge) {
         type: edge.type
     };
 });
-
-function getAmbientDialogueForScene(sceneId) {
-    return "<strong>Companion Dialogue:</strong> Sita says, \"Let every choice carry compassion.\" Lakshmana replies, \"And let every step carry courage.\"";
-}
-
-function addAmbientDialogue(storyCard) {
-    var heading;
-
-    if (!storyCard || currentScene <= 0 || currentScene === 61 || currentScene === 62 || currentScene === 63) {
-        return;
-    }
-
-    if (!storyCard.querySelector(".ambient-dialogue")) {
-        heading = storyCard.querySelector("h2, h1");
-        if (heading) {
-            heading.insertAdjacentHTML("afterend", "<p class='ambient-dialogue'>" + getAmbientDialogueForScene(currentScene) + "</p>");
-        } else {
-            storyCard.insertAdjacentHTML("afterbegin", "<p class='ambient-dialogue'>" + getAmbientDialogueForScene(currentScene) + "</p>");
-        }
-    }
-
-}
-
 
 function randomizer() {
     return Math.floor(Math.random() * 101);
@@ -2585,7 +2562,6 @@ function showScene() {
             "</div>";
     }
 
-    addAmbientDialogue(storyCard);
     ensureStoryCardToolbar();
     addSceneToReceipt();
     syncHashWithCurrentScene();
