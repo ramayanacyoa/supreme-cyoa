@@ -22,7 +22,7 @@ This wiki documents the game exactly as it exists in the repository right now, i
 
 ## Snapshot
 
-- Current visible update badge in app UI: **Update 12**
+- Current visible update badge in app UI: **Update 13**
 - Main entry page: `index.html`
 - Story logic file: `Project.js`
 - Styling file: `Project.css`
@@ -36,3 +36,4 @@ This wiki is intentionally implementation-aware so future edits can be made safe
 
 - Added a **Companion Dialogue Interlude system**: every scene with choices now includes extra ambient dialogue and a "Pause for companion dialogue" option that opens a dedicated reflection scene, then returns the player to where they left off.
 - Added an **Epic Chronicle linear campaign** (starting after Scene 60) that walks through the Lanka war, Sita's restoration, return to Ayodhya, Uttara Kanda events, final departure, and later traditions in strict chronological order.
+- Added a **sequential scene-order guard** for post-legacy scene IDs so new scenes must remain continuous with no skipped IDs beyond Scene 102.

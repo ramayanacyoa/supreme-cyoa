@@ -22,7 +22,7 @@ The story is rendered dynamically by JavaScript and branches by scene ID transit
   - Timeline button
   - Inventory button with item count
   - Background music controls and volume dropdown
-- Fixed top-left update badge (`Update 12` currently)
+- Fixed top-left update badge (`Update 13` currently)
 - Intro card + start button
 - Story card with Undo button
 - Timeline modal with zoom/reveal

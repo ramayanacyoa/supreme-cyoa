@@ -35,6 +35,12 @@ var applyingSceneRoute = false;
 var scrollRevealObserver = null;
 var resolutionTier = "hd";
 var epicSagaStartId = 103;
+var sceneSequenceValidation = {
+    isValid: true,
+    message: "",
+    missingSceneId: null
+};
+var legacySceneSequenceCeiling = 102;
 var epicSagaBeats = [
     "Rama becomes emotional and praises Hanuman.",
     "The monkey army celebrates and prepares for war 🐒⚔️.",
@@ -856,6 +862,48 @@ var timelineEdges = [
 
 appendEpicSagaTimeline();
 
+function validateSequentialSceneOrder() {
+    var sceneIds = Object.keys(timelineNodeTitles).map(function (sceneId) {
+        return parseInt(sceneId, 10);
+    }).filter(function (sceneId) {
+        return !isNaN(sceneId) && sceneId > legacySceneSequenceCeiling;
+    }).sort(function (a, b) {
+        return a - b;
+    });
+    var expectedSceneId = legacySceneSequenceCeiling + 1;
+    var i;
+
+    sceneSequenceValidation.isValid = true;
+    sceneSequenceValidation.message = "";
+    sceneSequenceValidation.missingSceneId = null;
+
+    for (i = 0; i < sceneIds.length; i++) {
+        if (sceneIds[i] !== expectedSceneId) {
+            sceneSequenceValidation.isValid = false;
+            sceneSequenceValidation.missingSceneId = expectedSceneId;
+            sceneSequenceValidation.message =
+                "Scene sequence broken. Missing Scene " + expectedSceneId +
+                " before Scene " + sceneIds[i] + ". Create missing scenes in order before adding later ones.";
+            break;
+        }
+
+        expectedSceneId++;
+    }
+
+    if (!sceneSequenceValidation.isValid) {
+        console.error(sceneSequenceValidation.message);
+    }
+}
+
+function guardSequentialSceneOrder() {
+    if (sceneSequenceValidation.isValid) {
+        return true;
+    }
+
+    alert(sceneSequenceValidation.message);
+    return false;
+}
+
 timelineEdges = timelineEdges.map(function (edge) {
     return {
         from: edge.from,
@@ -1373,6 +1421,10 @@ function restart() {
 }
 
 function startAdventure() {
+    if (!guardSequentialSceneOrder()) {
+        return;
+    }
+
     playerName = document.getElementById("playerName").value.trim();
 
     if (playerName === "") {
@@ -2536,6 +2588,10 @@ function makeChoice(choice) {
     var choices = document.querySelectorAll("#storyCard #choices button");
     var i;
 
+    if (!guardSequentialSceneOrder()) {
+        return;
+    }
+
     for (i = 0; i < choices.length; i++) {
         if (choices[i].getAttribute("onclick") === "makeChoice(" + choice + ")") {
             selectedButton = choices[i];
@@ -2996,6 +3052,10 @@ function makeChoice(choice) {
 function makeDecision(decision){
     var previousScene = currentScene;
 
+    if (!guardSequentialSceneOrder()) {
+        return;
+    }
+
     if (decision === 1){
             currentScene = 53;
     } else if (currentScene === 53 && decision === 2){
@@ -3022,6 +3082,7 @@ function makeDecision(decision){
 
 document.addEventListener("DOMContentLoaded", function () {
     document.body.setAttribute("data-resolution-tier", resolutionTier);
+    validateSequentialSceneOrder();
     applyResolutionTierStyling();
     renderTimeline(timelineModalOpen);
     updatePlayerStatsCard();

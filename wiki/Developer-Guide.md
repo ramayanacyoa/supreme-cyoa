@@ -22,6 +22,7 @@
 
 - `showScene()` and `makeChoice()` are tightly coupled by scene IDs.
 - Keep scene IDs unique and consistent across both functions.
+- New scenes above legacy Scene 102 are now guarded by a strict sequential validator; do not skip IDs.
 
 ### 2) Timeline coherence
 
@@ -62,4 +63,3 @@ If you introduce new ending/final nodes, consider whether they should generate r
 - [ ] Add scene to `routableSceneIds` if hash routing needed
 - [ ] Update any ending receipt trigger logic
 - [ ] If artifact-related, define lore and add pickup logic
-
