@@ -1450,8 +1450,7 @@ function startAdventure() {
     playerName = document.getElementById("playerName").value.trim();
 
     if (playerName === "") {
-        alert("Please enter your name!");
-        return;
+        playerName = "Traveler";
     }
 
     oldStates = [];
@@ -3016,7 +3015,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 23");
+    console.log("Update 24");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();
