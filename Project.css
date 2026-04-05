@@ -656,6 +656,20 @@ p {
   color: #fff0c6;
 }
 
+.scene-dialogue {
+  margin-top: 18px;
+  padding: 12px 16px;
+  max-width: 72ch;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 223, 165, 0.24);
+  background: rgba(16, 10, 19, 0.45);
+  color: rgba(255, 238, 204, 0.92);
+}
+
+.scene-dialogue strong {
+  color: #ffdca1;
+}
+
 #choices {
   margin-top: 26px;
   display: flex;

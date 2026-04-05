@@ -1491,6 +1491,49 @@ function handleTimelineModalBackdrop(event) {
     }
 }
 
+function getSceneDialogueLine(sceneId) {
+    var speaker = playerName || "Traveler";
+
+    if (sceneId >= 54) {
+        return "Hanuman says, \"Steady your heart, " + speaker + ". Every choice now can echo across Lanka.\"";
+    }
+
+    if (sceneId >= 40) {
+        return "Lakshmana says, \"Brother, each ally we meet adds a new verse to this journey.\"";
+    }
+
+    if (sceneId >= 19) {
+        return "Sita whispers, \"Listen closely, " + speaker + "—the forest is speaking before danger arrives.\"";
+    }
+
+    return "Dasharatha says, \"My child, let wisdom guide your next words, even in grief.\"";
+}
+
+function addAmbientDialogueToScene() {
+    var storyCard = document.getElementById("storyCard");
+    var choicesContainer;
+    var dialogue;
+
+    if (!storyCard || currentScene <= 0) {
+        return;
+    }
+
+    if (storyCard.querySelector(".scene-dialogue")) {
+        return;
+    }
+
+    choicesContainer = storyCard.querySelector("#choices");
+    if (!choicesContainer) {
+        return;
+    }
+
+    dialogue = document.createElement("p");
+    dialogue.className = "scene-dialogue";
+    dialogue.innerHTML = "<strong>Dialogue:</strong> " + escapeHtml(getSceneDialogueLine(currentScene));
+
+    choicesContainer.parentNode.insertBefore(dialogue, choicesContainer);
+}
+
 function showScene() {
     var storyCard = document.getElementById("storyCard");
 
@@ -2188,6 +2231,7 @@ function showScene() {
             "</div>";
     }
 
+    addAmbientDialogueToScene();
     ensureStoryCardToolbar();
     addSceneToReceipt();
     syncHashWithCurrentScene();

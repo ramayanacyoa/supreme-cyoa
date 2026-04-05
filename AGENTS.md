@@ -9,3 +9,12 @@
 
 ## Update Timeline and Receipt Scenes Rule
 - If any new scenes are added, update the timeline and receipts for the new scenes.
+
+## Versioning Rule
+- Current release tag/version: `1.0.0-alpha`.
+- Stay in `alpha` type/stage until the user explicitly changes the type.
+- Always confirm with the user before changing the version.
+- Version scheme: `major.minor.patch-type`.
+  - Minor changes increase `patch`.
+  - Feature updates increase `minor` and reset patch to `0`.
+  - Major updates increase `major` and reset minor/patch to `0`.
