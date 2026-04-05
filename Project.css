@@ -865,9 +865,14 @@ blockquote,
 @media (max-width: 768px) {
   body {
     min-height: 100dvh;
-    padding: 132px 10px calc(24px + env(safe-area-inset-bottom));
-    gap: 16px;
+    padding: 112px 10px calc(20px + env(safe-area-inset-bottom));
+    gap: 14px;
     background-position: center top, center top, center, center, center;
+  }
+
+  body::before,
+  body::after {
+    display: none;
   }
 
   #titleContainer,
@@ -914,12 +919,11 @@ blockquote,
   }
 
   #storyCardToolbar {
-    position: sticky;
-    top: 0;
+    position: static;
     z-index: 3;
-    margin: -8px -4px 12px;
-    padding: 8px 4px 10px;
-    background: linear-gradient(180deg, rgba(12, 20, 34, 0.96), rgba(12, 20, 34, 0.56), transparent);
+    margin: 0 0 10px;
+    padding: 0;
+    background: none;
   }
 
   #storyCard h2 {
@@ -1036,9 +1040,9 @@ blockquote,
     top: max(6px, env(safe-area-inset-top));
     width: calc(100vw - 10px);
     justify-content: center;
-    border-radius: 14px;
-    padding: 7px;
-    gap: 8px;
+    border-radius: 12px;
+    padding: 6px;
+    gap: 6px;
   }
 
   #navLinks,
@@ -1056,29 +1060,28 @@ blockquote,
   }
 
   #soundtrackBadge {
-    padding: 6px;
-    gap: 6px;
+    padding: 6px 8px;
+    gap: 5px;
+    justify-content: center;
   }
 
   .soundtrack-label {
-    letter-spacing: 0.08em;
-    font-size: 0.6rem;
+    display: none;
   }
 
   .soundtrack-track-name {
-    width: 100%;
-    text-align: center;
-    font-size: 0.74rem;
+    display: none;
   }
 
   #backgroundMusic {
-    width: min(220px, calc(100vw - 44px));
-    height: 28px;
+    width: min(180px, calc(55vw));
+    height: 26px;
   }
 
   #musicVolume {
-    width: min(145px, calc(45vw));
-    min-width: 112px;
+    width: min(128px, calc(40vw));
+    min-width: 100px;
+    font-size: 0.8rem;
   }
 
   #updateBadge {
@@ -1108,7 +1111,7 @@ blockquote,
 
 @media (max-width: 480px) {
   body {
-    padding: 130px 8px calc(18px + env(safe-area-inset-bottom));
+    padding: 104px 8px calc(16px + env(safe-area-inset-bottom));
   }
 
   #titleContainer {
@@ -1142,6 +1145,21 @@ blockquote,
   #aboutButton {
     padding: 7px 10px;
     font-size: 0.75rem;
+  }
+
+  #soundtrackBadge {
+    padding: 5px 6px;
+  }
+
+  #backgroundMusic {
+    width: min(150px, calc(52vw));
+    height: 24px;
+  }
+
+  #musicVolume {
+    width: min(118px, calc(38vw));
+    min-width: 94px;
+    padding: 6px 8px;
   }
 
   #timelineLegend {
