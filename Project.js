@@ -185,24 +185,17 @@ var routableSceneIds = [
 
 function parseRouteFromHash() {
     var hash = window.location.hash || "";
-    var route = {
-        sceneId: null,
-        timelineOpen: false
-    };
-    var sceneMatch;
+    var route = { sceneId: null, timelineOpen: false };
+    var sceneMatch = hash.match(/^#scene-(\d+)(\?timeline=1)?$/);
 
     if (!hash) {
         return route;
     }
 
-    sceneMatch = hash.match(/^#scene-(\d+)(\?timeline=1)?$/);
     if (sceneMatch) {
         route.sceneId = parseInt(sceneMatch[1], 10);
         route.timelineOpen = !!sceneMatch[2];
-        return route;
-    }
-
-    if (hash === "#timeline") {
+    } else if (hash === "#timeline") {
         route.timelineOpen = true;
     }
 
@@ -210,11 +203,9 @@ function parseRouteFromHash() {
 }
 
 function buildHashRoute(sceneId, isTimelineOpen) {
-    if (sceneId > 0) {
-        return "#scene-" + sceneId + (isTimelineOpen ? "?timeline=1" : "");
-    }
-
-    return isTimelineOpen ? "#timeline" : "";
+    return sceneId > 0
+        ? "#scene-" + sceneId + (isTimelineOpen ? "?timeline=1" : "")
+        : (isTimelineOpen ? "#timeline" : "");
 }
 
 function isRoutableScene(sceneId) {
@@ -1622,6 +1613,15 @@ function focusStoryCard() {
     window.requestAnimationFrame(function () {
         storyCard.scrollIntoView({ behavior: "smooth", block: "start" });
     });
+}
+
+function finishSceneDecision(previousScene) {
+    if (previousScene !== currentScene) {
+        takenTransitions.push(previousScene + "->" + currentScene);
+    }
+
+    showScene();
+    focusStoryCard();
 }
 
 function applyScrollRevealState(element) {
@@ -3180,12 +3180,7 @@ function makeChoice(choice) {
             currentScene = choice;
         }
     }
-    if (previousScene !== currentScene) {
-        takenTransitions.push(previousScene + "->" + currentScene);
-    }
-
-    showScene();
-    focusStoryCard();
+    finishSceneDecision(previousScene);
 }
 
 function makeDecision(decision){
@@ -3211,16 +3206,11 @@ function makeDecision(decision){
         currentScene = 56;
     }
 
-    if (previousScene !== currentScene) {
-        takenTransitions.push(previousScene + "->" + currentScene);
-    }
-
-    showScene();
-    focusStoryCard();
+    finishSceneDecision(previousScene);
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 17");
+    console.log("Update 18");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();
