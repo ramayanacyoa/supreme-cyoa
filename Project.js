@@ -25,7 +25,6 @@ var storytellingGameState = null;
 var explorationState = null;
 var triviaSessionCount = 0;
 var triviaSessionQuestionLimit = 10;
-var inventoryModalOpen = false;
 var defaultSoundtrackSrc = "Sacred Path Of Rama.mp3";
 var lankaSoundtrackSrc = "Lanka Burns At Dawn.mp3";
 var rescueSoundtrackMode = false;
@@ -33,7 +32,6 @@ var activeSoundtrackSrc = "";
 var applyingSceneRoute = false;
 var scrollRevealObserver = null;
 var resolutionTier = "hd";
-var appUpdateVersion = 19;
 var sceneSequenceValidation = {
     isValid: true,
     message: "",
@@ -978,7 +976,6 @@ function openInventoryModal() {
         inventoryList.innerHTML = listHtml;
     }
 
-    inventoryModalOpen = true;
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
 }
@@ -990,7 +987,6 @@ function closeInventoryModal() {
         return;
     }
 
-    inventoryModalOpen = false;
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden", "true");
 }
@@ -1007,10 +1003,6 @@ function addArtifact(artifactName) {
     }
 
     updateInventoryCard();
-}
-
-function hasArtifact(artifactName) {
-    return inventoryArtifacts.indexOf(artifactName) !== -1;
 }
 
 function clearStoryCard() {
@@ -2752,7 +2744,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 21");
+    console.log("Update 22");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();
