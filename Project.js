@@ -1444,7 +1444,7 @@ function restart() {
 
 function startAdventure() {
     if (!guardSequentialSceneOrder()) {
-        return;
+        console.warn("Scene order validation warning at start:", sceneSequenceValidation.message);
     }
 
     playerName = document.getElementById("playerName").value.trim();
@@ -3015,7 +3015,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 25");
+    console.log("Update 26");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();
@@ -3029,6 +3029,8 @@ document.addEventListener("DOMContentLoaded", function () {
     var musicVolume = document.getElementById("musicVolume");
     var navbarToggle = document.getElementById("navbarToggle");
     var topNavbar = document.getElementById("topNavbar");
+
+    window.startAdventure = startAdventure;
 
     if (startButton) {
         startButton.addEventListener("click", startAdventure);
