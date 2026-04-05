@@ -417,6 +417,9 @@ var timelineNodeTitles = {
     58: "Surasa's Test",
     59: "Sita in Ashoka Vatika",
     60: "Traveler Debrief",
+    61: "Forest Reflection Interlude",
+    62: "War-Camp Reflection Interlude",
+    63: "Strategy Tent Reflection Interlude",
     65: "Search for Sita",
     66: "Bharata's Plea",
     67: "Ayodhya Return Ending",
@@ -435,10 +438,7 @@ var timelineNodeTitles = {
     99: "Storytelling Game",
     100: "Storytelling Result",
     101: "Ocean Exploration",
-    102: "Expedition Discovery",
-    61: "Forest Reflection Interlude",
-    62: "War-Camp Reflection Interlude",
-    63: "Strategy Tent Reflection Interlude"
+    102: "Expedition Discovery"
 };
 
 artifactLoreCatalog = {
@@ -513,8 +513,9 @@ var timelineLevels = [
     [44, 45, 46],
     [47, 69, 95, 96, 97],
     [70, 93, 77, 53, 101],
-    [71, 72, 73, 54, 55, 98, 99, 100, 102, 61, 62, 63],
-    [56, 57, 58, 59, 60]
+    [71, 72, 73, 54, 55, 98, 99, 100, 102],
+    [56, 57, 58, 59, 60],
+    [61, 62, 63]
 ];
 
 var timelineEdges = [
@@ -655,37 +656,31 @@ timelineEdges = timelineEdges.map(function (edge) {
 });
 
 function getAmbientDialogueForScene(sceneId) {
-    if (sceneId >= 53 && sceneId <= 60) {
-        return "<strong>Camp Dialogue:</strong> Hanuman says, \"Every report and every small decision keeps Sita's hope alive.\" Lakshmana adds, \"Stay steady; disciplined choices win long campaigns.\"";
-    }
-
-    if (sceneId === 47 || sceneId === 70 || sceneId === 71 || sceneId === 72 || sceneId === 73 || sceneId === 77 || sceneId === 93 || sceneId === 99 || sceneId === 100 || sceneId === 101 || sceneId === 102) {
-        return "<strong>Training Dialogue:</strong> Sugriva leans over the map, \"Strategy grows stronger when we speak openly.\" Angada grins, \"A short discussion now can save a hard battle later.\"";
-    }
-
-    return "<strong>Travel Dialogue:</strong> Sita quietly says, \"Even in exile, compassion must guide us.\" Lakshmana replies, \"Then let every step be careful and brave.\"";
+    return "<strong>Companion Dialogue:</strong> Sita says, \"Let every choice carry compassion.\" Lakshmana replies, \"And let every step carry courage.\"";
 }
 
 function addAmbientDialogueAndChoice(storyCard) {
     var choicesContainer;
     var existingButton;
     var reflectionButton;
+    var heading;
 
     if (!storyCard || currentScene <= 0 || currentScene === 61 || currentScene === 62 || currentScene === 63) {
         return;
     }
 
+    if (!storyCard.querySelector(".ambient-dialogue")) {
+        heading = storyCard.querySelector("h2, h1");
+        if (heading) {
+            heading.insertAdjacentHTML("afterend", "<p class='ambient-dialogue'>" + getAmbientDialogueForScene(currentScene) + "</p>");
+        } else {
+            storyCard.insertAdjacentHTML("afterbegin", "<p class='ambient-dialogue'>" + getAmbientDialogueForScene(currentScene) + "</p>");
+        }
+    }
+
     choicesContainer = storyCard.querySelector("#choices");
     if (!choicesContainer) {
         return;
-    }
-
-    if (!storyCard.querySelector(".ambient-dialogue")) {
-        storyCard.innerHTML = storyCard.innerHTML.replace(
-            "<div id='choices'>",
-            "<p class='ambient-dialogue'>" + getAmbientDialogueForScene(currentScene) + "</p><div id='choices'>"
-        );
-        choicesContainer = storyCard.querySelector("#choices");
     }
 
     existingButton = choicesContainer.querySelector("button[data-ambient-dialogue='1']");
