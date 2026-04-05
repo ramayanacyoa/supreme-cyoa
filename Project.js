@@ -33,8 +33,17 @@ var activeSoundtrackSrc = "";
 var applyingSceneRoute = false;
 var scrollRevealObserver = null;
 var resolutionTier = "hd";
-var appUpdateVersion = 15;
+var appUpdateVersion = 16;
 var epicSagaStartId = 103;
+var lankaWarProfile = {
+    openingPlan: "",
+    commandStyle: "",
+    rescuePriority: "",
+    finalVow: "",
+    morale: 0,
+    mercy: 0,
+    renown: 0
+};
 var sceneSequenceValidation = {
     isValid: true,
     message: "",
@@ -604,6 +613,9 @@ function renderEpicSagaScene(storyCard) {
     var isPhaseStart;
     var expandedNarrative;
     var extraChoices = "";
+    var dynamicNarrative = "";
+    var specialEndingSummary = "";
+    var headingLabel = "Part 3: Epic Chronicle";
 
     if (!isEpicSagaScene(currentScene)) {
         return false;
@@ -614,6 +626,29 @@ function renderEpicSagaScene(storyCard) {
     isPhaseStart = isEpicSagaPhaseStart(beatIndex);
     expandedNarrative = epicSagaExpandedNarratives[beatIndex] || "";
 
+    if (beatIndex >= 14) {
+        headingLabel = "Part 3: War for Lanka";
+    }
+
+    if (beatIndex >= 14) {
+        dynamicNarrative = buildLankaWarNarrative(beatIndex);
+    }
+
+    if (beatIndex >= 14 && beatIndex <= 20) {
+        extraChoices += "<button onclick='makeChoice(410)'>Open with bridge artillery</button>";
+        extraChoices += "<button onclick='makeChoice(411)'>Open with stealth sabotage</button>";
+    }
+
+    if (beatIndex >= 29 && beatIndex <= 44) {
+        extraChoices += "<button onclick='makeChoice(412)'>Prioritize rescuing wounded allies</button>";
+        extraChoices += "<button onclick='makeChoice(413)'>Press the assault relentlessly</button>";
+    }
+
+    if (beatIndex >= 49 && beatIndex <= 58) {
+        extraChoices += "<button onclick='makeChoice(414)'>Offer mercy to surrendering foes</button>";
+        extraChoices += "<button onclick='makeChoice(415)'>Demand total submission</button>";
+    }
+
     if (beatIndex >= 37 && beatIndex <= 55) {
         extraChoices += "<button onclick='makeChoice(62)'>Call a war-camp reflection</button>";
     }
@@ -622,11 +657,17 @@ function renderEpicSagaScene(storyCard) {
         extraChoices += "<button onclick='makeChoice(54)'>Regroup at the war council</button>";
     }
 
+    if (beatIndex === epicSagaBeats.length - 1) {
+        specialEndingSummary = buildLankaSpecialEndingSummary();
+    }
+
     storyCard.innerHTML =
-        "<h1>Part 3: Epic Chronicle</h1>" +
+        "<h1>" + headingLabel + "</h1>" +
         "<h2>" + phaseLabel + "</h2>" +
         "<p>" + beatText + "</p>" +
         expandedNarrative +
+        dynamicNarrative +
+        specialEndingSummary +
         "<div id='choices'>" +
         (isEpicSagaScene(nextSceneId)
             ? "<button onclick='makeChoice(" + nextSceneId + ")'>Continue</button>"
@@ -636,6 +677,85 @@ function renderEpicSagaScene(storyCard) {
         "</div>";
 
     return true;
+}
+
+function buildLankaWarNarrative(beatIndex) {
+    var profile = lankaWarProfile;
+    var opening = profile.openingPlan || "balanced vanguard";
+    var command = profile.commandStyle || "disciplined coordination";
+    var rescue = profile.rescuePriority || "steady battlefield rotations";
+    var vow = profile.finalVow || "dharma before glory";
+    var momentum = "Momentum " + profile.morale + " | Mercy " + profile.mercy + " | Renown " + profile.renown;
+
+    if (beatIndex < 21) {
+        return "<p>The launch against Lanka expands from a simple outline into full operations: engineers chant timings, vanara captains relay wave patterns, and commanders map every torchline on the island walls.</p>" +
+            "<p><strong>Current doctrine:</strong> " + escapeHtml(opening) + " with " + escapeHtml(command) + ".</p>" +
+            "<p><em>" + momentum + "</em></p>";
+    }
+
+    if (beatIndex < 45) {
+        return "<p>The middle campaign now branches by your command calls. Scouts rotate through night lanes, medics establish triage circles behind shattered gates, and messenger teams keep Rama's center linked to every flank.</p>" +
+            "<p><strong>Active field focus:</strong> " + escapeHtml(rescue) + " while preserving " + escapeHtml(vow) + ".</p>" +
+            "<p><em>" + momentum + "</em></p>";
+    }
+
+    return "<p>As the final phase unfolds, your earlier branches echo through every line of dialogue and strategy report. Veterans repeat your orders to younger recruits, turning one decision tree into an entire war culture.</p>" +
+        "<p><strong>Closing vow:</strong> " + escapeHtml(vow) + ". Lanka remembers this after the war.</p>" +
+        "<p><em>" + momentum + "</em></p>";
+}
+
+function buildLankaSpecialEndingSummary() {
+    var warId = buildLankaWarEndingId();
+    var doctrine = lankaWarProfile.openingPlan || "balanced vanguard";
+    var closing = lankaWarProfile.finalVow || "dharma before glory";
+    var tone = lankaWarProfile.mercy >= 2 ? "Reconciliation" : (lankaWarProfile.renown >= 2 ? "Legendary Conquest" : "Hard-Won Balance");
+
+    return "<h3>Special Ending Unlocked</h3>" +
+        "<p><strong>Ending Code:</strong> LANKA-" + warId + "</p>" +
+        "<p><strong>Ending Tone:</strong> " + tone + "</p>" +
+        "<p>Your branch path resolves into one of <strong>216 special Lanka endings</strong> driven by doctrine, mercy, renown, and final vows.</p>" +
+        "<p><strong>Recorded ending:</strong> The " + escapeHtml(doctrine) + " campaign closes under the vow of " + escapeHtml(closing) + ".</p>";
+}
+
+function buildLankaWarEndingId() {
+    var openingScore = lankaWarProfile.openingPlan === "stealth sabotage" ? 2 : (lankaWarProfile.openingPlan === "bridge artillery" ? 1 : 0);
+    var commandScore = lankaWarProfile.commandStyle === "storm leadership" ? 2 : (lankaWarProfile.commandStyle === "disciplined coordination" ? 1 : 0);
+    var rescueScore = lankaWarProfile.rescuePriority === "wounded-first rescue lanes" ? 2 : (lankaWarProfile.rescuePriority === "relentless pressure" ? 1 : 0);
+    var vowScore = lankaWarProfile.finalVow === "mercy after victory" ? 2 : (lankaWarProfile.finalVow === "unyielding justice" ? 1 : 0);
+    var moraleBucket = Math.max(0, Math.min(2, Math.floor((lankaWarProfile.morale + 3) / 3)));
+    var renownBucket = Math.max(0, Math.min(2, Math.floor((lankaWarProfile.renown + 3) / 3)));
+
+    return "" + openingScore + commandScore + rescueScore + vowScore + moraleBucket + renownBucket;
+}
+
+function isLankaWarProfileChoice(choice) {
+    return choice === 410 || choice === 411 || choice === 412 || choice === 413 || choice === 414 || choice === 415;
+}
+
+function applyLankaWarProfileChoice(choice) {
+    if (choice === 410) {
+        lankaWarProfile.openingPlan = "bridge artillery";
+        lankaWarProfile.commandStyle = "disciplined coordination";
+        lankaWarProfile.morale += 1;
+    } else if (choice === 411) {
+        lankaWarProfile.openingPlan = "stealth sabotage";
+        lankaWarProfile.commandStyle = "storm leadership";
+        lankaWarProfile.renown += 1;
+    } else if (choice === 412) {
+        lankaWarProfile.rescuePriority = "wounded-first rescue lanes";
+        lankaWarProfile.mercy += 1;
+        lankaWarProfile.morale += 1;
+    } else if (choice === 413) {
+        lankaWarProfile.rescuePriority = "relentless pressure";
+        lankaWarProfile.renown += 1;
+        lankaWarProfile.morale -= 1;
+    } else if (choice === 414) {
+        lankaWarProfile.finalVow = "mercy after victory";
+        lankaWarProfile.mercy += 1;
+    } else if (choice === 415) {
+        lankaWarProfile.finalVow = "unyielding justice";
+        lankaWarProfile.renown += 1;
+    }
 }
 
 function appendEpicSagaTimeline() {
@@ -1402,6 +1522,18 @@ function addChoiceToReceipt(choiceText) {
     receiptChoices.push(choiceText);
 }
 
+function resetLankaWarProfile() {
+    lankaWarProfile = {
+        openingPlan: "",
+        commandStyle: "",
+        rescuePriority: "",
+        finalVow: "",
+        morale: 0,
+        mercy: 0,
+        renown: 0
+    };
+}
+
 function restart() {
     currentScene = 0;
     broughtLakshmana = false;
@@ -1423,6 +1555,7 @@ function restart() {
     visitedSceneIds = [];
     takenTransitions = [];
     rescueSoundtrackMode = false;
+    resetLankaWarProfile();
     clearStoryCard();
     syncHashWithCurrentScene();
     renderTimeline(timelineModalOpen);
@@ -1452,6 +1585,7 @@ function startAdventure() {
     storytellingGameState = null;
     explorationState = null;
     triviaSessionCount = 0;
+    resetLankaWarProfile();
     currentScene = 1;
     updatePlayerStatsCard();
     showScene();
@@ -2430,8 +2564,8 @@ function showScene() {
         storyCard.innerHTML =
             "<h2>War Council</h2>" +
             (sitaConfirmed
-                ? "<p>Hanuman's report and Sita's token are now confirmed. The council shifts from search operations to full invasion planning against Lanka's defenses.</p><p>You can return to camp support activities or immediately open the Lanka battle campaign.</p>"
-                : "<p>The rescue campaign begins. Scouts bring reports from coastlines, forests, and hidden roads toward Lanka.</p><p>You can continue with Hanuman's council activities or lead the next mission immediately.</p>") +
+                ? "<p>Hanuman places Sita's token in the center of the command map, and the tent falls silent. Confirmation turns uncertainty into urgency: this is no longer a rumor hunt, but a disciplined operation to breach Lanka, protect civilians, and end Ravana's war machine.</p><p>Jambavan marks coastal currents, Nala sketches bridge-load math, and Angada lists strike teams by readiness. Your command table now tracks not just victory—but how victory is achieved.</p><p>You can return to camp support operations for additional preparation, or launch the full Lanka war campaign immediately.</p>"
+                : "<p>The rescue campaign enters its strategic phase. Messengers arrive with sketches of cliff routes, tidal windows, and guard rotations along Lanka's perimeter.</p><p>Hanuman asks for patience: one more focused mission could convert scattered clues into war-grade intelligence.</p>") +
             "<div id='choices'>" +
             "<button onclick='makeChoice(47)'>Return to Hanuman's camp</button>" +
             (sitaConfirmed
@@ -2454,7 +2588,8 @@ function showScene() {
         addArtifact("Ocean Wind Compass");
         storyCard.innerHTML =
             "<h2>The Journey Across the Ocean</h2>" +
-            "<p>The rescue council debates how to reach Lanka quickly. Jambavan proposes Hanuman's leap as the opening move.</p>" +
+            "<p>The rescue council stretches late into the night. Engineers propose rafts, archers propose covering fire, and navigators argue over storm timing. Jambavan's conclusion is clear: Hanuman's leap must be the first decisive move, but it must be framed inside a coordinated campaign, not a lone gamble.</p>" +
+            "<p>You receive the Ocean Wind Compass, a command tool tuned to relay corridor changes between scouts and launch teams.</p>" +
             "<div id='choices'>" +
             "<button onclick='makeDecision(4)'>Agree with the leap plan</button>" +
             "<button onclick='makeDecision(5)'>Question the risk first</button>" +
@@ -2462,14 +2597,16 @@ function showScene() {
     } else if (currentScene === 56) {
         storyCard.innerHTML =
             "<h2>Hanuman's Leap</h2>" +
-            "<p>Hanuman launches across the ocean, carrying your hopes and strategy to Lanka's gates. Midway, the sea darkens as a divine envoy rises from the waves.</p>" +
+            "<p>At dawn, war drums roll once across the shore. Hanuman bows to Rama, gathers force, and launches into the sky with enough power to shake salt spray from distant rocks. Every unit in camp tracks his arc as if watching the fate of the war itself.</p>" +
+            "<p>Mid-flight, the horizon darkens and the sea lifts in spirals. A divine envoy rises from the waves to test whether courage is matched by wisdom.</p>" +
             "<div id='choices'>" +
             "<button onclick='makeChoice(58)'>Face the ocean envoy</button>" +
             "</div>";
     } else if (currentScene === 57) {
         storyCard.innerHTML =
             "<h2>You Raise Concerns</h2>" +
-            "<p>You call the mission dangerous, but Hanuman steadies the room and asks for trust in coordinated teamwork.</p>" +
+            "<p>You challenge the plan openly: one failed leap could shatter morale before the invasion even begins. The tent tenses, but Hanuman answers without anger, outlining fallback routes, signal relays, and recovery teams.</p>" +
+            "<p>Your caution improves the plan: scouts now mirror his path from shore lookouts, and message runners are assigned to every command lane.</p>" +
             "<p><q>" + playerName + ", strategy without faith breaks alliances. Let us move as one.</q></p>" +
             "<div id='choices'>" +
             "<button onclick='makeDecision(7)'>Accept and proceed</button>" +
@@ -2478,8 +2615,9 @@ function showScene() {
         addArtifact("Surasa's Trial Pearl");
         storyCard.innerHTML =
             "<h2>Surasa in the Ocean</h2>" +
-            "<p>Surasa rises from the ocean, declaring that the gods sent her to test Hanuman's resolve before Lanka is reached.</p>" +
-            "<p>Hanuman bows, expands, then shrinks in wisdom to pass through her challenge without violence. Surasa blesses the mission and grants passage.</p>" +
+            "<p>Surasa rises like a living stormwall, declaring that even righteous missions must pass through discernment before crossing sacred waters.</p>" +
+            "<p>Hanuman answers with humility first, strength second, and cleverness last: he expands to meet her challenge, then shrinks in a flash to pass harmlessly through. The gods' test resolves not through domination, but through balanced mastery.</p>" +
+            "<p>Surasa blesses the campaign and leaves behind a luminous pearl, now carried as proof that the mission has divine sanction.</p>" +
             "<div id='choices'>" +
             "<button onclick='makeChoice(59)'>Continue toward Lanka</button>" +
             "</div>";
@@ -2487,8 +2625,8 @@ function showScene() {
         addArtifact("Sita's Ashoka Leaf Token");
         storyCard.innerHTML =
             "<h2>Meeting Sita in the Garden</h2>" +
-            "<p>In Ashoka Vatika, Hanuman finds Sita under guarded trees. He offers Rama's sign and receives her message of steadfast faith.</p>" +
-            "<p>Sita gives a sacred token so the rescue camp will know this meeting is true.</p>" +
+            "<p>Inside Ashoka Vatika, Hanuman moves from shadow to shadow until he sees Sita beneath a guarded tree, worn by grief yet unbroken in resolve. He delivers Rama's sign carefully, speaking softly so fear does not mistake hope for another trick.</p>" +
+            "<p>Sita's response is precise and royal: tell Rama she stands firm, tell Lakshmana she remembers his loyalty, and tell the camp to move with speed before Ravana escalates pressure. She sends a sacred token to verify the meeting beyond doubt.</p>" +
             "<div id='choices'>" +
             "<button onclick='makeChoice(60)'>Fly back with Sita's message</button>" +
             "</div>";
@@ -2496,8 +2634,9 @@ function showScene() {
         addArtifact("Hanuman's Debrief Seal");
         storyCard.innerHTML =
             "<h2>Return Flight and Debrief</h2>" +
-            "<p>Hanuman returns across the sea and lands before you, brave traveler. He reports Surasa's divine test, Sita's condition, and Lanka's defenses.</p>" +
-            "<p>The camp now has verified intelligence and renewed purpose. With Sita's message secured, the next chapter is the direct war march into Lanka.</p>" +
+            "<p>Hanuman returns at dusk, scorched by battle wind but smiling with mission success. His debrief is detailed: approach lanes, gate pressure points, elite commander placements, and morale conditions inside Lanka's walls.</p>" +
+            "<p>When Sita's message and token are presented, the camp's uncertainty ends. Smiths reforge damaged weapons, medics pre-pack field kits, and bridge engineers begin synchronized shifts through the night.</p>" +
+            "<p>The campaign now transitions from rescue intelligence to full-scale launch against Lanka.</p>" +
             "<div id='choices'>" +
             "<button onclick='makeChoice(" + lankaWarStartSceneId + ")'>Begin the Lanka war campaign</button>" +
             "<button onclick='makeChoice(54)'>Report to War Council</button>" +
@@ -3044,7 +3183,9 @@ function makeChoice(choice) {
             currentScene = epicSagaStartId;
         }
     } else if (isEpicSagaScene(currentScene)) {
-        if (isEpicSagaScene(choice) && choice === currentScene + 1) {
+        if (isLankaWarProfileChoice(choice)) {
+            applyLankaWarProfileChoice(choice);
+        } else if (isEpicSagaScene(choice) && choice === currentScene + 1) {
             currentScene = choice;
         } else if (choice === 54 || choice === 47 || choice === 62) {
             currentScene = choice;
@@ -3090,7 +3231,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update " + appUpdateVersion);
+    console.log("Update 16");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();
