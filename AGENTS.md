@@ -7,3 +7,5 @@
 ## Scene Routing Rule
 - If any new scenes are added, update URL routing to include routes for the new scenes.
 
+## Update Timeline and Receipt Scenes Rule
+- If any new scenes are added, update the timeline and receipts for the new scenes.
