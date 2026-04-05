@@ -33,7 +33,7 @@ var activeSoundtrackSrc = "";
 var applyingSceneRoute = false;
 var scrollRevealObserver = null;
 var resolutionTier = "hd";
-var appUpdateVersion = 16;
+var appUpdateVersion = 17;
 var epicSagaStartId = 103;
 var lankaWarProfile = {
     openingPlan: "",
@@ -3210,7 +3210,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 18");
+    console.log("Update 19");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();

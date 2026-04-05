@@ -1,4 +1,36 @@
 (function () {
+    function setupScrollRevealTransitions() {
+        var revealedCards = document.querySelectorAll(".scroll-reveal");
+
+        if (!revealedCards.length) {
+            return;
+        }
+
+        if (typeof window.IntersectionObserver !== "function") {
+            revealedCards.forEach(function (card) {
+                card.classList.add("in-view");
+            });
+            return;
+        }
+
+        var observer = new IntersectionObserver(function (entries, scrollObserver) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("in-view");
+                    scrollObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            root: null,
+            threshold: 0.14,
+            rootMargin: "0px 0px -8% 0px"
+        });
+
+        revealedCards.forEach(function (card) {
+            observer.observe(card);
+        });
+    }
+
     var peopleEntries = [
         {
             name: "Rama",
@@ -111,6 +143,8 @@
         filtered.forEach(function (entry) {
             peopleGrid.appendChild(createPeopleCard(entry));
         });
+
+        setupScrollRevealTransitions();
     }
 
     document.addEventListener("DOMContentLoaded", function () {
