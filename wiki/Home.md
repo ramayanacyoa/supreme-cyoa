@@ -27,6 +27,7 @@ This wiki documents the game exactly as it exists in the repository right now, i
 - Story logic file: `Project.js`
 - Styling file: `Project.css`
 - Secondary page: `before-the-ramayana.html` (coming soon screen)
+- Reference page: `people-of-ramayana.html` (individuals + clans/tribes/kingdoms guide)
 
 ## Notes
 
@@ -39,3 +40,4 @@ This wiki is intentionally implementation-aware so future edits can be made safe
 - Expanded post-launch Lanka scenes with detailed prose, tactical branching buttons, and a **War Profile** system that tracks morale/mercy/renown and doctrine choices across the war arc.
 - Added a **216-code Lanka Special Ending matrix** that resolves at the end of the epic campaign based on accumulated war-profile choices.
 - Added a **sequential scene-order guard** for post-legacy scene IDs so new scenes must remain continuous with no skipped IDs beyond Scene 102.
+- Added a **People of the Ramayana reference page** with category filtering for key individuals and major groups/kingdoms.

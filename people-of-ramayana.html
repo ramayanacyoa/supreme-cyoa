@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>People of the Ramayana</title>
+  <link rel="stylesheet" href="Project.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="favicon_io/favicon.ico">
+  <link rel="manifest" href="favicon_io/site.webmanifest">
+  <script src="people-of-ramayana.js" defer></script>
+</head>
+<body id="peoplePageBody">
+  <nav id="topNavbar" aria-label="Site navigation">
+    <div id="navLinks">
+      <a id="aboutButton" href="index.html">Main Adventure</a>
+      <a class="nav-link-pill" href="before-the-ramayana.html">Before the Ramayana</a>
+    </div>
+  </nav>
+
+  <div id="titleContainer">
+    <header>
+      <h1>People of the Ramayana</h1>
+      <h3 class="subtitle">Individuals, Clans, Tribes, and Kingdoms</h3>
+      <h4 id="description">A quick guide to the major figures and groups in the epic world.</h4>
+      <p>Use the category filters below to explore heroes, sages, royal houses, vanara allies, rakshasa commanders, and major realms.</p>
+    </header>
+  </div>
+
+  <main id="storyCard" aria-live="polite">
+    <section id="peopleControls" aria-label="People page controls">
+      <label for="peopleCategory">View category:</label>
+      <select id="peopleCategory">
+        <option value="all">All</option>
+        <option value="individual">Individuals</option>
+        <option value="group">Clans / Tribes / Kingdoms</option>
+      </select>
+    </section>
+    <section id="peopleGrid" aria-label="People and groups list"></section>
+  </main>
+</body>
+</html>
