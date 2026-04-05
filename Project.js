@@ -266,9 +266,17 @@ function applySceneFromHash() {
 function toggleNavbarMenu(forceOpen) {
     var navbar = document.getElementById("topNavbar");
     var toggleButton = document.getElementById("navbarToggle");
+    var isMobileNavbar = window.matchMedia("(max-width: 768px)").matches;
     var shouldOpen = typeof forceOpen === "boolean" ? forceOpen : true;
 
     if (!navbar || !toggleButton) {
+        return;
+    }
+
+    if (!isMobileNavbar) {
+        navbar.classList.add("nav-open");
+        toggleButton.setAttribute("aria-expanded", "true");
+        toggleButton.textContent = "✕";
         return;
     }
 
@@ -279,6 +287,11 @@ function toggleNavbarMenu(forceOpen) {
     navbar.classList.toggle("nav-open", shouldOpen);
     toggleButton.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
     toggleButton.textContent = shouldOpen ? "✕" : "☰";
+}
+
+function syncNavbarLayout() {
+    var isMobileNavbar = window.matchMedia("(max-width: 768px)").matches;
+    toggleNavbarMenu(isMobileNavbar ? false : true);
 }
 
 function updateBackgroundMusicForScene() {
@@ -3207,7 +3220,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 16");
+    console.log("Update 17");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();
@@ -3229,11 +3242,17 @@ document.addEventListener("DOMContentLoaded", function () {
     setupScrollRevealTransitions();
 
     if (navbarToggle && topNavbar) {
+        syncNavbarLayout();
+
         navbarToggle.addEventListener("click", function () {
             toggleNavbarMenu();
         });
 
         document.addEventListener("click", function (event) {
+            if (!window.matchMedia("(max-width: 768px)").matches) {
+                return;
+            }
+
             if (!topNavbar.classList.contains("nav-open")) {
                 return;
             }
@@ -3243,6 +3262,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             toggleNavbarMenu(false);
+        });
+
+        window.addEventListener("resize", function () {
+            syncNavbarLayout();
         });
     }
 

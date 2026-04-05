@@ -142,6 +142,7 @@ body::after {
 }
 
 #navbarToggle {
+  display: none;
   width: auto;
   min-width: 46px;
   min-height: 42px;
@@ -160,11 +161,6 @@ body::after {
   transform: translateY(-1px);
   background: rgba(243, 201, 120, 0.2);
   border-color: rgba(255, 230, 173, 0.7);
-}
-
-#topNavbar #navLinks,
-#topNavbar #soundtrackBadge {
-  display: none;
 }
 
 #topNavbar.nav-open {
@@ -1086,10 +1082,18 @@ blockquote,
   }
 
   #navbarToggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-width: 42px;
     min-height: 38px;
     padding: 5px 9px;
     font-size: 1.15rem;
+  }
+
+  #topNavbar #navLinks,
+  #topNavbar #soundtrackBadge {
+    display: none;
   }
 
   #topNavbar.nav-open {
