@@ -9,3 +9,7 @@
 
 ## Update Timeline and Receipt Scenes Rule
 - If any new scenes are added, update the timeline and receipts for the new scenes.
+
+## Feature Wiki Rule
+- Whenever a new feature is added, add it to the Features page in the repository wiki if possible.
+- If wiki access is unavailable, clearly note that the wiki could not be updated.
