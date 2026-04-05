@@ -37,7 +37,7 @@ From Hanuman hub, player can access:
 - Ally conversation/training
 - Ocean exploration
 - Main rescue storyline continuation
-- Companion dialogue interludes (context-sensitive reflection scenes that return to the prior scene)
+- Ambient companion dialogue text shown in scene cards (no pause/reflection choice button)
 
 ### Part 2: Rescue sequence
 
@@ -60,7 +60,7 @@ From Hanuman hub, player can access:
 
 - Lore artifact injections: 95, 96, 97
 - Negotiation duel: 98
-- Dialogue interludes: 61, 62, 63
+- Legacy reflection scene IDs still present in code: 61, 62, 63
 - Guessing game: 93
 - Storytelling game/result: 99, 100
 - Ocean exploration loop: 101, 102

@@ -11,7 +11,6 @@ var takenTransitions = [];
 var timelineModalOpen = false;
 var timelineZoom = 1;
 var timelineRevealAll = false;
-var dialogueInterludeReturnScene = null;
 var journeyTriviaState = null;
 var perfectTriviaSessionsInRow = 0;
 var dasharathaStoryUnlocked = false;
@@ -940,6 +939,29 @@ timelineEdges = timelineEdges.map(function (edge) {
     };
 });
 
+function getAmbientDialogueForScene(sceneId) {
+    return "<strong>Companion Dialogue:</strong> Sita says, \"Let every choice carry compassion.\" Lakshmana replies, \"And let every step carry courage.\"";
+}
+
+function addAmbientDialogue(storyCard) {
+    var heading;
+
+    if (!storyCard || currentScene <= 0 || currentScene === 61 || currentScene === 62 || currentScene === 63) {
+        return;
+    }
+
+    if (!storyCard.querySelector(".ambient-dialogue")) {
+        heading = storyCard.querySelector("h2, h1");
+        if (heading) {
+            heading.insertAdjacentHTML("afterend", "<p class='ambient-dialogue'>" + getAmbientDialogueForScene(currentScene) + "</p>");
+        } else {
+            storyCard.insertAdjacentHTML("afterbegin", "<p class='ambient-dialogue'>" + getAmbientDialogueForScene(currentScene) + "</p>");
+        }
+    }
+
+}
+
+
 function randomizer() {
     return Math.floor(Math.random() * 101);
 }
@@ -1279,7 +1301,6 @@ function saveOldState() {
         journeyTriviaState: journeyTriviaState ? JSON.parse(JSON.stringify(journeyTriviaState)) : null,
         perfectTriviaSessionsInRow: perfectTriviaSessionsInRow,
         dasharathaStoryUnlocked: dasharathaStoryUnlocked,
-        dialogueInterludeReturnScene: dialogueInterludeReturnScene,
         characterConversationState: characterConversationState ? JSON.parse(JSON.stringify(characterConversationState)) : null,
         guessGameState: guessGameState ? JSON.parse(JSON.stringify(guessGameState)) : null,
         receiptScenes: receiptScenes.slice(),
@@ -1308,7 +1329,6 @@ function undoChoice() {
     journeyTriviaState = oldState.journeyTriviaState || null;
     perfectTriviaSessionsInRow = oldState.perfectTriviaSessionsInRow || 0;
     dasharathaStoryUnlocked = !!oldState.dasharathaStoryUnlocked;
-    dialogueInterludeReturnScene = oldState.dialogueInterludeReturnScene || null;
     characterConversationState = oldState.characterConversationState || null;
     guessGameState = oldState.guessGameState || null;
     receiptScenes = oldState.receiptScenes;
@@ -1389,7 +1409,6 @@ function restart() {
     playerStats = {};
     inventoryItems = [];
     journeyTriviaState = null;
-    dialogueInterludeReturnScene = null;
     perfectTriviaSessionsInRow = 0;
     dasharathaStoryUnlocked = false;
     characterConversationState = null;
@@ -2565,6 +2584,7 @@ function showScene() {
             "</div>";
     }
 
+    addAmbientDialogue(storyCard);
     ensureStoryCardToolbar();
     addSceneToReceipt();
     syncHashWithCurrentScene();
@@ -2598,20 +2618,6 @@ function makeChoice(choice) {
     }
 
     saveOldState();
-
-    if (choice === 300 && currentScene > 0 && currentScene !== 61 && currentScene !== 62 && currentScene !== 63) {
-        dialogueInterludeReturnScene = currentScene;
-        if (currentScene >= 53 && currentScene <= 60) {
-            currentScene = 62;
-        } else if (currentScene === 47 || currentScene === 70 || currentScene === 71 || currentScene === 72 || currentScene === 73 || currentScene === 77 || currentScene === 93 || currentScene === 99 || currentScene === 100 || currentScene === 101 || currentScene === 102) {
-            currentScene = 63;
-        } else {
-            currentScene = 61;
-        }
-    } else if (choice === 301 && (currentScene === 61 || currentScene === 62 || currentScene === 63)) {
-        currentScene = dialogueInterludeReturnScene || 1;
-        dialogueInterludeReturnScene = null;
-    } else
 
     if (currentScene === 1 || currentScene === 2) {
         if (choice === 3) {
