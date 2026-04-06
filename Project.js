@@ -3018,7 +3018,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 27");
+    console.log("Update 28");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();

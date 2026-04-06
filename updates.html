@@ -3,30 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Before The Ramayana</title>
+  <title>Ramayana Adventure Updates</title>
   <link rel="stylesheet" href="Project.css">
-  <link rel="icon" href="favicon1.png" type="image/png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="favicon_io/favicon.ico">
+  <link rel="manifest" href="favicon_io/site.webmanifest">
 </head>
-<body id="backstorybody">
+<body>
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
     <div id="navLinks">
       <a id="aboutButton" href="index.html">Main Adventure</a>
+      <a class="nav-link-pill" href="before-the-ramayana.html">Before the Ramayana</a>
       <a class="nav-link-pill" href="people-of-ramayana.html">People of the Ramayana</a>
-      <a class="nav-link-pill" href="updates.html">Updates</a>
     </div>
   </nav>
 
   <div id="titleContainer">
     <header>
       <h1>The Ramayana</h1>
-      <h3 class="subtitle">COMING SOON!</h3>
-      <h4 id="description">Explore the events that lead up to the great Indian Epic of Ramayana.</h4>
-      <p>Make choices and determine new ways the Ramayana could have begun, or if it even happened at all.</p>
-      <button onclick="window.location.href='index.html'">Experience The Ramayana</button>
-      <button onclick="window.location.href='people-of-ramayana.html'">People of the Ramayana</button>
+      <h3 class="subtitle">Project Updates</h3>
+      <h4 id="description">Track what changed in each release.</h4>
+      <p>This page records recent improvements and bug fixes for the adventure.</p>
     </header>
   </div>
+
+  <main id="storyCard" aria-live="polite">
+    <h2>Latest Update</h2>
+    <div id="updateInfo">
+      <h3>Update 28</h3>
+      <p>Added a dedicated Updates page and linked it in the navbar across the main pages.</p>
+      <p>Restored the Begin Your Quest flow by fixing the missing reset helper and cleaned one unused declaration.</p>
+    </div>
+  </main>
+
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       var navbarToggle = document.getElementById("navbarToggle");

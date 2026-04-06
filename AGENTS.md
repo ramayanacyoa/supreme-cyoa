@@ -13,3 +13,7 @@
 ## Feature Wiki Rule
 - Whenever a new feature is added, add it to the Features page in the repository wiki if possible.
 - If wiki access is unavailable, clearly note that the wiki could not be updated.
+
+## Updates Page Rule
+- Keep the `#updateInfo` div in `updates.html` current whenever a new update is added.
+- Always include the latest update number in that `#updateInfo` content.
