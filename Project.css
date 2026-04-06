@@ -86,7 +86,7 @@ body::after {
 #titleContainer,
 #storyCard,
 #timelineCard {
-  width: min(960px, 100%);
+  width: min(1080px, 100%);
   position: relative;
   border-radius: 28px;
   background:
@@ -825,7 +825,8 @@ button,
   appearance: none;
   border: 1px solid var(--crisp-line);
   border-radius: 999px;
-  padding: 13px 22px;
+  min-height: 44px;
+  padding: 14px 24px;
   background:
     linear-gradient(135deg, rgba(255, 229, 170, 0.22), rgba(255, 184, 112, 0.12)),
     rgba(255, 248, 234, 0.06);
@@ -975,7 +976,7 @@ blockquote,
   }
 
   p {
-    font-size: 0.98rem;
+    font-size: 1.05rem;
   }
 
   .subtitle {
@@ -1105,7 +1106,8 @@ blockquote,
   .btn {
     width: 100%;
     border-radius: 14px;
-    padding: 12px 16px;
+    min-height: 44px;
+    padding: 14px 18px;
     border-color: rgba(116, 255, 225, 0.35);
     background:
       linear-gradient(145deg, rgba(81, 227, 191, 0.35), rgba(59, 161, 255, 0.2)),
@@ -1376,10 +1378,18 @@ blockquote,
 }
 
 #storyNavMain {
-  max-width: 760px;
+  max-width: 900px;
   margin-inline: auto;
   font-size: 1.08rem;
-  line-height: 1.85;
+  line-height: 1.6;
+}
+
+.scene-number-label {
+  margin: 6px 0 10px;
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 239, 198, 0.88);
 }
 
 .scene-meta-grid {
@@ -1412,8 +1422,16 @@ blockquote,
 
 .next-prev-controls {
   display: flex;
-  gap: 10px;
-  margin: 14px 0 18px;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 30px 0 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 223, 162, 0.4);
+}
+
+.next-prev-controls button {
+  min-width: 170px;
 }
 
 .next-prev-controls button:disabled {
@@ -1427,13 +1445,14 @@ blockquote,
 }
 
 #storyNavMain h2 {
-  font-size: 1.6rem;
-  margin: 10px 0 12px;
+  font-size: 2.1rem;
+  margin: 22px 0 14px;
 }
 
 #storyNavMain p {
-  margin: 0 0 16px;
+  margin: 0 0 22px;
   max-width: 70ch;
+  font-size: 1.1rem;
 }
 
 .story-transition-line,
@@ -1455,6 +1474,41 @@ blockquote,
 .extended-scene-notes summary {
   cursor: pointer;
   font-weight: 600;
+}
+
+
+@media (max-width: 768px) {
+  #storyNavMain {
+    font-size: 1.125rem;
+  }
+
+  #storyNavMain p {
+    font-size: 1.125rem;
+    margin-bottom: 24px;
+  }
+
+  #storyNavMain h2 {
+    margin-top: 26px;
+    font-size: clamp(1.95rem, 7vw, 2.3rem);
+  }
+
+  .next-prev-controls {
+    position: sticky;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    background: rgba(12, 20, 34, 0.94);
+    border: 1px solid rgba(116, 255, 225, 0.3);
+    border-radius: 14px;
+    padding: 10px;
+    margin: 34px 0 26px;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 4;
+  }
+
+  .next-prev-controls button {
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 @media (max-width: 980px) {

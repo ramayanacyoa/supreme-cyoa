@@ -1,6 +1,6 @@
 # Supreme CYOA Wiki (Current State)
 
-_Last updated: 2026-04-05 (UTC)_
+_Last updated: 2026-04-06 (UTC)_
 
 Welcome to the project wiki for **The Ramayana: Choose Your Adventure**.
 
@@ -35,6 +35,7 @@ This wiki is intentionally implementation-aware so future edits can be made safe
 
 ## Features (recent)
 
+- Added a **responsive scene readability pass** with larger scene headings/body text, standardized paragraph spacing, divider-separated sections, stronger button affordances, and a sticky mobile Previous/Next control bar.
 - Added a **Story Navigator layer**: Scene counter/progress bar, next/previous controls, keyboard arrow navigation, jump-to-scene/chapter menus, chapter-grouped table of contents, and a jump sidebar with Kanda labels.
 - Updated companion dialogue behavior so scenes keep ambient companion flavor text without adding a pause/reflection button to choices.
 - Added an **Epic Chronicle linear campaign** (starting after Scene 60) that walks through the Lanka war, Sita's restoration, return to Ayodhya, Uttara Kanda events, final departure, and later traditions in strict chronological order.

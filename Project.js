@@ -272,6 +272,7 @@ function renderStoryNavigationLayer() {
         "</select>" +
         "</aside>" +
         "<div id='storyNavMain'>" +
+        "<p class='scene-number-label'>Scene " + currentScene + "</p>" +
         "<div class='scene-meta-grid'>" +
         "<div><strong>Kanda:</strong> " + chapterMeta.label + "</div>" +
         "<div><strong>Chapter:</strong> " + chapterMeta.chapter + "</div>" +
@@ -3018,7 +3019,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 28");
+    console.log("Update 29");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();
