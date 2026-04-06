@@ -224,7 +224,6 @@ function applyNarrativeFlowEnhancements() {
 
 function renderStoryNavigationLayer() {
     var storyCard = document.getElementById("storyCard");
-    var heading = storyCard ? storyCard.querySelector("h2") : null;
     var existing = document.getElementById("storyNavigationShell");
     var chapterMeta;
     var sceneCounter;
@@ -1440,6 +1439,10 @@ function restart() {
     setUndoButton();
     updatePlayerStatsCard();
     updateInventoryCard();
+}
+
+function resetLankaWarProfile() {
+    rescueSoundtrackMode = false;
 }
 
 function startAdventure() {
@@ -3015,7 +3018,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 26");
+    console.log("Update 27");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();
