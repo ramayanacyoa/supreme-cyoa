@@ -258,12 +258,6 @@ function renderStoryNavigationLayer() {
         "<aside id='sceneSidebar'>" +
         "<h3>Table of Contents</h3>" +
         tocItems +
-        "<label for='chapterJump'>Jump to chapter</label>" +
-        "<select id='chapterJump' onchange='jumpToChapter(this.value)'>" +
-        chapterCatalog.map(function (chapter) {
-            return "<option value='" + chapter.id + "'" + (chapter.id === chapterMeta.id ? " selected" : "") + ">" + chapter.label + "</option>";
-        }).join("") +
-        "</select>" +
         "<label for='sceneJump'>Jump to scene</label>" +
         "<select id='sceneJump' onchange='jumpToScene(this.value)'>" +
         linearSceneOrder.map(function (sceneId) {
@@ -3019,7 +3013,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 29");
+    console.log("Update 30");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();
