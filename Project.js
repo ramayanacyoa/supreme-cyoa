@@ -54,19 +54,12 @@ var chapterCatalog = [
 ];
 
 var chapterJumpEnabled = true;
+var forestSceneIds = [65, 66, 67, 68, 95, 96, 98];
 
 function getChapterMetaForScene(sceneId) {
-    var i;
-    var chapter;
-
-    for (i = 0; i < chapterCatalog.length; i++) {
-        chapter = chapterCatalog[i];
-        if (chapter.scenes.indexOf(sceneId) !== -1) {
-            return chapter;
-        }
-    }
-
-    return {
+    return chapterCatalog.find(function (chapter) {
+        return chapter.scenes.indexOf(sceneId) !== -1;
+    }) || {
         id: "misc",
         label: "Interlude",
         chapter: "Interlude",
@@ -78,7 +71,7 @@ function getSceneLocationLabel(sceneId) {
     if (sceneId <= 4) {
         return "Ayodhya Palace";
     }
-    if (sceneId <= 39 || sceneId === 65 || sceneId === 66 || sceneId === 67 || sceneId === 68 || sceneId === 95 || sceneId === 96 || sceneId === 98) {
+    if (sceneId <= 39 || forestSceneIds.indexOf(sceneId) !== -1) {
         return "Dandaka Forest";
     }
     if (sceneId >= 40 && sceneId <= 100) {
@@ -131,17 +124,17 @@ function jumpToScene(sceneId) {
 }
 
 function jumpToChapter(chapterId) {
-    var i;
+    var chapter;
 
     if (!chapterJumpEnabled) {
         return;
     }
 
-    for (i = 0; i < chapterCatalog.length; i++) {
-        if (chapterCatalog[i].id === chapterId) {
-            jumpToScene(chapterCatalog[i].scenes[0]);
-            return;
-        }
+    chapter = chapterCatalog.find(function (chapterEntry) {
+        return chapterEntry.id === chapterId;
+    });
+    if (chapter) {
+        jumpToScene(chapter.scenes[0]);
     }
 }
 
@@ -149,11 +142,9 @@ function navigateLinearScene(step) {
     var currentIndex = getLinearIndex(currentScene);
     var nextIndex = currentIndex + step;
 
-    if (currentIndex === -1 || nextIndex < 0 || nextIndex >= linearSceneOrder.length) {
-        return;
+    if (currentIndex !== -1 && nextIndex >= 0 && nextIndex < linearSceneOrder.length) {
+        jumpToScene(linearSceneOrder[nextIndex]);
     }
-
-    jumpToScene(linearSceneOrder[nextIndex]);
 }
 
 function applyNarrativeFlowEnhancements() {
@@ -230,6 +221,10 @@ function renderStoryNavigationLayer() {
     var progressPct;
     var tocItems;
     var currentIndex;
+    var heading;
+    var navMain;
+    var toolbar;
+    var navShell;
 
     if (!storyCard || currentScene <= 0) {
         if (existing) {
@@ -252,6 +247,7 @@ function renderStoryNavigationLayer() {
     }
 
     storyCard.classList.add("scene-card-layout");
+    heading = storyCard.querySelector("h2");
 
     storyCard.insertAdjacentHTML("afterbegin",
         "<section id='storyNavigationShell'>" +
@@ -284,14 +280,15 @@ function renderStoryNavigationLayer() {
         "</div>" +
         "</section>");
 
-    if (heading) {
-        document.getElementById("storyNavMain").appendChild(heading);
+    navMain = document.getElementById("storyNavMain");
+    toolbar = document.getElementById("storyCardToolbar");
+    navShell = document.getElementById("storyNavigationShell");
+
+    if (heading && navMain) {
+        navMain.appendChild(heading);
     }
 
     Array.prototype.slice.call(storyCard.childNodes).forEach(function (node) {
-        var navMain = document.getElementById("storyNavMain");
-        var toolbar = document.getElementById("storyCardToolbar");
-        var navShell = document.getElementById("storyNavigationShell");
         if (node === toolbar || node === navShell) {
             return;
         }
@@ -3013,7 +3010,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 30");
+    console.log("Update 31");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();
