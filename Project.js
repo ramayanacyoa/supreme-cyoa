@@ -3010,7 +3010,7 @@ function makeDecision(decision){
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Update 31");
+    console.log("Update 32");
     document.body.setAttribute("data-resolution-tier", resolutionTier);
     validateSequentialSceneOrder();
     applyResolutionTierStyling();
@@ -3041,19 +3041,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         document.addEventListener("click", function (event) {
-            if (!window.matchMedia("(max-width: 768px)").matches) {
-                return;
+            if (window.matchMedia("(max-width: 768px)").matches && topNavbar.classList.contains("nav-open") && !topNavbar.contains(event.target)) {
+                toggleNavbarMenu(false);
             }
-
-            if (!topNavbar.classList.contains("nav-open")) {
-                return;
-            }
-
-            if (topNavbar.contains(event.target)) {
-                return;
-            }
-
-            toggleNavbarMenu(false);
         });
 
         window.addEventListener("resize", function () {

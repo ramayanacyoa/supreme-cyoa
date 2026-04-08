@@ -33,10 +33,9 @@
   <main id="storyCard" aria-live="polite">
     <h2>Latest Update</h2>
     <div id="updateInfo">
-      <h3>Update 31</h3>
-      <p>Simplified scene navigation and chapter lookup logic by replacing repetitive loops with clearer array lookups.</p>
-      <p>Removed inactive repeated scene-location datatype values by centralizing forest scene IDs in one shared list.</p>
-      <p>Streamlined story navigation rendering setup to reduce repeated DOM queries without changing gameplay behavior.</p>
+      <h3>Update 32</h3>
+      <p>Simplified mobile navbar outside-click handling by combining repeated guard checks into one condition.</p>
+      <p>Removed extra early-return lines while preserving the same menu open/close behavior.</p>
     </div>
   </main>
 
@@ -55,20 +54,10 @@
       });
 
       document.addEventListener("click", function (event) {
-        if (!window.matchMedia("(max-width: 768px)").matches) {
-          return;
+        if (window.matchMedia("(max-width: 768px)").matches && topNavbar.classList.contains("nav-open") && !topNavbar.contains(event.target)) {
+          topNavbar.classList.remove("nav-open");
+          navbarToggle.setAttribute("aria-expanded", "false");
         }
-
-        if (!topNavbar.classList.contains("nav-open")) {
-          return;
-        }
-
-        if (topNavbar.contains(event.target)) {
-          return;
-        }
-
-        topNavbar.classList.remove("nav-open");
-        navbarToggle.setAttribute("aria-expanded", "false");
       });
     });
   </script>
