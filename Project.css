@@ -1455,8 +1455,6 @@ blockquote,
   font-size: 1.1rem;
 }
 
-.story-transition-line,
-.story-mini-recap,
 .story-flow-filler {
   border-left: 3px solid rgba(255, 223, 162, 0.6);
   padding-left: 12px;
