@@ -14,7 +14,7 @@ The story is rendered dynamically by JavaScript and branches by scene ID transit
 - Endings can trigger a restart path.
 - A timeline modal visualizes explored and possible routes.
 - Inventory modal tracks artifact discoveries and lore.
-- Post-recon Lanka war content now includes long-form scene writing, tactical branch choices, a war profile tracker (morale/mercy/renown), and a combinational special-ending system with 216 Lanka ending codes.
+- Post-recon Lanka war content includes long-form scene writing and tactical branch choices through Scene 102.
 
 ## UI components at a glance
 
@@ -23,7 +23,7 @@ The story is rendered dynamically by JavaScript and branches by scene ID transit
   - Timeline button
   - Inventory button with item count
   - Background music controls and volume dropdown
-- Fixed top-left update badge (`Update 16` currently)
+- Hidden update console marker (`Update 1` currently)
 - Intro card + start button
 - Story card with Undo button
 - Timeline modal with zoom/reveal
@@ -55,6 +55,4 @@ The game tracks:
 - Receipt history (scene summaries + selected choices)
 - Undo history snapshots
 - Timeline visit/edge history
-- Minigame state objects
 - Inventory artifact collection
-- Story unlock counters (e.g., perfect trivia streak)

@@ -1,6 +1,6 @@
 # Supreme CYOA Wiki (Current State)
 
-_Last updated: 2026-04-06 (UTC)_
+_Last updated: 2026-04-13 (UTC)_
 
 Welcome to the project wiki for **The Ramayana: Choose Your Adventure**.
 
@@ -8,7 +8,6 @@ This wiki documents the game exactly as it exists in the repository right now, i
 
 - Story structure and major scene flows
 - Core gameplay systems
-- Minigames and unlock conditions
 - Inventory artifacts and lore
 - Routing/hash behavior
 - File-level architecture for maintenance
@@ -17,12 +16,11 @@ This wiki documents the game exactly as it exists in the repository right now, i
 
 - [Game Overview](./Game-Overview.md)
 - [Scene & Route Reference](./Scene-and-Route-Reference.md)
-- [Minigames, Progression, and Unlocks](./Minigames-Progression-and-Unlocks.md)
 - [Developer Guide](./Developer-Guide.md)
 
 ## Snapshot
 
-- Current visible update badge in app UI: **Update 16**
+- Current hidden update console marker: **Update 1**
 - Main entry page: `index.html`
 - Story logic file: `Project.js`
 - Styling file: `Project.css`
@@ -33,13 +31,13 @@ This wiki documents the game exactly as it exists in the repository right now, i
 
 This wiki is intentionally implementation-aware so future edits can be made safely without breaking scene flow, timeline highlighting, or inventory/trivia systems.
 
-## Features (recent)
+## Features (current)
 
-- Added a **responsive scene readability pass** with larger scene headings/body text, standardized paragraph spacing, divider-separated sections, stronger button affordances, and a sticky mobile Previous/Next control bar.
-- Added a **Story Navigator layer**: Scene counter/progress bar, next/previous controls, keyboard arrow navigation, jump-to-scene/chapter menus, chapter-grouped table of contents, and a jump sidebar with Kanda labels.
-- Updated companion dialogue behavior so scenes keep ambient companion flavor text without adding a pause/reflection button to choices.
-- Added an **Epic Chronicle linear campaign** (starting after Scene 60) that walks through the Lanka war, Sita's restoration, return to Ayodhya, Uttara Kanda events, final departure, and later traditions in strict chronological order.
-- Expanded post-launch Lanka scenes with detailed prose, tactical branching buttons, and a **War Profile** system that tracks morale/mercy/renown and doctrine choices across the war arc.
-- Added a **216-code Lanka Special Ending matrix** that resolves at the end of the epic campaign based on accumulated war-profile choices.
-- Added a **sequential scene-order guard** for post-legacy scene IDs so new scenes must remain continuous with no skipped IDs beyond Scene 102.
-- Added a **People of the Ramayana reference page** with category filtering for key individuals and major groups/kingdoms.
+- Core branching story gameplay across exile, forest, alliance, and rescue/war arcs.
+- Scene rendering in `#storyCard` with choice-driven progression through `makeChoice()` and `makeDecision()`.
+- Undo history support with Story Card toolbar button.
+- Timeline modal with zoom and reveal/highlight of visited nodes and traversed edges.
+- Inventory modal with collectible artifacts and lore text.
+- Hash-based scene routing (`#scene-<id>`, optional `?timeline=1`) for deep-linking.
+- Background music system with track switching between default and rescue campaign themes.
+- Extended Scene 55–102 arc covering Hanuman's leap, Lanka reconnaissance, bridge construction, war escalation, and final duel resolution.
