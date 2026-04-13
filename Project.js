@@ -140,7 +140,7 @@ function syncNavbarLayout() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("Update 2");
+  console.log("Update 3");
 
   var startButton = document.getElementById("startBtn");
   var playerNameInput = document.getElementById("playerName");

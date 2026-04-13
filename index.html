@@ -18,24 +18,26 @@
     <div id="navLinks">
       <a id="aboutButton" href="https://arjun-singh.com/" target="_blank" rel="noopener noreferrer">About</a>
       <a class="nav-link-pill" href="updates.html">Updates</a>
+      <button id="timelineButton" onclick="openTimelineModal()" type="button">Timeline</button>
+      <button id="inventoryButton" onclick="openInventoryModal()" type="button">Inventory (0)</button>
     </div>
 
     <div id="soundtrackBadge">
-      <label for="backgroundMusic" class="soundtrack-label">Background Music</label>
-      <p id="currentTrackName" class="soundtrack-track-name">Sacred Path Of Rama</p>
-      <audio id="backgroundMusic" controls autoplay muted loop preload="metadata" controlslist="nodownload noplaybackrate" disablepictureinpicture disableremoteplayback>
-        <source src="Sacred Path Of Rama.mp3" type="audio/mpeg">
-      </audio>
-      <label for="musicVolume" class="soundtrack-label">Volume</label>
-      <select id="musicVolume" aria-label="Select background music volume">
-        <option value="0" selected>Muted (0%)</option>
-        <option value="0.2">Low (20%)</option>
-        <option value="0.4">Medium (40%)</option>
-        <option value="0.6">High (60%)</option>
-        <option value="0.8">Very High (80%)</option>
-        <option value="1">Max (100%)</option>
-      </select>
-    </div>
+    <label for="backgroundMusic" class="soundtrack-label">Background Music</label>
+    <p id="currentTrackName" class="soundtrack-track-name">Sacred Path Of Rama</p>
+    <audio id="backgroundMusic" controls autoplay muted loop preload="metadata" controlslist="nodownload noplaybackrate" disablepictureinpicture disableremoteplayback>
+      <source src="Sacred Path Of Rama.mp3" type="audio/mpeg">
+    </audio>
+    <label for="musicVolume" class="soundtrack-label">Volume</label>
+    <select id="musicVolume" aria-label="Select background music volume">
+      <option value="0" selected>Muted (0%)</option>
+      <option value="0.2">Low (20%)</option>
+      <option value="0.4">Medium (40%)</option>
+      <option value="0.6">High (60%)</option>
+      <option value="0.8">Very High (80%)</option>
+      <option value="1">Max (100%)</option>
+    </select>
+  </div>
   </nav>
 
   <div id="titleContainer">
@@ -43,7 +45,7 @@
       <h1>The Ramayana</h1>
       <h3 class="subtitle">An Epic Adventure Awaits</h3>
       <h4 id="description">Embark on your own journey through the great Indian epic.</h4>
-      <p>You will travel through ancient India, make difficult choices, and uncover how the story might unfold in different ways.</p>
+      <p>You will travel through ancient India, make difficult choices, and uncover how the story of the Ramayana might unfold in different ways.</p>
       <button onclick="window.location.href='before-the-ramayana.html'">Before the Ramayana</button>
       <button onclick="window.location.href='people-of-ramayana.html'">People of the Ramayana</button>
     </header>
@@ -60,6 +62,57 @@
     </div>
   </div>
 
-  <main id="storyCard" aria-live="polite"></main>
+  <div id="storyCard">
+    <div id="storyCardToolbar">
+      <button id="undoButton" onclick="undoChoice()" type="button" disabled aria-label="Undo last choice">
+        <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+          <path d="M9 7H4V2"/>
+          <path d="M4 7l5-5"/>
+          <path d="M4 7h9a7 7 0 1 1 0 14h-2"/>
+        </svg>
+        <span>Undo</span>
+      </button>
+    </div>
+    <!-- this is where the story will be displayed -->
+    <div id="choices"></div>
+  </div>
+
+  <div id="timelineModal" class="timeline-modal" aria-hidden="true" onclick="handleTimelineModalBackdrop(event)">
+    <section id="timelineCard" aria-live="polite" role="dialog" aria-modal="true" aria-label="Timeline Flowchart">
+      <div class="timeline-modal-header">
+        <div>
+          <h2>Timeline Flowchart</h2>
+          <p>By default this only shows your experienced route. Press <strong>Reveal</strong> to see other possibilities.</p>
+        </div>
+        <button type="button" class="timeline-close" onclick="closeTimelineModal()" aria-label="Close timeline">✕</button>
+      </div>
+      <div id="timelineLegend">
+        <span class="legend-item"><span class="legend-swatch"></span>All possible paths</span>
+        <span class="legend-item"><span class="legend-swatch highlight"></span>Your exact route</span>
+        <span class="legend-item"><span class="legend-swatch current"></span>Current scene</span>
+      </div>
+      <div id="timelineZoomControls" aria-label="Timeline zoom controls">
+        <button type="button" onclick="adjustTimelineZoom(-0.2)" aria-label="Zoom out timeline">−</button>
+        <span id="timelineZoomValue">100%</span>
+        <button type="button" onclick="adjustTimelineZoom(0.2)" aria-label="Zoom in timeline">+</button>
+        <button type="button" id="timelineRevealButton" onclick="revealTimelinePossibilities()" aria-label="Reveal other timeline possibilities">Reveal</button>
+      </div>
+      <div id="timelineFlowchart"></div>
+    </section>
+  </div>
+
+  <div id="inventoryModal" class="timeline-modal" aria-hidden="true" onclick="handleInventoryModalBackdrop(event)">
+    <section id="inventoryCard" role="dialog" aria-modal="true" aria-live="polite" aria-label="Artifact inventory">
+      <div class="timeline-modal-header">
+        <div>
+          <h2>Artifact Inventory</h2>
+          <p>Collected relics from your journey. Each artifact includes lore discovered so far.</p>
+        </div>
+        <button type="button" class="timeline-close" onclick="closeInventoryModal()" aria-label="Close inventory">✕</button>
+      </div>
+      <p id="inventoryEmpty">No artifacts collected yet. Continue your journey to discover relics.</p>
+      <ul id="inventoryList"></ul>
+    </section>
+  </div>
 </body>
 </html>
