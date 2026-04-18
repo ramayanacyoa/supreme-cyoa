@@ -4,7 +4,7 @@ var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
 
-console.log("Update 3");
+console.log("Update 5");
 
 var scenes = {
   1: {
@@ -382,7 +382,7 @@ function showScene() {
 
   var scene = scenes[currentScene];
   var sceneTitle = escapeHtml(scene.title);
-  var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo'>Undo</button></div>";
+  var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo'>Undo</button><button type='button' onclick='openTimelineModal()' aria-label='Open timeline'>Timeline</button></div>";
 
   if (currentScene === 1) {
     html += "<h1>" + sceneTitle + "</h1>";
@@ -463,8 +463,55 @@ function setupNavbar() {
   });
 }
 
-function handleTimelineModalBackdrop() {}
-function closeTimelineModal() {}
+function renderSimpleTimelineList() {
+  var list = document.getElementById("timelineList");
+  if (!list) {
+    return;
+  }
+
+  var html = "";
+  historyStack.forEach(function (sceneId) {
+    if (!scenes[sceneId]) {
+      return;
+    }
+    html += "<li>" + escapeHtml(scenes[sceneId].title) + "</li>";
+  });
+
+  if (scenes[currentScene]) {
+    html += "<li><strong>" + escapeHtml(scenes[currentScene].title) + " (Current)</strong></li>";
+  }
+
+  if (!html) {
+    html = "<li><strong>Start your quest to build the timeline.</strong></li>";
+  }
+
+  list.innerHTML = html;
+}
+
+function openTimelineModal() {
+  var modal = document.getElementById("timelineModal");
+  if (!modal) {
+    return;
+  }
+  renderSimpleTimelineList();
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function handleTimelineModalBackdrop(event) {
+  if (event && event.target && event.target.id === "timelineModal") {
+    closeTimelineModal();
+  }
+}
+
+function closeTimelineModal() {
+  var modal = document.getElementById("timelineModal");
+  if (!modal) {
+    return;
+  }
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+}
 function adjustTimelineZoom() {}
 function revealTimelinePossibilities() {}
 function handleInventoryModalBackdrop() {}

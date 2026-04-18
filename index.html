@@ -14,7 +14,7 @@
   <link rel="manifest" href="favicon_io/site.webmanifest">
 </head>
 <body>
-  <div id="updateBadge" aria-hidden="true" data-resolution-label="HD">Update 2</div>
+  <div id="updateBadge" aria-hidden="true" data-resolution-label="HD">Update 5</div>
 
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
@@ -54,6 +54,21 @@
 
   <div id="storyCard">
     <div id="choices"></div>
+  </div>
+
+  <div id="timelineModal" class="timeline-modal" onclick="handleTimelineModalBackdrop(event)" aria-hidden="true">
+    <div id="timelineCard">
+      <div class="timeline-modal-header">
+        <h2>Timeline</h2>
+        <button class="timeline-close" type="button" onclick="closeTimelineModal()" aria-label="Close timeline">×</button>
+      </div>
+      <p>Your choices so far:</p>
+      <div id="receiptCard">
+        <div class="receipt-section">
+          <ol id="timelineList"></ol>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 </html>
