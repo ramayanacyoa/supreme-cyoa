@@ -8,7 +8,7 @@ console.log("Update 10");
 
 var scenes = {
   1: {
-    title: "The Ramayana Adventure: The Banwas",
+    title: "The Ramayana Begins",
     text: [
       "Welcome, {{name}}!",
       "{{name}}, you are the prince of Ayodhya, and the kingdom is preparing to celebrate your coronation as King Dasharatha grows old.",
