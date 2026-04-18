@@ -899,6 +899,11 @@ p {
   font-size: 0.92rem;
 }
 
+.timeline-current-scene strong,
+.timeline-current-scene .timeline-scene-description {
+  color: #51e3bf;
+}
+
 button,
 .btn {
   appearance: none;

@@ -4,7 +4,7 @@ var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
 
-console.log("Update 8");
+console.log("Update 9");
 
 var scenes = {
   1: {
@@ -482,7 +482,7 @@ function renderSimpleTimelineList() {
   });
 
   if (scenes[currentScene]) {
-    html += "<li><strong>" + escapeHtml(scenes[currentScene].title) + " (Current)</strong><p class='timeline-scene-description'>" + escapeHtml(interpolatePlayerName(scenes[currentScene].text.join(" "))) + "</p></li>";
+    html += "<li class='timeline-current-scene'><strong>" + escapeHtml(scenes[currentScene].title) + " (Current)</strong><p class='timeline-scene-description'>" + escapeHtml(interpolatePlayerName(scenes[currentScene].text.join(" "))) + "</p></li>";
   }
 
   if (!html) {
