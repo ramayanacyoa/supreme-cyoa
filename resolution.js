@@ -1,3 +1,4 @@
+//resolution code/settings
 var resolutionTier="hd";
 function getResolutionTier(){var screenWidth=window.screen&&window.screen.width?window.screen.width:window.innerWidth;
 var screenHeight=window.screen&&window.screen.height?window.screen.height:window.innerHeight;
