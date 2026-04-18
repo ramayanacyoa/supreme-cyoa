@@ -429,6 +429,7 @@ body[data-resolution-tier="uhd"] {
 
 .restart-art {
   background-image: url("restartBtn");
+  filter: brightness(1.2) saturate(1.18) contrast(1.08) drop-shadow(0 6px 11px rgba(255, 186, 77, 0.37));
 }
 
 #startBtn:hover,
@@ -443,6 +444,14 @@ body[data-resolution-tier="uhd"] {
 .restart-art:focus-visible {
   outline: none;
   filter: brightness(1.22) saturate(1.25) drop-shadow(0 0 0 3px rgba(255, 230, 163, 0.42)) drop-shadow(0 8px 14px rgba(255, 194, 96, 0.4));
+}
+
+.restart-art:hover {
+  filter: brightness(1.3) saturate(1.3) contrast(1.12) drop-shadow(0 9px 15px rgba(255, 194, 96, 0.5));
+}
+
+.restart-art:focus-visible {
+  filter: brightness(1.28) saturate(1.3) contrast(1.12) drop-shadow(0 0 0 3px rgba(255, 230, 163, 0.46)) drop-shadow(0 9px 15px rgba(255, 194, 96, 0.45));
 }
 
 #undoButton.art-button:disabled {

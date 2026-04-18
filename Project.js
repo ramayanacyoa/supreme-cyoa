@@ -4,7 +4,7 @@ var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
 
-console.log("Update 6");
+console.log("Update 8");
 
 var scenes = {
   1: {
@@ -374,6 +374,11 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+function interpolatePlayerName(text) {
+  var displayName = playerName || "Traveler";
+  return text.replace(/\{\{name\}\}/g, displayName);
+}
+
 function showScene() {
   var storyCard = document.getElementById("storyCard");
   if (!storyCard || !scenes[currentScene]) {
@@ -391,8 +396,7 @@ function showScene() {
   }
 
   scene.text.forEach(function (paragraph) {
-    var text = paragraph.replace("{{name}}", escapeHtml(playerName));
-    html += "<p>" + escapeHtml(text) + "</p>";
+    html += "<p>" + escapeHtml(interpolatePlayerName(paragraph)) + "</p>";
   });
 
   html += "<div id='choices'>";
@@ -474,11 +478,11 @@ function renderSimpleTimelineList() {
     if (!scenes[sceneId]) {
       return;
     }
-    html += "<li><strong>" + escapeHtml(scenes[sceneId].title) + "</strong><p class='timeline-scene-description'>" + escapeHtml(scenes[sceneId].text.join(" ")) + "</p></li>";
+    html += "<li><strong>" + escapeHtml(scenes[sceneId].title) + "</strong><p class='timeline-scene-description'>" + escapeHtml(interpolatePlayerName(scenes[sceneId].text.join(" "))) + "</p></li>";
   });
 
   if (scenes[currentScene]) {
-    html += "<li><strong>" + escapeHtml(scenes[currentScene].title) + " (Current)</strong><p class='timeline-scene-description'>" + escapeHtml(scenes[currentScene].text.join(" ")) + "</p></li>";
+    html += "<li><strong>" + escapeHtml(scenes[currentScene].title) + " (Current)</strong><p class='timeline-scene-description'>" + escapeHtml(interpolatePlayerName(scenes[currentScene].text.join(" "))) + "</p></li>";
   }
 
   if (!html) {
