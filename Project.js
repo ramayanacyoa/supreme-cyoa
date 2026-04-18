@@ -1,226 +1,479 @@
-var currentScene=0;
-var playerName="";
-var broughtLakshmana=false;
-var wentAlone=false;
+var currentScene = 0;
+var playerName = "";
+var broughtLakshmana = false;
+var wentAlone = false;
+var historyStack = [];
 
-function clearStoryCard(){document.getElementById("storyCard").innerHTML="<!-- this is where the story will be displayed --><div id='choices'></div>";
-}function restart(){currentScene=0;
-broughtLakshmana=false;
-wentAlone=false;
-clearStoryCard();
-}function resetLankaWarProfile(){rescueSoundtrackMode=false;
-}function startAdventure(){playerName=document.getElementById("playerName").value.trim();
-if(playerName===""){playerName="Traveler";
-}currentScene=1;
-showScene();
-}function focusStoryCard(){var storyCard=document.getElementById("storyCard");
-if(!storyCard){return;
-}window.requestAnimationFrame(function(){storyCard.scrollIntoView({behavior:"smooth",block:"start"});
-});
-}function finishSceneDecision(previousScene){showScene();
-focusStoryCard();
-}function showScene(){var storyCard=document.getElementById("storyCard");
-if(currentScene===1){storyCard.innerHTML="<h1>Part 1: The Bhanwas</h1>"+"<h2>Welcome, "+playerName+"!</h2>"+"<p>You are a brave warrior in ancient India from the Kingdom of Ayodhya. You are soon to be crowned ruler, as your father, King Dasharatha, is getting old.</p>"+"<p>One of your father's wives, Kaikeyi, demands that her own son, your younger brother Bharata, be crowned instead. Your father is left with no choice but to exile you from the kingdom.</p>"+"<p>As part of your exile, you swear that you will live apart from royal comfort and will not enter any city until your exile ends.</p>"+"<p>Do you:</p>"+"<div id='choices'>"+"<button onclick='makeChoice(3)'>Argue back</button>"+"<button onclick='makeChoice(4)'>Accept the exile</button>"+"</div>";
-}else if(currentScene===2){storyCard.innerHTML="<h2>Exile Begins</h2>"+"<p>You have been banished from Ayodhya. The road ahead is uncertain, and your response will shape the rest of your journey.</p>"+"<p>Do you:</p>"+"<div id='choices'>"+"<button onclick='makeChoice(3)'>Argue back</button>"+"<button onclick='makeChoice(4)'>Accept the exile</button>"+"</div>";
-}else if(currentScene===3){storyCard.innerHTML="<h2>You choose to argue back.</h2>"+"<p>Dasharatha is moved by your words and begins to argue with Kaikeyi. Though he is heartbroken, he is ultimately unable to resist her demands because of an old promise.</p>"+"<p>You are left with no choice but to continue into exile.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(4)'>Continue</button>"+"</div>";
-}else if(currentScene===4){storyCard.innerHTML="<h2>You choose to accept the exile.</h2>"+"<p>You prepare to leave, bound by your exile and your vow not to enter any city until it is over. Your brother Lakshmana and your wife Sita insist on going with you.</p>"+"<p>Do you:</p>"+"<div id='choices'>"+"<button onclick='makeChoice(5)'>Go alone</button>"+"<button onclick='makeChoice(6)'>Go with them</button>"+"</div>";
-}else if(currentScene===5){storyCard.innerHTML="<h2>You choose to go alone.</h2>"+"<p>You decide it will be easier for your loved ones to remain safe and comfortable in Ayodhya. You set out alone, carrying the burden of exile by yourself.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(8)'>Continue</button>"+"</div>";
-}else if(currentScene===6){storyCard.innerHTML="<h2>You choose to go with them.</h2>"+"<p>You, Lakshmana, and Sita journey together through the forests. The trials are difficult, but their loyalty gives you strength.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(8)'>Continue</button>"+"</div>";
-}else if(currentScene===7){storyCard.innerHTML="<h2>Surphanaka's Encounter</h2>"+"<p>One day, outside your home, you encounter a powerful demoness named Surphanaka. She claims she wants to be your wife, but you refuse because you are already married.</p>"+"<p>You suggest Lakshmana instead, but he refuses as well. Furious, Surphanaka threatens to kill Sita.</p>"+"<p>What do you do?</p>"+"<div id='choices'>"+"<button onclick='makeChoice(12)'>Accept the marriage</button>"+"<button onclick='makeChoice(9)'>Fight Surphanaka</button>"+"<button onclick='makeChoice(10)'>Protect Sita</button>"+"<button onclick='makeChoice(11)'>Negotiate</button>"+"</div>";
-}else if(currentScene===8){storyCard.innerHTML="<h2>Surphanaka's Encounter</h2>"+"<p>One day, outside your home, you encounter a powerful demoness named Surphanaka. She claims she wants to be your wife.</p>"+"<p>Do you:</p>"+"<div id='choices'>"+"<button onclick='makeChoice(12)'>Accept</button>"+"<button onclick='makeChoice(13)'>Reject</button>"+"</div>";
-}else if(currentScene===9){storyCard.innerHTML="<h2>Fight Surphanaka</h2>"+"<p>You choose to fight Surphanaka. Your strengths are evenly matched, and fate will decide the outcome.</p>"+"<p><strong>Current fight win odds:</strong> "+getChallengeOdds("fight")+"%</p>"+"<div id='choices'>"+"<button onclick='makeChoice(14)'>Fight</button>"+"</div>";
-}else if(currentScene===10){storyCard.innerHTML="<h2>Protect Sita</h2>"+"<p>You rush to defend Sita before Surphanaka can strike. Lakshmana steps in as well, and together you force the demoness to retreat in humiliation.</p>"+"<p>With Surphanaka driven away, the forest grows quiet once more. For a brief moment, it seems your troubles have passed.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(19)'>Continue</button>"+"</div>";
-}else if(currentScene===11){storyCard.innerHTML="<h2>Negotiate with Surphanaka</h2>"+"<p>You try to calm Surphanaka with reason, hoping to avoid violence. For a moment she listens, but her anger burns fiercely.</p>"+"<p>Do you try one last peaceful appeal, or prepare to fight?</p>"+"<div id='choices'>"+"<button onclick='makeChoice(15)'>Try again</button>"+"<button onclick='makeChoice(9)'>Prepare to fight</button>"+"</div>";
-}else if(currentScene===12){storyCard.innerHTML="<h2>Accept Surphanaka's Proposal</h2>"+"<p>You accept Surphanaka's proposal and choose to stand by her side. Word of this shocking alliance quickly spreads across the land.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(16)'>Meet Ravana</button>"+"</div>";
-}else if(currentScene===13){storyCard.innerHTML="<h2>Reject Surphanaka's Proposal</h2>"+"<p>You reject Surphanaka firmly. She is enraged by the insult and prepares to attack.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(9)'>Fight Surphanaka</button>"+"</div>";
-}else if(currentScene===14){storyCard.innerHTML="<h2>Victory</h2>"+"<p>You defeat Surphanaka, and she flees in disgrace. At last, you, Sita, and Lakshmana are free from her schemes.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(19)'>Continue</button>"+"</div>";
-}else if(currentScene===52){storyCard.innerHTML="<h2>Peaceful Ending</h2>"+"<p>You defeat Surphanaka while traveling alone, and her threat finally comes to an end.</p>"+"<p>Later, when the time comes to return, you refuse to go back to Ayodhya. Instead, you stay where you have found peace and live happily ever after.</p>"+"<div id='choices'>"+"<button onclick='restart()'>Restart</button>"+"</div>";
-}else if(currentScene===15){storyCard.innerHTML="<h2>Negotiation Fails</h2>"+"<p>Your final attempt at peace fails. Surphanaka's fury grows, and you realize battle can no longer be avoided.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(9)'>Fight Surphanaka</button>"+"</div>";
-}else if(currentScene===16){storyCard.innerHTML="<h2>Meeting Ravana</h2>"+"<p>Surphanaka brings you before her brother, Ravana, the mighty king of Lanka. Rather than treating you as an enemy, he welcomes your ambition and darkness.</p>"+"<p>Ravana offers you power, a throne, and a new future beside Surphanaka.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(17)'>Claim the throne</button>"+"</div>";
-}else if(currentScene===17){storyCard.innerHTML="<h2>Evil King Ending</h2>"+"<p>You accept Ravana's offer, marry Surphanaka, and rise as an evil king. Together, you rule with fear, power, and strange happiness for the rest of your days.</p>"+"<p>In this ending, your adventure does not end in honor, but in a dark happily ever after.</p>"+"<div id='choices'>"+"<button onclick='restart()'>Restart</button>"+"</div>";
-}else if(currentScene===18){storyCard.innerHTML="<h2>Game Over</h2>"+"<p>You fought bravely, but Surphanaka proved too powerful. Your journey ends here.</p>"+"<div id='choices'>"+"<button onclick='restart()'>Restart</button>"+"</div>";
-}else if(currentScene===19){storyCard.innerHTML="<h2>The Golden Deer</h2>"+"<p>Days later, while traveling with Sita and Lakshmana, you spot a beautiful golden deer shimmering between the trees. Its coat glows like sunlight, and Sita is immediately enchanted by it.</p>"+"<p>She asks you to catch it for her, but Lakshmana warns that such a creature may be a trick. Unknown to you, the golden deer is actually the demon Maricha in disguise.</p>"+"<p>What do you do?</p>"+"<div id='choices'>"+"<button onclick='makeChoice(20)'>Chase the deer</button>"+"<button onclick='makeChoice(21)'>Ignore it</button>"+"</div>";
-}else if(currentScene===20){storyCard.innerHTML="<h2>Bring Lakshmana?</h2>"+"<p>Sita pleads with you to catch the deer. Lakshmana still does not trust it and offers to come with you if you want help.</p>"+"<p>Do you bring Lakshmana with you?</p>"+"<div id='choices'>"+"<button onclick='makeChoice(22)'>Yes, bring Lakshmana</button>"+"<button onclick='makeChoice(23)'>No, leave him with Sita</button>"+"</div>";
-}else if(currentScene===21){storyCard.innerHTML="<h2>You Ignore the Deer</h2>"+"<p>You decide not to trust the strange creature. Staying with Sita and Lakshmana keeps your family safe, and the golden deer vanishes back into the forest.</p>"+"<p>The danger passes, and this path of the story comes to an end.</p>"+"<div id='choices'>"+"<button onclick='restart()'>Restart</button>"+"</div>";
-}else if(currentScene===22){storyCard.innerHTML="<h2>Find the Deer</h2>"+"<p>You and Lakshmana track the golden deer deeper into the forest, while Sita remains behind at the hut. The creature keeps just out of reach, always glittering between the trees.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(24)'>Keep following it</button>"+"</div>";
-}else if(currentScene===23){storyCard.innerHTML="<h2>Find the Deer</h2>"+"<p>You leave Lakshmana behind to guard Sita and track the golden deer alone. The creature leads you farther and farther from the hut, never seeming to tire.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(24)'>Keep following it</button>"+"</div>";
-}else if(currentScene===24){storyCard.innerHTML="<h2>Shoot the Deer</h2>"+"<p>At last, you loose an arrow and strike the golden deer. As it falls, its shining body twists and changes. Before you lies Maricha, the demon who had taken the deer's form.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(25)'>Continue</button>"+"</div>";
-}else if(currentScene===25){storyCard.innerHTML="<h2>Maricha's Last Cry</h2>"+"<p>With his dying breath, Maricha cries out in a voice that sounds just like yours. The sound rushes back through the forest toward Sita and Lakshmana.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(26)'>Continue</button>"+"</div>";
-}else if(currentScene===26){storyCard.innerHTML="<h2>Ravana Sees His Chance</h2>"+"<p>Because Lakshmana came with you, Sita is left alone at the hut. Ravana wastes no time. Disguised as a holy man, he approaches her with false humility before revealing his true form.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(27)'>Continue</button>"+"</div>";
-}else if(currentScene===27){storyCard.innerHTML="<h2>Lakshmana Draws the Line</h2>"+"<p>Hearing Maricha's false cry, Sita begs Lakshmana to go after you. Before leaving, Lakshmana draws a protective line around the hut and warns her not to step outside it for any reason.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(28)'>Continue</button>"+"</div>";
-}else if(currentScene===28){storyCard.innerHTML="<h2>Ravana's Trick</h2>"+"<p>Ravana arrives disguised as a wandering holy man and asks Sita for alms. Bound by duty and compassion, she is torn between Lakshmana's warning and the request of a guest.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(29)'>See what happens</button>"+"</div>";
-}else if(currentScene===29){storyCard.innerHTML="<h2>The Abduction of Sita</h2>"+"<p>Ravana reveals his true form, seizes Sita, and lifts her into his flying chariot. He rises above the forest with her as she cries out for help.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(30)'>Continue</button>"+"</div>";
-}else if(currentScene===30){storyCard.innerHTML="<h2>Jatayu Sees Ravana</h2>"+"<p>Jatayu, the aged vulture king, sees Ravana carrying Sita away through the sky. He knows he may be too old for battle, but he cannot ignore her cries.</p>"+"<p>What does Jatayu do?</p>"+"<div id='choices'>"+"<button onclick='makeChoice(31)'>Do nothing</button>"+"<button onclick='makeChoice(32)'>Try to rescue Sita</button>"+"</div>";
-}else if(currentScene===31){storyCard.innerHTML="<h2>Sita is Taken</h2>"+"<p>Jatayu does not intervene. Ravana escapes with Sita, and when you return, your exile has become a desperate rescue mission.</p>"+"<p>You and Lakshmana immediately begin searching the forest for signs of where she was taken.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(65)'>Keep searching</button>"+"</div>";
-}else if(currentScene===32){storyCard.innerHTML="<h2>Jatayu's Rescue Attempt</h2>"+"<p>Jatayu launches himself into the sky to stop Ravana. He fights bravely, but fate will decide if he can save Sita.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(51)'>See what happens</button>"+"</div>";
-}else if(currentScene===48){storyCard.innerHTML="<h2>Jatayu's Rescue Attempt</h2>"+"<p>Jatayu keeps fighting in the sky. Answer the second question:</p>"+"<p><strong>What is the name of the island kingdom ruled by Ravana?</strong></p>"+"<div id='choices'>"+"<button onclick='makeChoice(49)'>Lanka</button>"+"<button onclick='makeChoice(34)'>Ayodhya</button>"+"<button onclick='makeChoice(35)'>Mithila</button>"+"</div>";
-}else if(currentScene===49){storyCard.innerHTML="<h2>Jatayu's Rescue Attempt</h2>"+"<p>Jatayu is almost there. Answer the final question:</p>"+"<p><strong>Who is Rama's loyal brother traveling with him in the forest?</strong></p>"+"<div id='choices'>"+"<button onclick='makeChoice(33)'>Lakshmana</button>"+"<button onclick='makeChoice(34)'>Bharata</button>"+"<button onclick='makeChoice(35)'>Vali</button>"+"</div>";
-}else if(currentScene===50){storyCard.innerHTML="<h2>Jatayu's Final Struggle</h2>"+"<p>You answered all three questions correctly, but the battle is still dangerous. Jatayu makes one final desperate attack against Ravana in the sky.</p>"+"<p>Fate will now decide whether he wins or falls.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(51)'>See what happens</button>"+"</div>";
-}else if(currentScene===33){storyCard.innerHTML="<h2>Jatayu Rescues Sita</h2>"+"<p>Your answer gives Jatayu the strength he needs. He slashes Ravana's chariot apart, forces it down into the forest, and rescues Sita before Ravana can flee.</p>"+"<p>Jatayu returns Sita safely to you, but Ravana is still nearby among the wreckage of the shattered chariot.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(36)'>Go after Ravana</button>"+"</div>";
-}else if(currentScene===34){storyCard.innerHTML="<h2>Jatayu Falls</h2>"+"<p>Jatayu attacks bravely, but without enough strength behind him, Ravana strikes him down. Sita is still carried away into the distance.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(37)'>Continue</button>"+"</div>";
-}else if(currentScene===35){storyCard.innerHTML="<h2>Jatayu Falls</h2>"+"<p>Jatayu fights with all his courage, but Ravana defeats him. Sita remains in Ravana's grasp, and the journey must continue without her.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(37)'>Continue</button>"+"</div>";
-}else if(currentScene===36){storyCard.innerHTML="<h2>Fight Ravana in the Forest</h2>"+"<p>You race to the forest where Jatayu shattered Ravana's chariot. There, among broken wheels and torn banners, you confront Ravana before he can escape.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(38)'>Fight Ravana</button>"+"</div>";
-}else if(currentScene===37){storyCard.innerHTML="<h2>Sita is Taken</h2>"+"<p>Jatayu's bravery could not stop Ravana. When you return, you learn that Sita has been taken, and your exile becomes a rescue mission.</p>"+"<p>You and Lakshmana begin searching at once, following broken branches and tracks through the woods.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(65)'>Keep searching</button>"+"</div>";
-}else if(currentScene===65){storyCard.innerHTML="<h2>Searching for Sita</h2>"+"<p>You search through groves, riverbanks, and rocky trails for any clue of Sita's path. As the day fades, you decide to return to your forest home to regroup.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(66)'>Return to the hut</button>"+"</div>";
-}else if(currentScene===66){storyCard.innerHTML="<h2>Bharata at the Hut</h2>"+"<p>When you return, Bharata is waiting. He falls at your feet and pleads for you to return to Ayodhya and take the throne.</p>"+"<p>Do you accept Bharata's plea or continue your exile and rescue mission?</p>"+"<div id='choices'>"+"<button onclick='makeChoice(67)'>Accept and return</button>"+"<button onclick='makeChoice(68)'>Decline and continue exile</button>"+"</div>";
-}else if(currentScene===67){storyCard.innerHTML="<h2>Ayodhya Return Ending</h2>"+"<p>You accept Bharata's plea and return to Ayodhya before your exile vow is complete. Court rivals see your return as a threat, and you are killed in a palace conspiracy.</p>"+"<p>Your story ends in Ayodhya before Sita can be rescued.</p>"+"<div id='choices'>"+"<button onclick='restart()'>Restart</button>"+"</div>";
-}else if(currentScene===68){storyCard.innerHTML="<h2>The Sandals Promise</h2>"+"<p>You refuse to return early and place your sandals in Bharata's hands. Bharata vows, \"I am not king. You are king, and I will rule only as your servant until you return.\"</p>"+"<p>With your vow intact, you continue the search and soon cross paths with Sugriva.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(40)'>Continue to Sugriva</button>"+"</div>";
-}else if(currentScene===38){storyCard.innerHTML="<h2>Forest Duel Ending</h2>"+"<p>You meet Ravana in the forest beside the wreck of his broken chariot and battle him face to face. Though the clash shakes the forest, Sita is safe by your side once more.</p>"+"<p>This path ends with a hard-won victory and the promise of new dangers ahead.</p>"+"<div id='choices'>"+"<button onclick='restart()'>Restart</button>"+"</div>";
-}else if(currentScene===39){storyCard.innerHTML="<h2>Lakshmana Saves Sita</h2>"+"<p>As Ravana moves to seize Sita, Lakshmana returns in time to intervene. Ravana is forced to retreat, and Sita remains safe within the protection of the line.</p>"+"<p>This path ends with danger avoided, at least for now.</p>"+"<div id='choices'>"+"<button onclick='restart()'>Restart</button>"+"</div>";
-}else if(currentScene===40){storyCard.innerHTML="<h2>Meeting Sugriva</h2>"+"<p>As you and Lakshmana search for Sita, you come upon Sugriva, a vanara prince hiding in fear. He has been driven from his home by his powerful brother, Vali.</p>"+"<p>Sugriva offers friendship and help in your search if you will help him in return.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(97)'>Inspect the cave mural nearby</button>"+"<button onclick='makeChoice(41)'>Hear Sugriva's request</button>"+"</div>";
-}else if(currentScene===97){storyCard.innerHTML="<h2>Artifact Found: Kishkindha Cave Mural Tablet</h2>"+"<p>Painted stone scenes show vanara heroes leaping impossible distances in service of dharma. The art predates your arrival, as if awaiting Hanuman's future deed.</p>"+"<p><em>Extra Lore:</em> Regional oral retellings often include cave murals as memory archives for vanara clans.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(41)'>Return to Sugriva's request</button>"+"</div>";
-}else if(currentScene===41){storyCard.innerHTML="<h2>Sugriva's Plea</h2>"+"<p>Sugriva tells you that Vali stole his wife and seized his place. He begs you to help him defeat Vali so he can reclaim what was taken from him.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(42)'>Consider his plan</button>"+"</div>";
-}else if(currentScene===42){storyCard.innerHTML="<h2>Your Exile Vow</h2>"+"<p>You remind Sugriva that during your exile you swore not to enter any city. Because of that vow, you cannot march into Vali's stronghold yourself.</p>"+"<p>Instead, you convince Sugriva to lure Vali out and fight him where you can take the shot from the forest.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(43)'>Set the trap</button>"+"</div>";
-}else if(currentScene===43){storyCard.innerHTML="<h2>Sugriva Challenges Vali</h2>"+"<p>Sugriva roars a challenge, and Vali rushes out to fight him. The brothers clash with such speed and force that the whole forest trembles.</p>"+"<p>To strike true, answer this question correctly:</p>"+"<p><strong>What did Vali steal from Sugriva?</strong></p>"+"<div id='choices'>"+"<button onclick='makeChoice(44)'>Sugriva's wife</button>"+"<button onclick='makeChoice(45)'>Sugriva's bow</button>"+"<button onclick='makeChoice(46)'>Sugriva's horse</button>"+"</div>";
-}else if(currentScene===44){storyCard.innerHTML="<h2>Vali Falls</h2>"+"<p>Your answer steadies your hand. You loose your arrow at the perfect moment, and it strikes Vali down. Sugriva is finally freed from his brother's power.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(47)'>Meet Sugriva's ally</button>"+"</div>";
-}else if(currentScene===45){storyCard.innerHTML="<h2>You Miss the Moment</h2>"+"<p>Your aim wavers, and the shot is lost. Vali realizes something is wrong, and Sugriva is forced to retreat before the plan succeeds.</p>"+"<div id='choices'>"+"<button onclick='restart()'>Restart</button>"+"</div>";
-}else if(currentScene===46){storyCard.innerHTML="<h2>You Miss the Moment</h2>"+"<p>You hesitate for too long, and Vali gains the advantage. Sugriva barely escapes, and this attempt to help him fails.</p>"+"<div id='choices'>"+"<button onclick='restart()'>Restart</button>"+"</div>";
-}else if(currentScene===47){storyCard.innerHTML="<h2>Meeting Hanuman</h2>"+"<p>Grateful for your help, Sugriva brings forward his wisest and most loyal companion: Hanuman. Hanuman bows before you and offers his strength in the search for Sita.</p>"+"<p>The war-camp is now focused only on the main rescue campaign.</p>"+"<div id='choices'>"+"<button onclick='makeChoice(76)'>Return to Main Story</button>"+"</div>";}else if(currentScene===53){storyCard.innerHTML="<h1>The Rescue Begins</h1>"+"<h2>The Rescue Begins</h2>"+"<p>You cannot undo anything from here on.</p>"+"<div id='choices'>"+"<button onclick='makeDecision(2)'>Begin The Rescue</button>"+"</div>";
-}else if(currentScene===54){storyCard.innerHTML="<h2>War Council</h2>"+"<p>The rescue campaign enters its strategic phase. Messengers arrive with sketches of cliff routes, tidal windows, and guard rotations along Lanka's perimeter.</p>"+"<p>Hanuman asks for patience: one more focused mission could convert scattered clues into war-grade intelligence.</p>"+"<h3>Part 2: The Lanka War - Coming Soon!</h3>"+"<div id='choices'>"+"<button onclick='restart()'>Restart</button>"+"</div>";
+console.log("Update 2");
+
+var scenes = {
+  1: {
+    title: "The Ramayana Adventure: The Banwas",
+    text: [
+      "Welcome, {{name}}!",
+      "You are a brave warrior in ancient India from the Kingdom of Ayodhya. You are soon to be crowned ruler, as your father, King Dasharatha, is getting old.",
+      "One of your father's wives, Kaikeyi, demands that her own son, your younger brother Bharata, be crowned instead. Your father is left with no choice but to exile you from the kingdom.",
+      "As part of your exile, you swear that you will live apart from royal comfort and will not enter any city until your exile ends."
+    ],
+    choices: [
+      { label: "Argue back", next: 3 },
+      { label: "Accept the exile", next: 4 }
+    ]
+  },
+  3: {
+    title: "You choose to argue back.",
+    text: [
+      "Dasharatha is moved by your words and begins to argue with Kaikeyi. Though he is heartbroken, he is ultimately unable to resist her demands because of an old promise.",
+      "You are left with no choice but to continue into exile."
+    ],
+    choices: [{ label: "Continue", next: 4 }]
+  },
+  4: {
+    title: "You choose to accept the exile.",
+    text: [
+      "You prepare to leave, bound by your exile and your vow not to enter any city until it is over.",
+      "Your brother Lakshmana and your wife Sita insist on going with you."
+    ],
+    choices: [
+      { label: "Go alone", next: 5, onPick: function () { wentAlone = true; } },
+      { label: "Go with them", next: 6, onPick: function () { wentAlone = false; } }
+    ]
+  },
+  5: {
+    title: "You choose to go alone.",
+    text: ["You set out alone, carrying the burden of exile by yourself."],
+    choices: [{ label: "Continue", next: 8 }]
+  },
+  6: {
+    title: "You choose to go with them.",
+    text: ["You, Lakshmana, and Sita journey together through the forests."],
+    choices: [{ label: "Continue", next: 7 }]
+  },
+  7: {
+    title: "Surphanaka's Encounter",
+    text: [
+      "A demoness named Surphanaka appears and threatens Sita after being rejected.",
+      "What do you do?"
+    ],
+    choices: [
+      { label: "Fight Surphanaka", next: 9 },
+      { label: "Protect Sita", next: 10 },
+      { label: "Negotiate", next: 11 },
+      { label: "Accept the marriage", next: 12 }
+    ]
+  },
+  8: {
+    title: "Surphanaka's Encounter",
+    text: ["Surphanaka proposes to you. Do you accept or reject?"],
+    choices: [
+      { label: "Accept", next: 12 },
+      { label: "Reject", next: 13 }
+    ]
+  },
+  9: {
+    title: "Fight Surphanaka",
+    text: ["You battle Surphanaka. Fate decides the outcome."],
+    choices: [{ label: "Fight", next: -1 }]
+  },
+  10: {
+    title: "Protect Sita",
+    text: ["You and Lakshmana force Surphanaka to retreat."],
+    choices: [{ label: "Continue", next: 19 }]
+  },
+  11: {
+    title: "Negotiate with Surphanaka",
+    text: ["You attempt peace, but tension remains."],
+    choices: [
+      { label: "Try again", next: 15 },
+      { label: "Prepare to fight", next: 9 }
+    ]
+  },
+  12: {
+    title: "Accept Surphanaka's Proposal",
+    text: ["You accept and are brought before Ravana."],
+    choices: [{ label: "Meet Ravana", next: 16 }]
+  },
+  13: {
+    title: "Reject Surphanaka's Proposal",
+    text: ["She is enraged and prepares to attack."],
+    choices: [{ label: "Fight Surphanaka", next: 9 }]
+  },
+  14: {
+    title: "Victory",
+    text: ["You defeat Surphanaka and continue onward."],
+    choices: [{ label: "Continue", next: 19 }]
+  },
+  15: {
+    title: "Negotiation Fails",
+    text: ["Your final attempt at peace fails."],
+    choices: [{ label: "Fight Surphanaka", next: 9 }]
+  },
+  16: {
+    title: "Meeting Ravana",
+    text: ["Ravana offers you power and a throne."],
+    choices: [{ label: "Claim the throne", next: 17 }]
+  },
+  17: {
+    title: "Evil King Ending",
+    text: ["You accept Ravana's offer and rule beside Surphanaka."],
+    choices: [{ label: "Restart", restart: true }]
+  },
+  18: {
+    title: "Game Over",
+    text: ["You fought bravely, but your journey ends here."],
+    choices: [{ label: "Restart", restart: true }]
+  },
+  19: {
+    title: "The Golden Deer",
+    text: ["Sita asks you to chase a mysterious golden deer."],
+    choices: [
+      { label: "Chase the deer", next: 20 },
+      { label: "Ignore it", next: 21 }
+    ]
+  },
+  20: {
+    title: "Bring Lakshmana?",
+    text: ["Lakshmana offers to come with you."],
+    choices: [
+      { label: "Yes, bring Lakshmana", next: 22, onPick: function () { broughtLakshmana = true; } },
+      { label: "No, leave him with Sita", next: 23, onPick: function () { broughtLakshmana = false; } }
+    ]
+  },
+  21: {
+    title: "You Ignore the Deer",
+    text: ["You stay together and danger passes for now."],
+    choices: [{ label: "Restart", restart: true }]
+  },
+  22: {
+    title: "Find the Deer",
+    text: ["You and Lakshmana track the deer deeper into the forest."],
+    choices: [{ label: "Keep following it", next: 24 }]
+  },
+  23: {
+    title: "Find the Deer",
+    text: ["You track the deer alone."],
+    choices: [{ label: "Keep following it", next: 24 }]
+  },
+  24: {
+    title: "Shoot the Deer",
+    text: ["The golden deer is revealed as Maricha."],
+    choices: [{ label: "Continue", next: 25 }]
+  },
+  25: {
+    title: "Maricha's Last Cry",
+    text: ["His final cry sounds like your voice."],
+    choices: [{ label: "Continue", next: 26 }]
+  },
+  26: {
+    title: "Ravana Sees His Chance",
+    text: ["Ravana approaches Sita in disguise."],
+    choices: [{ label: "Continue", next: 29 }]
+  },
+  27: {
+    title: "Lakshmana Draws the Line",
+    text: ["Lakshmana leaves a protective warning around the hut."],
+    choices: [{ label: "Continue", next: 28 }]
+  },
+  28: {
+    title: "Ravana's Trick",
+    text: ["Sita is torn between caution and duty to a guest."],
+    choices: [{ label: "See what happens", next: -2 }]
+  },
+  29: {
+    title: "The Abduction of Sita",
+    text: ["Ravana reveals his true form and abducts Sita."],
+    choices: [{ label: "Continue", next: 30 }]
+  },
+  30: {
+    title: "Jatayu Sees Ravana",
+    text: ["Jatayu must decide whether to intervene."],
+    choices: [
+      { label: "Do nothing", next: 31 },
+      { label: "Try to rescue Sita", next: 32 }
+    ]
+  },
+  31: {
+    title: "Sita is Taken",
+    text: ["Ravana escapes and your rescue mission begins."],
+    choices: [{ label: "Keep searching", next: 65 }]
+  },
+  32: {
+    title: "Jatayu's Rescue Attempt",
+    text: ["Jatayu fights bravely in the sky."],
+    choices: [{ label: "See what happens", next: -3 }]
+  },
+  33: {
+    title: "Jatayu Rescues Sita",
+    text: ["Jatayu saves Sita and Ravana crashes nearby."],
+    choices: [{ label: "Go after Ravana", next: 36 }]
+  },
+  34: {
+    title: "Jatayu Falls",
+    text: ["Jatayu is struck down and Sita is still taken."],
+    choices: [{ label: "Continue", next: 37 }]
+  },
+  36: {
+    title: "Fight Ravana in the Forest",
+    text: ["You confront Ravana beside his shattered chariot."],
+    choices: [{ label: "Fight Ravana", next: 38 }]
+  },
+  37: {
+    title: "Sita is Taken",
+    text: ["You and Lakshmana begin searching at once."],
+    choices: [{ label: "Keep searching", next: 65 }]
+  },
+  38: {
+    title: "Forest Duel Ending",
+    text: ["You win a hard-fought battle and protect Sita."],
+    choices: [{ label: "Restart", restart: true }]
+  },
+  39: {
+    title: "Lakshmana Saves Sita",
+    text: ["Ravana retreats and Sita remains safe."],
+    choices: [{ label: "Restart", restart: true }]
+  },
+  40: {
+    title: "Meeting Sugriva",
+    text: ["Sugriva asks for your help against Vali."],
+    choices: [{ label: "Hear Sugriva's request", next: 41 }]
+  },
+  41: {
+    title: "Sugriva's Plea",
+    text: ["Sugriva asks you to help defeat Vali."],
+    choices: [{ label: "Consider his plan", next: 42 }]
+  },
+  42: {
+    title: "Your Exile Vow",
+    text: ["You set a trap to face Vali outside the city."],
+    choices: [{ label: "Set the trap", next: 43 }]
+  },
+  43: {
+    title: "Sugriva Challenges Vali",
+    text: ["Answer correctly to take the shot."],
+    choices: [
+      { label: "Sugriva's wife", next: 44 },
+      { label: "Sugriva's bow", next: 45 },
+      { label: "Sugriva's horse", next: 46 }
+    ]
+  },
+  44: {
+    title: "Vali Falls",
+    text: ["Your arrow strikes true and Sugriva is freed."],
+    choices: [{ label: "Meet Sugriva's ally", next: 47 }]
+  },
+  45: {
+    title: "You Miss the Moment",
+    text: ["The plan fails."],
+    choices: [{ label: "Restart", restart: true }]
+  },
+  46: {
+    title: "You Miss the Moment",
+    text: ["Sugriva retreats and the attempt fails."],
+    choices: [{ label: "Restart", restart: true }]
+  },
+  47: {
+    title: "Meeting Hanuman",
+    text: ["Hanuman joins the rescue effort."],
+    choices: [{ label: "Go to War Council", next: 54 }]
+  },
+  52: {
+    title: "Peaceful Ending",
+    text: ["Traveling alone, you defeat Surphanaka and live in peace."],
+    choices: [{ label: "Restart", restart: true }]
+  },
+  54: {
+    title: "War Council",
+    text: [
+      "The rescue campaign enters its strategic phase with routes, tides, and defenses mapped.",
+      "Part 2: The Lanka War — Coming Soon!"
+    ],
+    choices: [{ label: "Restart", restart: true }]
+  },
+  65: {
+    title: "Searching for Sita",
+    text: ["You search for clues and return to regroup."],
+    choices: [{ label: "Return to the hut", next: 66 }]
+  },
+  66: {
+    title: "Bharata at the Hut",
+    text: ["Bharata asks you to return to Ayodhya."],
+    choices: [
+      { label: "Accept and return", next: 67 },
+      { label: "Decline and continue exile", next: 68 }
+    ]
+  },
+  67: {
+    title: "Ayodhya Return Ending",
+    text: ["You return early and your story ends in palace intrigue."],
+    choices: [{ label: "Restart", restart: true }]
+  },
+  68: {
+    title: "The Sandals Promise",
+    text: ["You uphold your vow and continue the rescue mission."],
+    choices: [{ label: "Continue to Sugriva", next: 40 }]
+  }
+};
+
+function randomPercent() {
+  return Math.floor(Math.random() * 100);
 }
-}function makeChoice(choice){var previousScene=currentScene;function makeChoice(choice){var previousScene=currentScene;
-var selectedButton;
-var choices=document.querySelectorAll("#storyCard #choices button");
-var i;
-if(!guardSequentialSceneOrder()){return;
-}for(i=0;
-i<choices.length;
-i++){if(choices[i].getAttribute("onclick")==="makeChoice("+choice+")"){selectedButton=choices[i];
-break;
-}}if(selectedButton){addChoiceToReceipt(selectedButton.textContent.trim());
-}saveOldState();
-if(currentScene===1||currentScene===2){if(choice===3){currentScene=3;
-}else if(choice===4){currentScene=4;
-}}else if(currentScene===3){if(choice===4){currentScene=4;
-}}else if(currentScene===4){if(choice===5){wentAlone=true;
-currentScene=5;
-}else if(choice===6){wentAlone=false;
-currentScene=6;
-}}else if(currentScene===5){if(choice===8){currentScene=8;
-}}else if(currentScene===6){if(choice===8){currentScene=7;
-}}else if(currentScene===7){if(choice===12){currentScene=12;
-}else if(choice===9){currentScene=9;
-}else if(choice===10){currentScene=10;
-}else if(choice===11){currentScene=11;
-}}else if(currentScene===8){if(choice===12){currentScene=12;
-}else if(choice===13){currentScene=13;
-}}else if(currentScene===9){if(choice===14){if(randomizer()<getChallengeOdds("fight")){if(wentAlone){currentScene=52;
-}else{currentScene=14;
-}}else{currentScene=18;
-}}}else if(currentScene===11){if(choice===15){currentScene=15;
-}else if(choice===9){currentScene=98;
-}}else if(currentScene===10||currentScene===14){if(choice===19){currentScene=19;
-}}else if(currentScene===12){if(choice===16){currentScene=16;
-}}else if(currentScene===13){if(choice===9){currentScene=9;
-}}else if(currentScene===16){if(choice===17){currentScene=17;
-}}else if(currentScene===19){if(choice===95){currentScene=95;
-}else if(choice===20){currentScene=20;
-broughtLakshmana=false;
-}else if(choice===21){currentScene=21;
-}}else if(currentScene===95){if(choice===20){currentScene=20;
-broughtLakshmana=false;
-}else if(choice===21){currentScene=21;
-}}else if(currentScene===20){if(choice===22){currentScene=22;
-broughtLakshmana=true;
-}else if(choice===23){currentScene=23;
-broughtLakshmana=false;
-}}else if(currentScene===22||currentScene===23){if(choice===24){currentScene=24;
-}}else if(currentScene===24){if(choice===25){currentScene=25;
-}}else if(currentScene===25){if(choice===26){if(broughtLakshmana){currentScene=26;
-}else{currentScene=27;
-}}}else if(currentScene===26){if(choice===27){currentScene=29;
-}}else if(currentScene===27){if(choice===28){currentScene=28;
-}}else if(currentScene===28){if(choice===29){if(randomizer()<50){currentScene=29;
-}else{currentScene=39;
-}}}else if(currentScene===29){if(choice===30){currentScene=30;
-}}else if(currentScene===30){if(choice===96){addArtifact("Jatayu's Wind-Sworn Plume");
-currentScene=96;
-}else if(choice===31){currentScene=31;
-}else if(choice===32){currentScene=32;
-}}else if(currentScene===96){if(choice===31){currentScene=31;
-}else if(choice===32){currentScene=32;
-}}else if(currentScene===32){if(choice===48){currentScene=48;
-}else if(choice===34){currentScene=34;
-}else if(choice===35){currentScene=35;
-}}else if(currentScene===48){if(choice===49){currentScene=49;
-}else if(choice===34){currentScene=34;
-}else if(choice===35){currentScene=35;
-}}else if(currentScene===49){if(choice===33){currentScene=50;
-}else if(choice===34){currentScene=34;
-}else if(choice===35){currentScene=35;
-}}else if(currentScene===50){if(choice===51){if(randomizer()>=90){currentScene=33;
-}else{currentScene=34;
-}}}else if(currentScene===33){if(choice===36){currentScene=36;
-}}else if(currentScene===34||currentScene===35){if(choice===37){currentScene=37;
-}}else if(currentScene===31||currentScene===37){if(choice===65){currentScene=65;
-}}else if(currentScene===65){if(choice===66){currentScene=66;
-}}else if(currentScene===66){if(choice===67){currentScene=67;
-}else if(choice===68){currentScene=68;
-}}else if(currentScene===36){if(choice===38){currentScene=38;
-}}else if(currentScene===68){if(choice===40){currentScene=40;
-}}else if(currentScene===40){if(choice===97){currentScene=97;
-}else if(choice===41){currentScene=41;
-}}else if(currentScene===97){if(choice===41){currentScene=41;
-}}else if(currentScene===41){if(choice===42){currentScene=42;
-}}else if(currentScene===42){if(choice===43){currentScene=43;
-}}else if(currentScene===43){if(choice===44){currentScene=44;
-}else if(choice===45){currentScene=45;
-}else if(choice===46){currentScene=46;
-}}else if(currentScene===44){if(choice===47){currentScene=47;
-}}else if(currentScene===47){if(choice===76){currentScene=53;
-}}else if(currentScene===54){if(choice===47){currentScene=47;
-}}else if(currentScene===98){if(choice===140){if(randomizer()<clampOdds(getChallengeOdds("fight")+8)){currentScene=14;
-}else{currentScene=18;
-}}}finishSceneDecision(previousScene);
-}function makeDecision(decision){var previousScene=currentScene;
-if(!guardSequentialSceneOrder()){return;
-}if(decision===1){currentScene=53;
-}else if(currentScene===53&&decision===2){currentScene=54;
-}else if(currentScene===54&&(decision===3||decision===55)){currentScene=55;
-}else if(currentScene===55){if(decision===56){currentScene=56;
-}else if(decision===57){currentScene=57;
-}}else if(currentScene===56&&decision===58){currentScene=58;
-}else if(currentScene===57&&decision===59){currentScene=59;
-}else if(currentScene===58&&decision===60){currentScene=60;
-}else if(currentScene===59){if(decision===60){currentScene=60;
-}else if(decision===62){currentScene=62;
-}}else if(currentScene===60){if(decision===61){currentScene=61;
-}else if(decision===63){currentScene=63;
-}}else if((currentScene===61||currentScene===62)&&decision===63){currentScene=63;
-}else if(currentScene===63){if(decision===64){currentScene=64;
-}else if(decision===69){currentScene=69;
-}}else if(currentScene===64&&decision===69){currentScene=69;
-}else if(currentScene===69){if(decision===70){currentScene=70;
-}else if(decision===71){currentScene=71;
-}}else if(currentScene===71&&decision===70){currentScene=70;
-}else if(currentScene===70){if(decision===72){currentScene=72;
-}else if(decision===73){currentScene=73;
-}}else if((currentScene===72||currentScene===73)&&decision===74){currentScene=74;
-}else if(currentScene===74){if(decision===75){currentScene=75;
-}else if(decision===84){currentScene=84;
-}}else if(currentScene===75){if(decision===77){currentScene=77;
-}else if(decision===78){currentScene=78;
-}}else if((currentScene===77||currentScene===78)&&decision===79){currentScene=79;
-}else if(currentScene===79){if(decision===80){currentScene=80;
-}else if(decision===81){currentScene=81;
-}}else if((currentScene===80||currentScene===81)&&decision===82){currentScene=82;
-}else if(currentScene===82){if(decision===83){currentScene=83;
-}else if(decision===84){currentScene=84;
-}}else if(currentScene===83&&decision===84){currentScene=84;
-}else if(currentScene===84){if(decision===85){currentScene=85;
-}else if(decision===86){currentScene=86;
-}}else if((currentScene===85||currentScene===86)&&decision===87){currentScene=87;
-}else if(currentScene===87){if(decision===88){currentScene=88;
-}else if(decision===89){currentScene=89;
-}}else if((currentScene===88||currentScene===89)&&decision===90){currentScene=90;
-}else if(currentScene===90){if(decision===91){currentScene=91;
-}else if(decision===92){currentScene=92;
-}}else if((currentScene===91||currentScene===92)&&decision===93){currentScene=93;
-}else if(currentScene===93){if(decision===94){currentScene=94;
-}else if(decision===99){currentScene=99;
-}}else if((currentScene===94||currentScene===99)&&decision===100){currentScene=100;
-}else if(currentScene===100){if(decision===101){currentScene=101;
-}else if(decision===102){currentScene=102;
-}}else if(currentScene===102&&decision===101){currentScene=101;
-}finishSceneDecision(previousScene);
-}}
+
+function clearStoryCard() {
+  var storyCard = document.getElementById("storyCard");
+  if (storyCard) {
+    storyCard.innerHTML = "<div id='choices'></div>";
+  }
+}
+
+function restart() {
+  currentScene = 0;
+  broughtLakshmana = false;
+  wentAlone = false;
+  historyStack = [];
+  clearStoryCard();
+  updateUndoButton();
+}
+
+function startAdventure() {
+  var input = document.getElementById("playerName");
+  playerName = input ? input.value.trim() : "";
+  if (!playerName) {
+    playerName = "Traveler";
+  }
+  historyStack = [];
+  currentScene = 1;
+  showScene();
+  updateUndoButton();
+}
+
+function resolveSpecialNext(next) {
+  if (next === -1) {
+    if (randomPercent() < 65) {
+      return wentAlone ? 52 : 14;
+    }
+    return 18;
+  }
+
+  if (next === -2) {
+    return randomPercent() < 50 ? 29 : 39;
+  }
+
+  if (next === -3) {
+    return randomPercent() < 15 ? 33 : 34;
+  }
+
+  return next;
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function showScene() {
+  var storyCard = document.getElementById("storyCard");
+  if (!storyCard || !scenes[currentScene]) {
+    return;
+  }
+
+  var scene = scenes[currentScene];
+  var sceneTitle = escapeHtml(scene.title);
+  var html = "<div id='storyCardToolbar'><button id='undoButton' type='button' onclick='undoLastChoice()'>Undo</button></div>";
+
+  if (currentScene === 1) {
+    html += "<h1>" + sceneTitle + "</h1>";
+  } else {
+    html += "<h2>" + sceneTitle + "</h2>";
+  }
+
+  scene.text.forEach(function (paragraph) {
+    var text = paragraph.replace("{{name}}", escapeHtml(playerName));
+    html += "<p>" + escapeHtml(text) + "</p>";
+  });
+
+  html += "<div id='choices'>";
+  scene.choices.forEach(function (choice, index) {
+    if (choice.restart) {
+      html += "<button type='button' onclick='restart()'>" + escapeHtml(choice.label) + "</button>";
+    } else {
+      html += "<button type='button' onclick='makeChoice(" + index + ")'>" + escapeHtml(choice.label) + "</button>";
+    }
+  });
+  html += "</div>";
+
+  storyCard.innerHTML = html;
+  updateUndoButton();
+}
+
+function makeChoice(choiceIndex) {
+  var scene = scenes[currentScene];
+  if (!scene || !scene.choices[choiceIndex]) {
+    return;
+  }
+
+  var choice = scene.choices[choiceIndex];
+  if (typeof choice.onPick === "function") {
+    choice.onPick();
+  }
+
+  historyStack.push(currentScene);
+  currentScene = resolveSpecialNext(choice.next);
+  showScene();
+}
+
+function undoLastChoice() {
+  if (historyStack.length === 0) {
+    return;
+  }
+
+  currentScene = historyStack.pop();
+  showScene();
+}
+
+function updateUndoButton() {
+  var undoButton = document.getElementById("undoButton");
+  if (!undoButton) {
+    return;
+  }
+
+  undoButton.disabled = historyStack.length === 0;
+}
+
+function setupNavbar() {
+  var toggle = document.getElementById("navbarToggle");
+  var nav = document.getElementById("topNavbar");
+  if (!toggle || !nav) {
+    return;
+  }
+
+  toggle.addEventListener("click", function () {
+    var open = nav.classList.toggle("nav-open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  document.addEventListener("click", function (event) {
+    if (window.matchMedia("(max-width: 768px)").matches && nav.classList.contains("nav-open") && !nav.contains(event.target)) {
+      nav.classList.remove("nav-open");
+      toggle.setAttribute("aria-expanded", "false");
+    }
+  });
+}
+
+function handleTimelineModalBackdrop() {}
+function closeTimelineModal() {}
+function adjustTimelineZoom() {}
+function revealTimelinePossibilities() {}
+function handleInventoryModalBackdrop() {}
+function closeInventoryModal() {}
+
+document.addEventListener("DOMContentLoaded", function () {
+  setupNavbar();
+  if (typeof applyResolutionTierStyling === "function") {
+    applyResolutionTierStyling();
+    window.addEventListener("resize", applyResolutionTierStyling);
+  }
+});

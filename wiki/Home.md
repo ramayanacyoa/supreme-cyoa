@@ -1,16 +1,10 @@
 # Supreme CYOA Wiki (Current State)
 
-_Last updated: 2026-04-13 (UTC)_
+_Last updated: 2026-04-18 (UTC)_
 
-Welcome to the project wiki for **The Ramayana: Choose Your Adventure**.
+Welcome to the project wiki for **The Ramayana Adventure: The Banwas**.
 
-This wiki documents the game exactly as it exists in the repository right now, including:
-
-- Story structure and major scene flows
-- Core gameplay systems
-- Inventory artifacts and lore
-- Routing/hash behavior
-- File-level architecture for maintenance
+This wiki documents the game exactly as it exists in the repository right now.
 
 ## Quick links
 
@@ -20,24 +14,18 @@ This wiki documents the game exactly as it exists in the repository right now, i
 
 ## Snapshot
 
-- Current hidden update console marker: **Update 1**
+- Current hidden update console marker: **Update 2**
 - Main entry page: `index.html`
 - Story logic file: `Project.js`
 - Styling file: `Project.css`
 - Secondary page: `before-the-ramayana.html` (coming soon screen)
 - Reference page: `people-of-ramayana.html` (individuals + clans/tribes/kingdoms guide)
 
-## Notes
-
-This wiki is intentionally implementation-aware so future edits can be made safely without breaking scene flow, timeline highlighting, or inventory/trivia systems.
-
 ## Features (current)
 
-- Core branching story gameplay across exile, forest, alliance, and rescue/war arcs.
-- Scene rendering in `#storyCard` with choice-driven progression through `makeChoice()` and `makeDecision()`.
-- Undo history support with Story Card toolbar button.
-- Timeline modal with zoom and reveal/highlight of visited nodes and traversed edges.
-- Inventory modal with collectible artifacts and lore text.
-- Hash-based scene routing (`#scene-<id>`, optional `?timeline=1`) for deep-linking.
-- Background music system with track switching between default and rescue campaign themes.
-- Extended Scene 55–102 arc covering Hanuman's leap, Lanka reconnaissance, bridge construction, war escalation, and final duel resolution.
+- Part 1 story titled **The Ramayana Adventure: The Banwas**.
+- Core branching story flow through **War Council** only.
+- Scene rendering in `#storyCard` with choice-driven progression.
+- Simplified single-step Undo history button.
+- Responsive navbar with consistent pill-style links.
+- Part 2 teaser shown at War Council: **The Lanka War — Coming Soon!**.
