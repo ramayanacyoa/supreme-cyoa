@@ -4,16 +4,16 @@ var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
 
-console.log("Update 9");
+console.log("Update 10");
 
 var scenes = {
   1: {
     title: "The Ramayana Adventure: The Banwas",
     text: [
       "Welcome, {{name}}!",
-      "You are a brave warrior in ancient India from the Kingdom of Ayodhya. You are soon to be crowned ruler, as your father, King Dasharatha, is getting old.",
-      "One of your father's wives, Kaikeyi, demands that her own son, your younger brother Bharata, be crowned instead. Your father is left with no choice but to exile you from the kingdom.",
-      "As part of your exile, you swear that you will live apart from royal comfort and will not enter any city until your exile ends."
+      "{{name}}, you are the prince of Ayodhya, and the kingdom is preparing to celebrate your coronation as King Dasharatha grows old.",
+      "Before dawn, Kaikeyi invokes old promises and demands that her son Bharata receive the throne while you, {{name}}, are sent into exile.",
+      "To protect dharma and your father's honor, you accept a life of hardship and vow that you, {{name}}, will not enter any city until the exile ends."
     ],
     choices: [
       { label: "Argue back", next: 3 },
@@ -23,16 +23,16 @@ var scenes = {
   3: {
     title: "You choose to argue back.",
     text: [
-      "Dasharatha is moved by your words and begins to argue with Kaikeyi. Though he is heartbroken, he is ultimately unable to resist her demands because of an old promise.",
-      "You are left with no choice but to continue into exile."
+      "{{name}}, your words shake the royal court, and Dasharatha briefly gathers strength to challenge Kaikeyi's demand.",
+      "Even so, the king remains bound by his oath, and you, {{name}}, realize exile is unavoidable if honor is to survive."
     ],
     choices: [{ label: "Continue", next: 4 }]
   },
   4: {
     title: "You choose to accept the exile.",
     text: [
-      "You prepare to leave, bound by your exile and your vow not to enter any city until it is over.",
-      "Your brother Lakshmana and your wife Sita insist on going with you."
+      "{{name}}, you lay aside royal ornaments and prepare for forest life with calm resolve.",
+      "Lakshmana swears loyalty and Sita refuses to stay behind, telling you that your path, {{name}}, is now their path as well."
     ],
     choices: [
       { label: "Go alone", next: 5, onPick: function () { wentAlone = true; } },
@@ -41,19 +41,25 @@ var scenes = {
   },
   5: {
     title: "You choose to go alone.",
-    text: ["You set out alone, carrying the burden of exile by yourself."],
+    text: [
+      "{{name}}, you leave Ayodhya alone, carrying only a bow, memory, and duty.",
+      "Each step into the forest deepens the silence around you, but your vow remains unbroken."
+    ],
     choices: [{ label: "Continue", next: 8 }]
   },
   6: {
     title: "You choose to go with them.",
-    text: ["You, Lakshmana, and Sita journey together through the forests."],
+    text: [
+      "{{name}}, with Sita and Lakshmana at your side, exile becomes a shared pilgrimage instead of a lonely punishment.",
+      "Together you cross rivers, build shelter, and learn the rhythms of forest life."
+    ],
     choices: [{ label: "Continue", next: 7 }]
   },
   7: {
     title: "Surphanaka's Encounter",
     text: [
-      "A demoness named Surphanaka appears and threatens Sita after being rejected.",
-      "What do you do?"
+      "In the dappled forest light, Surphanaka appears and circles your camp, studying you, {{name}}, with dangerous fascination.",
+      "When rejected, she turns her anger toward Sita. {{name}}, how will you answer this threat?"
     ],
     choices: [
       { label: "Fight Surphanaka", next: 9 },
@@ -64,7 +70,10 @@ var scenes = {
   },
   8: {
     title: "Surphanaka's Encounter",
-    text: ["Surphanaka proposes to you. Do you accept or reject?"],
+    text: [
+      "Traveling alone, you, {{name}}, are approached by Surphanaka, who proposes an alliance through marriage.",
+      "Her smile hides a storm. Will you accept or reject?"
+    ],
     choices: [
       { label: "Accept", next: 12 },
       { label: "Reject", next: 13 }
@@ -72,17 +81,26 @@ var scenes = {
   },
   9: {
     title: "Fight Surphanaka",
-    text: ["You battle Surphanaka. Fate decides the outcome."],
+    text: [
+      "{{name}}, steel meets claw as the forest erupts in a swift and brutal clash.",
+      "Your fate turns on one fierce exchange."
+    ],
     choices: [{ label: "Fight", next: -1 }]
   },
   10: {
     title: "Protect Sita",
-    text: ["You and Lakshmana force Surphanaka to retreat."],
+    text: [
+      "{{name}}, you and Lakshmana form a shield around Sita and drive Surphanaka back.",
+      "She retreats in fury, promising revenge."
+    ],
     choices: [{ label: "Continue", next: 19 }]
   },
   11: {
     title: "Negotiate with Surphanaka",
-    text: ["You attempt peace, but tension remains."],
+    text: [
+      "{{name}}, you lower your weapon and try words before war, appealing to reason over rage.",
+      "Surphanaka listens, but her pride burns hotter than your diplomacy."
+    ],
     choices: [
       { label: "Try again", next: 15 },
       { label: "Prepare to fight", next: 9 }
@@ -90,42 +108,64 @@ var scenes = {
   },
   12: {
     title: "Accept Surphanaka's Proposal",
-    text: ["You accept and are brought before Ravana."],
+    text: [
+      "{{name}}, you accept her proposal to buy time and insight, stepping into a dangerous game.",
+      "Soon you are escorted to Lanka to stand before Ravana himself."
+    ],
     choices: [{ label: "Meet Ravana", next: 16 }]
   },
   13: {
     title: "Reject Surphanaka's Proposal",
-    text: ["She is enraged and prepares to attack."],
+    text: [
+      "{{name}}, your refusal lands like a blade, and Surphanaka answers with open fury.",
+      "The forest goes still as battle becomes inevitable."
+    ],
     choices: [{ label: "Fight Surphanaka", next: 9 }]
   },
   14: {
     title: "Victory",
-    text: ["You defeat Surphanaka and continue onward."],
+    text: [
+      "{{name}}, you survive the confrontation and push forward, though the warning signs of larger conflict are now impossible to ignore."
+    ],
     choices: [{ label: "Continue", next: 19 }]
   },
   15: {
     title: "Negotiation Fails",
-    text: ["Your final attempt at peace fails."],
+    text: [
+      "{{name}}, your final effort to avoid bloodshed collapses.",
+      "Words end, and the forest prepares for violence."
+    ],
     choices: [{ label: "Fight Surphanaka", next: 9 }]
   },
   16: {
     title: "Meeting Ravana",
-    text: ["Ravana offers you power and a throne."],
+    text: [
+      "Ravana greets you with charm and menace, offering you, {{name}}, power, luxury, and a throne to abandon your vow."
+    ],
     choices: [{ label: "Claim the throne", next: 17 }]
   },
   17: {
     title: "Evil King Ending",
-    text: ["You accept Ravana's offer and rule beside Surphanaka."],
+    text: [
+      "{{name}}, you accept Ravana's bargain and gain a crown at the price of righteousness.",
+      "Your legend survives, but not as a hero's."
+    ],
     choices: [{ label: "Restart", restart: true }]
   },
   18: {
     title: "Game Over",
-    text: ["You fought bravely, but your journey ends here."],
+    text: [
+      "{{name}}, you fought bravely, but destiny closes this path.",
+      "Another choice may yet restore your story."
+    ],
     choices: [{ label: "Restart", restart: true }]
   },
   19: {
     title: "The Golden Deer",
-    text: ["Sita asks you to chase a mysterious golden deer."],
+    text: [
+      "A radiant golden deer appears near the hut, moving like moonlight through leaves.",
+      "Sita asks you, {{name}}, to bring it back, unaware that illusion has already entered your home."
+    ],
     choices: [
       { label: "Chase the deer", next: 20 },
       { label: "Ignore it", next: 21 }
@@ -133,7 +173,10 @@ var scenes = {
   },
   20: {
     title: "Bring Lakshmana?",
-    text: ["Lakshmana offers to come with you."],
+    text: [
+      "Lakshmana offers to accompany you, {{name}}, worried by the deer's unnatural beauty.",
+      "Do you bring him or leave him to guard Sita?"
+    ],
     choices: [
       { label: "Yes, bring Lakshmana", next: 22, onPick: function () { broughtLakshmana = true; } },
       { label: "No, leave him with Sita", next: 23, onPick: function () { broughtLakshmana = false; } }
@@ -141,52 +184,80 @@ var scenes = {
   },
   21: {
     title: "You Ignore the Deer",
-    text: ["You stay together and danger passes for now."],
+    text: [
+      "{{name}}, you distrust the illusion and refuse the chase.",
+      "For now, the danger withdraws and your family remains together."
+    ],
     choices: [{ label: "Restart", restart: true }]
   },
   22: {
     title: "Find the Deer",
-    text: ["You and Lakshmana track the deer deeper into the forest."],
+    text: [
+      "{{name}}, you and Lakshmana track the deer deep into shadowed groves where every glimmer feels staged."
+    ],
     choices: [{ label: "Keep following it", next: 24 }]
   },
   23: {
     title: "Find the Deer",
-    text: ["You track the deer alone."],
+    text: [
+      "{{name}}, you pursue the deer alone, trusting speed over caution."
+    ],
     choices: [{ label: "Keep following it", next: 24 }]
   },
   24: {
     title: "Shoot the Deer",
-    text: ["The golden deer is revealed as Maricha."],
+    text: [
+      "Your arrow lands true, and the golden illusion tears away to reveal Maricha.",
+      "{{name}}, you now understand this chase was a trap from the beginning."
+    ],
     choices: [{ label: "Continue", next: 25 }]
   },
   25: {
     title: "Maricha's Last Cry",
-    text: ["His final cry sounds like your voice."],
+    text: [
+      "With his final breath, Maricha mimics your voice and cries for help.",
+      "{{name}}, the sound races toward your hut, meant to break trust at the worst possible moment."
+    ],
     choices: [{ label: "Continue", next: 26 }]
   },
   26: {
     title: "Ravana Sees His Chance",
-    text: ["Ravana approaches Sita in disguise."],
-    choices: [{ label: "Continue", next: 29 }]
+    text: [
+      "As you race back, Ravana takes disguise and moves toward your dwelling.",
+      "Moments before the calamity, fate brings Bharata to your forest camp."
+    ],
+    choices: [{ label: "Continue", next: 66 }]
   },
   27: {
     title: "Lakshmana Draws the Line",
-    text: ["Lakshmana leaves a protective warning around the hut."],
+    text: [
+      "Lakshmana leaves a protective warning before stepping away, torn between obedience and unease.",
+      "He prays that this line will hold until you return, {{name}}."
+    ],
     choices: [{ label: "Continue", next: 28 }]
   },
   28: {
     title: "Ravana's Trick",
-    text: ["Sita is torn between caution and duty to a guest."],
+    text: [
+      "Disguised as a holy seeker, Ravana asks for alms and manipulates sacred duty.",
+      "Sita hesitates between caution and compassion."
+    ],
     choices: [{ label: "See what happens", next: -2 }]
   },
   29: {
     title: "The Abduction of Sita",
-    text: ["Ravana reveals his true form and abducts Sita."],
+    text: [
+      "Ravana drops his disguise, reveals his terrifying form, and seizes Sita.",
+      "By the time you, {{name}}, return, the forest carries only echoes and broken signs of struggle."
+    ],
     choices: [{ label: "Continue", next: 30 }]
   },
   30: {
     title: "Jatayu Sees Ravana",
-    text: ["Jatayu must decide whether to intervene."],
+    text: [
+      "From the sky, Jatayu witnesses the abduction and recognizes the prince's family in peril.",
+      "The old warrior-bird must decide in an instant whether to intervene."
+    ],
     choices: [
       { label: "Do nothing", next: 31 },
       { label: "Try to rescue Sita", next: 32 }
@@ -194,62 +265,91 @@ var scenes = {
   },
   31: {
     title: "Sita is Taken",
-    text: ["Ravana escapes and your rescue mission begins."],
+    text: [
+      "Ravana escapes with Sita, and your grief becomes purpose.",
+      "{{name}}, the rescue mission begins."
+    ],
     choices: [{ label: "Keep searching", next: 65 }]
   },
   32: {
     title: "Jatayu's Rescue Attempt",
-    text: ["Jatayu fights bravely in the sky."],
+    text: [
+      "Jatayu rises against Ravana in a desperate sky battle, wings beating against impossible odds."
+    ],
     choices: [{ label: "See what happens", next: -3 }]
   },
   33: {
     title: "Jatayu Rescues Sita",
-    text: ["Jatayu saves Sita and Ravana crashes nearby."],
+    text: [
+      "Against all expectation, Jatayu tears Sita free and Ravana crashes nearby.",
+      "{{name}}, you have a final chance to finish this now."
+    ],
     choices: [{ label: "Go after Ravana", next: 36 }]
   },
   34: {
     title: "Jatayu Falls",
-    text: ["Jatayu is struck down and Sita is still taken."],
+    text: [
+      "Jatayu is struck down after a heroic stand, and Sita is still carried away.",
+      "His sacrifice leaves you, {{name}}, with grief and a vital clue."
+    ],
     choices: [{ label: "Continue", next: 37 }]
   },
   36: {
     title: "Fight Ravana in the Forest",
-    text: ["You confront Ravana beside his shattered chariot."],
+    text: [
+      "{{name}}, you confront Ravana beside his shattered chariot in a duel of fury and conviction."
+    ],
     choices: [{ label: "Fight Ravana", next: 38 }]
   },
   37: {
     title: "Sita is Taken",
-    text: ["You and Lakshmana begin searching at once."],
+    text: [
+      "{{name}}, you and Lakshmana begin searching immediately, following broken branches, chariot marks, and fading cries."
+    ],
     choices: [{ label: "Keep searching", next: 65 }]
   },
   38: {
     title: "Forest Duel Ending",
-    text: ["You win a hard-fought battle and protect Sita."],
+    text: [
+      "{{name}}, you win a brutal forest duel and protect Sita before Ravana can flee.",
+      "This path ends in sudden victory."
+    ],
     choices: [{ label: "Restart", restart: true }]
   },
   39: {
     title: "Lakshmana Saves Sita",
-    text: ["Ravana retreats and Sita remains safe."],
+    text: [
+      "Lakshmana's discipline holds; Ravana retreats and Sita remains safe.",
+      "{{name}}, your household survives this test."
+    ],
     choices: [{ label: "Restart", restart: true }]
   },
   40: {
     title: "Meeting Sugriva",
-    text: ["Sugriva asks for your help against Vali."],
+    text: [
+      "While searching for Sita, you, {{name}}, meet Sugriva, an exiled vanara prince seeking justice against Vali."
+    ],
     choices: [{ label: "Hear Sugriva's request", next: 41 }]
   },
   41: {
     title: "Sugriva's Plea",
-    text: ["Sugriva asks you to help defeat Vali."],
+    text: [
+      "Sugriva recounts betrayal and exile, asking you, {{name}}, to help him reclaim honor and kingdom."
+    ],
     choices: [{ label: "Consider his plan", next: 42 }]
   },
   42: {
     title: "Your Exile Vow",
-    text: ["You set a trap to face Vali outside the city."],
+    text: [
+      "Bound by your forest vow, you refuse to enter the city and instead design an ambush beyond its walls."
+    ],
     choices: [{ label: "Set the trap", next: 43 }]
   },
   43: {
     title: "Sugriva Challenges Vali",
-    text: ["Answer correctly to take the shot."],
+    text: [
+      "As Sugriva and Vali clash, you, {{name}}, must identify the critical truth before releasing your arrow."
+    ],
     choices: [
       { label: "Sugriva's wife", next: 44 },
       { label: "Sugriva's bow", next: 45 },
@@ -258,59 +358,111 @@ var scenes = {
   },
   44: {
     title: "Vali Falls",
-    text: ["Your arrow strikes true and Sugriva is freed."],
+    text: [
+      "Your arrow strikes true, Vali falls, and Sugriva's exile ends.",
+      "In gratitude, he commits his forces to your cause, {{name}}."
+    ],
     choices: [{ label: "Meet Sugriva's ally", next: 47 }]
   },
   45: {
     title: "You Miss the Moment",
-    text: ["The plan fails."],
+    text: [
+      "{{name}}, hesitation breaks the plan and Vali escapes the trap."
+    ],
     choices: [{ label: "Restart", restart: true }]
   },
   46: {
     title: "You Miss the Moment",
-    text: ["Sugriva retreats and the attempt fails."],
+    text: [
+      "Your call is wrong, and Sugriva retreats wounded.",
+      "{{name}}, the alliance collapses on this path."
+    ],
     choices: [{ label: "Restart", restart: true }]
   },
   47: {
     title: "Meeting Hanuman",
-    text: ["Hanuman joins the rescue effort."],
-    choices: [{ label: "Go to War Council", next: 54 }]
+    text: [
+      "Hanuman bows and pledges unwavering service, recognizing your purpose, {{name}}, as righteous and urgent.",
+      "Before marching, he invites you to a training ground challenge to sharpen your focus."
+    ],
+    choices: [{ label: "Go to Training Ground", next: 48 }]
+  },
+  48: {
+    title: "Training Ground Trivia",
+    text: [
+      "At a clearing marked with practice dummies and banner poles, Hanuman runs a quick readiness drill for you, {{name}}.",
+      "Trivia Question: Who is known as the devoted brother who accompanies you into exile?"
+    ],
+    choices: [
+      { label: "Lakshmana", next: 50 },
+      { label: "Shatrughna", next: 51 },
+      { label: "Vali", next: 51 }
+    ]
+  },
+  50: {
+    title: "Training Ground Result",
+    text: [
+      "Correct, {{name}}. Hanuman smiles and says your memory is as sharp as your aim.",
+      "Your allies leave the training ground with stronger morale."
+    ],
+    choices: [{ label: "Proceed to War Council", next: 54 }]
+  },
+  51: {
+    title: "Training Ground Result",
+    text: [
+      "Not quite, {{name}}. Hanuman reviews the key companions of your journey before the campaign continues.",
+      "Even mistakes can prepare a leader for war."
+    ],
+    choices: [{ label: "Proceed to War Council", next: 54 }]
   },
   52: {
     title: "Peaceful Ending",
-    text: ["Traveling alone, you defeat Surphanaka and live in peace."],
+    text: [
+      "{{name}}, traveling alone, you survive Surphanaka's challenge and complete exile in rare peace.",
+      "This quieter legend ends far from court and war."
+    ],
     choices: [{ label: "Restart", restart: true }]
   },
   54: {
     title: "War Council",
     text: [
-      "The rescue campaign enters its strategic phase with routes, tides, and defenses mapped.",
+      "At the council fire, you, {{name}}, review scouts' reports, sea routes, and Lanka's defenses with your allies.",
       "Part 2: The Lanka War — Coming Soon!"
     ],
     choices: [{ label: "Restart", restart: true }]
   },
   65: {
     title: "Searching for Sita",
-    text: ["You search for clues and return to regroup."],
-    choices: [{ label: "Return to the hut", next: 66 }]
+    text: [
+      "{{name}}, you search ravines, groves, and riverbanks for signs of Sita until clues lead you toward new allies."
+    ],
+    choices: [{ label: "Continue to Sugriva", next: 40 }]
   },
   66: {
     title: "Bharata at the Hut",
-    text: ["Bharata asks you to return to Ayodhya."],
+    text: [
+      "Right before disaster strikes, Bharata reaches your hut and pleads once more: return and rule Ayodhya, {{name}}.",
+      "You honor him, renew your vow, and ask him to safeguard the kingdom until your exile ends."
+    ],
     choices: [
-      { label: "Accept and return", next: 67 },
-      { label: "Decline and continue exile", next: 68 }
+      { label: "Entrust him with your sandals", next: 68 },
+      { label: "Ask him to carry a message to Ayodhya", next: 68 }
     ]
   },
   67: {
     title: "Ayodhya Return Ending",
-    text: ["You return early and your story ends in palace intrigue."],
+    text: [
+      "{{name}}, you return early and the epic turns into palace intrigue instead of a rescue quest."
+    ],
     choices: [{ label: "Restart", restart: true }]
   },
   68: {
     title: "The Sandals Promise",
-    text: ["You uphold your vow and continue the rescue mission."],
-    choices: [{ label: "Continue to Sugriva", next: 40 }]
+    text: [
+      "Bharata accepts your sandals as a symbol of rightful rule and departs in tears.",
+      "{{name}}, moments later the forest trembles as Ravana's plot unfolds."
+    ],
+    choices: [{ label: "Continue", next: 29 }]
   }
 };
 
