@@ -4,7 +4,7 @@ var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
 
-console.log("Update 11");
+console.log("Update 12");
 
 var scenes = {
   1: {
@@ -60,6 +60,10 @@ var scenes = {
     text: [
       "In the dappled forest light, Surphanaka appears and circles your camp, studying you, {{name}}, with dangerous fascination.",
       "When rejected, she turns her anger toward Sita. {{name}}, how will you answer this threat?"
+    ],
+    dialogue: [
+      { speaker: "Surphanaka", line: "\"Hand over Sita, and I may spare your camp.\"" },
+      { speaker: "{{name}}", line: "\"Stand down. You will not threaten my family.\"" }
     ],
     choices: [
       { label: "Fight Surphanaka", next: 9 },
@@ -166,6 +170,10 @@ var scenes = {
       "A radiant golden deer appears near the hut, moving like moonlight through leaves.",
       "Sita asks you, {{name}}, to bring it back, unaware that illusion has already entered your home."
     ],
+    dialogue: [
+      { speaker: "Sita", line: "\"That deer is beautiful, Rama. Please catch it for us.\"" },
+      { speaker: "{{name}}", line: "\"Stay alert while I decide. Something feels wrong.\"" }
+    ],
     choices: [
       { label: "Chase the deer", next: 20 },
       { label: "Ignore it", next: 21 }
@@ -250,6 +258,10 @@ var scenes = {
       "Ravana drops his disguise, reveals his terrifying form, and seizes Sita.",
       "By the time you, {{name}}, return, the forest carries only echoes and broken signs of struggle."
     ],
+    dialogue: [
+      { speaker: "Sita", line: "\"Rama! Lakshmana! Help me!\"" },
+      { speaker: "Ravana", line: "\"Cry out if you must. Lanka will still claim you.\"" }
+    ],
     choices: [{ label: "Continue", next: 30 }]
   },
   30: {
@@ -328,6 +340,9 @@ var scenes = {
     title: "Meeting Sugriva",
     text: [
       "While searching for Sita, you, {{name}}, meet Sugriva, an exiled vanara prince seeking justice against Vali."
+    ],
+    dialogue: [
+      { speaker: "Sugriva", line: "\"Help me reclaim my honor, and I will help you find Sita.\"" }
     ],
     choices: [{ label: "Hear Sugriva's request", next: 41 }]
   },
@@ -428,6 +443,10 @@ var scenes = {
     text: [
       "At the council fire, you, {{name}}, review scouts' reports, sea routes, and Lanka's defenses with your allies.",
       "Part 2: The Lanka War — Coming Soon!"
+    ],
+    dialogue: [
+      { speaker: "Hanuman", line: "\"Give the word, and we leap for Lanka tonight.\"" },
+      { speaker: "{{name}}", line: "\"We move with courage and discipline. Everyone returns together.\"" }
     ],
     choices: [{ label: "Restart", restart: true }]
   },
@@ -554,6 +573,14 @@ function showScene() {
   scene.text.forEach(function (paragraph) {
     html += "<p>" + escapeHtml(interpolatePlayerName(paragraph)) + "</p>";
   });
+
+  if (Array.isArray(scene.dialogue)) {
+    html += "<div class='scene-dialogue' aria-label='Scene dialogue'>";
+    scene.dialogue.forEach(function (entry) {
+      html += "<p><strong>" + escapeHtml(interpolatePlayerName(entry.speaker)) + ":</strong> " + escapeHtml(interpolatePlayerName(entry.line)) + "</p>";
+    });
+    html += "</div>";
+  }
 
   html += "<div id='choices'>";
   scene.choices.forEach(function (choice, index) {

@@ -9,6 +9,7 @@ _Last updated: 2026-04-18 (UTC)_
 - Restart options from ending scenes.
 - My Storyline modal that lists visited scenes and includes each scene description.
 - Expanded scene writing with deeper narrative descriptions and frequent player-name callouts for immersion.
+- Scene dialogue snippets in key moments with speaker labels to highlight what characters are saying during major events.
 - Training Ground Trivia minigame sequence unlocked immediately after meeting Hanuman.
 - Bharata encounter repositioned to occur right before the Sita abduction sequence.
 - Hover/focus helper text on art buttons:
