@@ -4,7 +4,7 @@ var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
 
-console.log("Update 5");
+console.log("Update 6");
 
 var scenes = {
   1: {
@@ -382,7 +382,7 @@ function showScene() {
 
   var scene = scenes[currentScene];
   var sceneTitle = escapeHtml(scene.title);
-  var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo'>Undo</button><button type='button' onclick='openTimelineModal()' aria-label='Open timeline'>Timeline</button></div>";
+  var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo' data-tooltip='undo'>Undo</button><button type='button' onclick='openTimelineModal()' aria-label='Open my storyline'>My Storyline</button></div>";
 
   if (currentScene === 1) {
     html += "<h1>" + sceneTitle + "</h1>";
@@ -398,7 +398,7 @@ function showScene() {
   html += "<div id='choices'>";
   scene.choices.forEach(function (choice, index) {
     if (choice.restart) {
-      html += "<button class='art-button restart-art' type='button' onclick='restart()' aria-label='Restart'>" + escapeHtml(choice.label) + "</button>";
+      html += "<button class='art-button restart-art' type='button' onclick='restart()' aria-label='Restart' data-tooltip='restart'>" + escapeHtml(choice.label) + "</button>";
     } else {
       html += "<button type='button' onclick='makeChoice(" + index + ")'>" + escapeHtml(choice.label) + "</button>";
     }
@@ -474,11 +474,11 @@ function renderSimpleTimelineList() {
     if (!scenes[sceneId]) {
       return;
     }
-    html += "<li>" + escapeHtml(scenes[sceneId].title) + "</li>";
+    html += "<li><strong>" + escapeHtml(scenes[sceneId].title) + "</strong><p class='timeline-scene-description'>" + escapeHtml(scenes[sceneId].text.join(" ")) + "</p></li>";
   });
 
   if (scenes[currentScene]) {
-    html += "<li><strong>" + escapeHtml(scenes[currentScene].title) + " (Current)</strong></li>";
+    html += "<li><strong>" + escapeHtml(scenes[currentScene].title) + " (Current)</strong><p class='timeline-scene-description'>" + escapeHtml(scenes[currentScene].text.join(" ")) + "</p></li>";
   }
 
   if (!html) {

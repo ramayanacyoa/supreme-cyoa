@@ -372,6 +372,7 @@ body[data-resolution-tier="uhd"] {
 #startBtn,
 #undoButton.art-button,
 .restart-art {
+  position: relative;
   min-height: 0;
   width: 220px;
   height: 64px;
@@ -390,6 +391,30 @@ body[data-resolution-tier="uhd"] {
     transform 0.25s var(--ease-refined),
     opacity 0.2s var(--ease-refined);
   filter: brightness(1.14) saturate(1.12) drop-shadow(0 5px 10px rgba(255, 186, 77, 0.33));
+}
+
+#startBtn[data-tooltip]:hover::after,
+#undoButton.art-button[data-tooltip]:hover::after,
+.restart-art[data-tooltip]:hover::after,
+#startBtn[data-tooltip]:focus-visible::after,
+#undoButton.art-button[data-tooltip]:focus-visible::after,
+.restart-art[data-tooltip]:focus-visible::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 223, 162, 0.5);
+  background: rgba(18, 10, 20, 0.93);
+  color: #fff3d4;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
 }
 
 #startBtn {
@@ -857,6 +882,12 @@ p {
 
 .receipt-section li + li {
   margin-top: 8px;
+}
+
+.timeline-scene-description {
+  margin: 4px 0 0;
+  color: rgba(255, 241, 220, 0.9);
+  font-size: 0.92rem;
 }
 
 button,
