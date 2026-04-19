@@ -4,7 +4,7 @@ var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
 
-console.log("Update 13");
+console.log("Update 14");
 
 var scenes = {
   1: {
@@ -585,7 +585,7 @@ function showScene() {
   html += "<div id='choices'>";
   scene.choices.forEach(function (choice, index) {
     if (choice.restart) {
-      html += "<button class='art-button restart-art' type='button' onclick='restart()' aria-label='Restart' data-tooltip='restart'>" + escapeHtml(choice.label) + "</button>";
+      html += "<button type='button' onclick='restart()' aria-label='Restart'>" + escapeHtml(choice.label) + "</button>";
     } else {
       html += "<button type='button' onclick='makeChoice(" + index + ")'>" + escapeHtml(choice.label) + "</button>";
     }

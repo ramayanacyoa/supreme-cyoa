@@ -1,6 +1,6 @@
 # Features
 
-_Last updated: 2026-04-18 (UTC)_
+_Last updated: 2026-04-19 (UTC)_
 
 ## Gameplay and UI Features
 
@@ -14,6 +14,7 @@ _Last updated: 2026-04-18 (UTC)_
 - Bharata encounter repositioned to occur right before the Sita abduction sequence.
 - Hover/focus helper text on art buttons:
   - Start button: `begin your quest`
-  - Restart button: `restart`
   - Undo button: `undo`
 - Responsive navigation and secondary lore pages.
+
+- Navbar soundtrack controls now use a simple native audio player in the navbar with muted autoplay, plus play/scrub/volume controls while hiding speed and download options.
