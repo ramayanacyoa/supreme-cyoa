@@ -5,15 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Before The Ramayana</title>
   <link rel="stylesheet" href="Project.css">
-  <link rel="icon" href="favicon1.png" type="image/png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="favicon_io/favicon.ico">
+  <link rel="manifest" href="favicon_io/site.webmanifest">
+  <script src="resolution.js"></script>
+  <script src="Project.js"></script>
 </head>
 <body id="backstorybody">
+  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 13</a>
+
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
     <div id="navLinks">
       <a id="aboutButton" href="index.html">Main Adventure</a>
+      <a class="nav-link-pill nav-link-current" href="before-the-ramayana.html" aria-current="page">Before the Ramayana</a>
       <a class="nav-link-pill" href="people-of-ramayana.html">People of the Ramayana</a>
-      <a class="nav-link-pill" href="updates.html">Updates</a>
+      <a class="nav-link-pill" href="https://arjun-singh.com/" target="_blank" rel="noopener noreferrer">About</a>
     </div>
   </nav>
 
@@ -27,37 +36,5 @@
       <button onclick="window.location.href='people-of-ramayana.html'">People of the Ramayana</button>
     </header>
   </div>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var navbarToggle = document.getElementById("navbarToggle");
-      var topNavbar = document.getElementById("topNavbar");
-
-      if (!navbarToggle || !topNavbar) {
-        return;
-      }
-
-      navbarToggle.addEventListener("click", function () {
-        var isOpen = topNavbar.classList.toggle("nav-open");
-        navbarToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      });
-
-      document.addEventListener("click", function (event) {
-        if (!window.matchMedia("(max-width: 768px)").matches) {
-          return;
-        }
-
-        if (!topNavbar.classList.contains("nav-open")) {
-          return;
-        }
-
-        if (topNavbar.contains(event.target)) {
-          return;
-        }
-
-        topNavbar.classList.remove("nav-open");
-        navbarToggle.setAttribute("aria-expanded", "false");
-      });
-    });
-  </script>
 </body>
 </html>

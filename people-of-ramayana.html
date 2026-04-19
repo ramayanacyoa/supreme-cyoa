@@ -10,15 +10,27 @@
   <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
   <link rel="icon" type="image/x-icon" href="favicon_io/favicon.ico">
   <link rel="manifest" href="favicon_io/site.webmanifest">
+  <script src="resolution.js"></script>
   <script src="people-of-ramayana.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (typeof applyResolutionTierStyling === "function") {
+        applyResolutionTierStyling();
+        window.addEventListener("resize", applyResolutionTierStyling);
+      }
+    });
+  </script>
 </head>
 <body id="peoplePageBody">
+  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 13</a>
+
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
     <div id="navLinks">
       <a id="aboutButton" href="index.html">Main Adventure</a>
       <a class="nav-link-pill" href="before-the-ramayana.html">Before the Ramayana</a>
-      <a class="nav-link-pill" href="updates.html">Updates</a>
+      <a class="nav-link-pill nav-link-current" href="people-of-ramayana.html" aria-current="page">People of the Ramayana</a>
+      <a class="nav-link-pill" href="https://arjun-singh.com/" target="_blank" rel="noopener noreferrer">About</a>
     </div>
   </nav>
 

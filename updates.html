@@ -10,14 +10,19 @@
   <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
   <link rel="icon" type="image/x-icon" href="favicon_io/favicon.ico">
   <link rel="manifest" href="favicon_io/site.webmanifest">
+  <script src="resolution.js"></script>
+  <script src="Project.js"></script>
 </head>
 <body>
+  <a id="updateBadge" class="nav-link-current" href="updates.html" aria-label="Go to updates page" aria-current="page" data-resolution-label="HD">Update 13</a>
+
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
     <div id="navLinks">
       <a id="aboutButton" href="index.html">Main Adventure</a>
       <a class="nav-link-pill" href="before-the-ramayana.html">Before the Ramayana</a>
       <a class="nav-link-pill" href="people-of-ramayana.html">People of the Ramayana</a>
+      <a class="nav-link-pill" href="https://arjun-singh.com/" target="_blank" rel="noopener noreferrer">About</a>
     </div>
   </nav>
 
@@ -33,34 +38,11 @@
   <main id="storyCard" aria-live="polite">
     <h2>Latest Update</h2>
     <div id="updateInfo">
-      <h3>Update 12</h3>
-      <p>Added simple in-scene dialogue lines to key story moments so characters briefly react to what is happening.</p>
-      <p>Updated the scene renderer to display speaker-tagged dialogue under scene descriptions without changing choice flow.</p>
-      <p>Dialogue now appears in Surphanaka, Golden Deer, Sita Abduction, Sugriva meeting, and War Council scenes.</p>
+      <h3>Update 13</h3>
+      <p>Standardized the navbar across all HTML pages and removed the old Updates navbar link everywhere.</p>
+      <p>Added an update badge button to every page that opens this updates page and fixed index to show the current update number.</p>
+      <p>Added an active-page underline state to navigation buttons (and the update badge on this page) for clearer current-page context.</p>
     </div>
   </main>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var navbarToggle = document.getElementById("navbarToggle");
-      var topNavbar = document.getElementById("topNavbar");
-
-      if (!navbarToggle || !topNavbar) {
-        return;
-      }
-
-      navbarToggle.addEventListener("click", function () {
-        var isOpen = topNavbar.classList.toggle("nav-open");
-        navbarToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      });
-
-      document.addEventListener("click", function (event) {
-        if (window.matchMedia("(max-width: 768px)").matches && topNavbar.classList.contains("nav-open") && !topNavbar.contains(event.target)) {
-          topNavbar.classList.remove("nav-open");
-          navbarToggle.setAttribute("aria-expanded", "false");
-        }
-      });
-    });
-  </script>
 </body>
 </html>
