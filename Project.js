@@ -4,7 +4,7 @@ var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
 
-console.log("Update 14");
+console.log("Update 15");
 
 var scenes = {
   1: {
@@ -650,6 +650,42 @@ function setupNavbar() {
   });
 }
 
+function setupVolumeSlider() {
+  var audio = document.getElementById("backgroundMusic");
+  var slider = document.getElementById("volumeSlider");
+  var valueLabel = document.getElementById("volumeValue");
+  if (!audio || !slider || !valueLabel) {
+    return;
+  }
+
+  var storedValue = window.localStorage ? window.localStorage.getItem("ramayanaMusicVolume") : null;
+  var startingValue = Number(storedValue);
+  if (!Number.isFinite(startingValue)) {
+    startingValue = Number(slider.value);
+  }
+  if (!Number.isFinite(startingValue)) {
+    startingValue = 65;
+  }
+  startingValue = Math.max(0, Math.min(100, Math.round(startingValue)));
+  slider.value = String(startingValue);
+  audio.volume = startingValue / 100;
+  audio.muted = startingValue === 0;
+  valueLabel.textContent = startingValue + "%";
+
+  slider.addEventListener("input", function () {
+    var nextValue = Number(slider.value);
+    if (!Number.isFinite(nextValue)) {
+      return;
+    }
+    audio.volume = Math.max(0, Math.min(1, nextValue / 100));
+    audio.muted = nextValue === 0;
+    valueLabel.textContent = Math.round(nextValue) + "%";
+    if (window.localStorage) {
+      window.localStorage.setItem("ramayanaMusicVolume", String(Math.round(nextValue)));
+    }
+  });
+}
+
 function renderSimpleTimelineList() {
   var list = document.getElementById("timelineList");
   if (!list) {
@@ -706,6 +742,7 @@ function closeInventoryModal() {}
 
 document.addEventListener("DOMContentLoaded", function () {
   setupNavbar();
+  setupVolumeSlider();
   if (typeof applyResolutionTierStyling === "function") {
     applyResolutionTierStyling();
     window.addEventListener("resize", applyResolutionTierStyling);

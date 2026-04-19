@@ -18,3 +18,4 @@ _Last updated: 2026-04-19 (UTC)_
 - Responsive navigation and secondary lore pages.
 
 - Navbar soundtrack controls now use a simple native audio player in the navbar with muted autoplay, plus play/scrub/volume controls while hiding speed and download options.
+- Navbar soundtrack now includes a dedicated volume slider with a live percentage readout, persistent saved volume preference, and resolution.js-driven mobile sizing refinements.
