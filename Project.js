@@ -1,18 +1,28 @@
 var currentScene = 0;
 var playerName = "";
+var fatherName = "";
+var motherName = "";
+var wifeName = "";
+var siblingOneName = "";
+var siblingTwoName = "";
+var siblingThreeName = "";
+var siblingOneGender = "male";
+var siblingTwoGender = "male";
+var siblingThreeGender = "male";
+var secondMotherName = "";
 var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
 
-console.log("Update 16");
+console.log("Update 20");
 
 var scenes = {
   1: {
     title: "The Ramayana Begins",
     text: [
       "Welcome, {{name}}!",
-      "{{name}}, you are the prince of Ayodhya, and the kingdom is preparing to celebrate your coronation as King Dasharatha grows old.",
-      "Before dawn, Kaikeyi invokes old promises and demands that her son Bharata receive the throne while you, {{name}}, are sent into exile.",
+      "{{name}}, you are the prince of Ayodhya, and the kingdom is preparing to celebrate your coronation as {{fatherName}} grows old.",
+      "Before dawn, {{secondMotherName}} invokes old promises and demands that {{siblingTwoName}} receive the throne while you, {{name}}, are sent into exile.",
       "To protect dharma and your father's honor, you accept a life of hardship and vow that you, {{name}}, will not enter any city until the exile ends."
     ],
     choices: [
@@ -23,7 +33,7 @@ var scenes = {
   3: {
     title: "You choose to argue back.",
     text: [
-      "{{name}}, your words shake the royal court, and Dasharatha briefly gathers strength to challenge Kaikeyi's demand.",
+      "{{name}}, your words shake the royal court, and {{fatherName}} briefly gathers strength to challenge {{secondMotherName}}'s demand.",
       "Even so, the king remains bound by his oath, and you, {{name}}, realize exile is unavoidable if honor is to survive."
     ],
     choices: [{ label: "Continue", next: 4 }]
@@ -32,7 +42,33 @@ var scenes = {
     title: "You choose to accept the exile.",
     text: [
       "{{name}}, you lay aside royal ornaments and prepare for forest life with calm resolve.",
-      "Lakshmana swears loyalty and Sita refuses to stay behind, telling you that your path, {{name}}, is now their path as well."
+      "{{siblingOneName}} swears loyalty and {{wifeName}} refuses to stay behind, telling you that your path, {{name}}, is now their path as well."
+    ],
+    choices: [
+      { label: "Argue back again", next: 69 },
+      { label: "Continue", next: 70 }
+    ]
+  },
+  69: {
+    title: "{{secondMotherName}}'s Final Command",
+    text: [
+      "{{name}}, your second refusal is treated as rebellion in open court.",
+      "Under {{secondMotherName}}'s demand, the guards carry out a swift execution before {{fatherName}} can stop it."
+    ],
+    choices: [{ label: "Restart", restart: true }]
+  },
+  70: {
+    title: "A Family Plea",
+    text: [
+      "{{motherName}}, {{siblingOneName}}, and {{siblingThreeName}} beg you not to go into exile.",
+      "{{siblingTwoName}} stays silent; {{siblingTwoPossessive}} mother, {{secondMotherName}}, forbids {{siblingTwoObject}} from pleading against the exile order."
+    ],
+    choices: [{ label: "Continue", next: 71 }]
+  },
+  71: {
+    title: "Who Goes With You?",
+    text: [
+      "You steady yourself and choose whether to walk into exile alone or with {{siblingOneName}} and {{wifeName}}."
     ],
     choices: [
       { label: "Go alone", next: 5, onPick: function () { wentAlone = true; } },
@@ -50,7 +86,7 @@ var scenes = {
   6: {
     title: "You choose to go with them.",
     text: [
-      "{{name}}, with Sita and Lakshmana at your side, exile becomes a shared pilgrimage instead of a lonely punishment.",
+      "{{name}}, with {{wifeName}} and {{siblingOneName}} at your side, exile becomes a shared pilgrimage instead of a lonely punishment.",
       "Together you cross rivers, build shelter, and learn the rhythms of forest life."
     ],
     choices: [{ label: "Continue", next: 66 }]
@@ -59,15 +95,15 @@ var scenes = {
     title: "Surphanaka's Encounter",
     text: [
       "In the dappled forest light, Surphanaka appears and circles your camp, studying you, {{name}}, with dangerous fascination.",
-      "When rejected, she turns her anger toward Sita. {{name}}, how will you answer this threat?"
+      "When rejected, she turns her anger toward {{wifeName}}. {{name}}, how will you answer this threat?"
     ],
     dialogue: [
-      { speaker: "Surphanaka", line: "\"Hand over Sita, and I may spare your camp.\"" },
+      { speaker: "Surphanaka", line: "\"Hand over {{wifeName}}, and I may spare your camp.\"" },
       { speaker: "{{name}}", line: "\"Stand down. You will not threaten my family.\"" }
     ],
     choices: [
       { label: "Fight Surphanaka", next: 9 },
-      { label: "Protect Sita", next: 10 },
+      { label: "Protect {{wifeName}}", next: 10 },
       { label: "Negotiate", next: 11 },
       { label: "Accept the marriage", next: 12 }
     ]
@@ -92,9 +128,9 @@ var scenes = {
     choices: [{ label: "Fight", next: -1 }]
   },
   10: {
-    title: "Protect Sita",
+    title: "Protect {{wifeName}}",
     text: [
-      "{{name}}, you and Lakshmana form a shield around Sita and drive Surphanaka back.",
+      "{{name}}, you and {{siblingOneName}} form a shield around {{wifeName}} and drive Surphanaka back.",
       "She retreats in fury, promising revenge."
     ],
     choices: [{ label: "Continue", next: 19 }]
@@ -168,10 +204,10 @@ var scenes = {
     title: "The Golden Deer",
     text: [
       "A radiant golden deer appears near the hut, moving like moonlight through leaves.",
-      "Sita asks you, {{name}}, to bring it back, unaware that illusion has already entered your home."
+      "{{wifeName}} asks you, {{name}}, to bring it back, unaware that illusion has already entered your home."
     ],
     dialogue: [
-      { speaker: "Sita", line: "\"That deer is beautiful, Rama. Please catch it for us.\"" },
+      { speaker: "{{wifeName}}", line: "\"That deer is beautiful, {{name}}. Please catch it for us.\"" },
       { speaker: "{{name}}", line: "\"Stay alert while I decide. Something feels wrong.\"" }
     ],
     choices: [
@@ -180,14 +216,14 @@ var scenes = {
     ]
   },
   20: {
-    title: "Bring Lakshmana?",
+    title: "Bring {{siblingOneName}}?",
     text: [
-      "Lakshmana offers to accompany you, {{name}}, worried by the deer's unnatural beauty.",
-      "Do you bring him or leave him to guard Sita?"
+      "{{siblingOneName}} offers to accompany you, {{name}}, worried by the deer's unnatural beauty.",
+      "Do you bring {{siblingOneObject}} or leave {{siblingOneObject}} to guard {{wifeName}}?"
     ],
     choices: [
-      { label: "Yes, bring Lakshmana", next: 22, onPick: function () { broughtLakshmana = true; } },
-      { label: "No, leave him with Sita", next: 23, onPick: function () { broughtLakshmana = false; } }
+      { label: "Yes, bring {{siblingOneName}}", next: 22, onPick: function () { broughtLakshmana = true; } },
+      { label: "No, leave {{siblingOneObject}} with {{wifeName}}", next: 23, onPick: function () { broughtLakshmana = false; } }
     ]
   },
   21: {
@@ -201,7 +237,7 @@ var scenes = {
   22: {
     title: "Find the Deer",
     text: [
-      "{{name}}, you and Lakshmana track the deer deep into shadowed groves where every glimmer feels staged."
+      "{{name}}, you and {{siblingOneName}} track the deer deep into shadowed groves where every glimmer feels staged."
     ],
     choices: [{ label: "Keep following it", next: 24 }]
   },
@@ -237,9 +273,9 @@ var scenes = {
     choices: [{ label: "Continue", next: 29 }]
   },
   27: {
-    title: "Lakshmana Draws the Line",
+    title: "{{siblingOneName}} Draws the Line",
     text: [
-      "Lakshmana leaves a protective warning before stepping away, torn between obedience and unease.",
+      "{{siblingOneName}} leaves a protective warning before stepping away, torn between obedience and unease.",
       "He prays that this line will hold until you return, {{name}}."
     ],
     choices: [{ label: "Continue", next: 28 }]
@@ -248,18 +284,18 @@ var scenes = {
     title: "Ravana's Trick",
     text: [
       "Disguised as a holy seeker, Ravana asks for alms and manipulates sacred duty.",
-      "Sita hesitates between caution and compassion."
+      "{{wifeName}} hesitates between caution and compassion."
     ],
     choices: [{ label: "See what happens", next: -2 }]
   },
   29: {
-    title: "The Abduction of Sita",
+    title: "The Abduction of {{wifeName}}",
     text: [
-      "Ravana drops his disguise, reveals his terrifying form, and seizes Sita.",
+      "Ravana drops his disguise, reveals his terrifying form, and seizes {{wifeName}}.",
       "By the time you, {{name}}, return, the forest carries only echoes and broken signs of struggle."
     ],
     dialogue: [
-      { speaker: "Sita", line: "\"Rama! Lakshmana! Help me!\"" },
+      { speaker: "{{wifeName}}", line: "\"{{name}}! {{siblingOneName}}! Help me!\"" },
       { speaker: "Ravana", line: "\"Cry out if you must. Lanka will still claim you.\"" }
     ],
     choices: [{ label: "Continue", next: 30 }]
@@ -267,18 +303,18 @@ var scenes = {
   30: {
     title: "Jatayu Sees Ravana",
     text: [
-      "From the sky, Jatayu witnesses the abduction and recognizes the prince's family in peril.",
+      "From the sky, Jatayu witnesses the abduction and recognizes your family in peril.",
       "The old warrior-bird must decide in an instant whether to intervene."
     ],
     choices: [
       { label: "Do nothing", next: 31 },
-      { label: "Try to rescue Sita", next: 32 }
+      { label: "Try to rescue {{wifeName}}", next: 32 }
     ]
   },
   31: {
-    title: "Sita is Taken",
+    title: "{{wifeName}} is Taken",
     text: [
-      "Ravana escapes with Sita, and your grief becomes purpose.",
+      "Ravana escapes with {{wifeName}}, and your grief becomes purpose.",
       "{{name}}, the rescue mission begins."
     ],
     choices: [{ label: "Keep searching", next: 65 }]
@@ -291,9 +327,9 @@ var scenes = {
     choices: [{ label: "See what happens", next: -3 }]
   },
   33: {
-    title: "Jatayu Rescues Sita",
+    title: "Jatayu Rescues {{wifeName}}",
     text: [
-      "Against all expectation, Jatayu tears Sita free and Ravana crashes nearby.",
+      "Against all expectation, Jatayu tears {{wifeName}} free and Ravana crashes nearby.",
       "{{name}}, you have a final chance to finish this now."
     ],
     choices: [{ label: "Go after Ravana", next: 36 }]
@@ -301,7 +337,7 @@ var scenes = {
   34: {
     title: "Jatayu Falls",
     text: [
-      "Jatayu is struck down after a heroic stand, and Sita is still carried away.",
+      "Jatayu is struck down after a heroic stand, and {{wifeName}} is still carried away.",
       "His sacrifice leaves you, {{name}}, with grief and a vital clue."
     ],
     choices: [{ label: "Continue", next: 37 }]
@@ -314,24 +350,24 @@ var scenes = {
     choices: [{ label: "Fight Ravana", next: 38 }]
   },
   37: {
-    title: "Sita is Taken",
+    title: "{{wifeName}} is Taken",
     text: [
-      "{{name}}, you and Lakshmana begin searching immediately, following broken branches, chariot marks, and fading cries."
+      "{{name}}, you and {{siblingOneName}} begin searching immediately, following broken branches, chariot marks, and fading cries."
     ],
     choices: [{ label: "Keep searching", next: 65 }]
   },
   38: {
     title: "Forest Duel Ending",
     text: [
-      "{{name}}, you win a brutal forest duel and protect Sita before Ravana can flee.",
+      "{{name}}, you win a brutal forest duel and protect {{wifeName}} before Ravana can flee.",
       "This path ends in sudden victory."
     ],
     choices: [{ label: "Restart", restart: true }]
   },
   39: {
-    title: "Lakshmana Saves Sita",
+    title: "{{siblingOneName}} Saves {{wifeName}}",
     text: [
-      "Lakshmana's discipline holds; Ravana retreats and Sita remains safe.",
+      "{{siblingOneName}}'s discipline holds; Ravana retreats and {{wifeName}} remains safe.",
       "{{name}}, your household survives this test."
     ],
     choices: [{ label: "Restart", restart: true }]
@@ -339,10 +375,10 @@ var scenes = {
   40: {
     title: "Meeting Sugriva",
     text: [
-      "While searching for Sita, you, {{name}}, meet Sugriva, an exiled vanara prince seeking justice against Vali."
+      "While searching for {{wifeName}}, you, {{name}}, meet Sugriva, an exiled vanara prince seeking justice against Vali."
     ],
     dialogue: [
-      { speaker: "Sugriva", line: "\"Help me reclaim my honor, and I will help you find Sita.\"" }
+      { speaker: "Sugriva", line: "\"Help me reclaim my honor, and I will help you find {{wifeName}}.\"" }
     ],
     choices: [{ label: "Hear Sugriva's request", next: 41 }]
   },
@@ -406,11 +442,11 @@ var scenes = {
     title: "Training Ground Trivia",
     text: [
       "At a clearing marked with practice dummies and banner poles, Hanuman runs a quick readiness drill for you, {{name}}.",
-      "Trivia Question: Who is known as the devoted brother who accompanies you into exile?"
+      "Trivia Question: Who is known as the devoted sibling who accompanies you into exile?"
     ],
     choices: [
-      { label: "Lakshmana", next: 50 },
-      { label: "Shatrughna", next: 51 },
+      { label: "{{siblingOneName}}", next: 50 },
+      { label: "{{siblingThreeName}}", next: 51 },
       { label: "Vali", next: 51 }
     ]
   },
@@ -450,16 +486,16 @@ var scenes = {
     choices: [{ label: "Restart", restart: true }]
   },
   65: {
-    title: "Searching for Sita",
+    title: "Searching for {{wifeName}}",
     text: [
-      "{{name}}, you search ravines, groves, and riverbanks for signs of Sita until clues lead you toward new allies."
+      "{{name}}, you search ravines, groves, and riverbanks for signs of {{wifeName}} until clues lead you toward new allies."
     ],
     choices: [{ label: "Continue to Sugriva", next: 40 }]
   },
   66: {
-    title: "Bharata at the Hut",
+    title: "{{siblingTwoName}} at the Hut",
     text: [
-      "Soon after exile begins, Bharata reaches your forest hut and pleads once more: return and rule Ayodhya, {{name}}.",
+      "Soon after exile begins, {{siblingTwoName}} reaches your forest hut and pleads once more: return and rule Ayodhya, {{name}}.",
       "You honor him, renew your vow, and ask him to safeguard the kingdom until your exile ends before you continue deeper into the forest."
     ],
     choices: [
@@ -477,8 +513,8 @@ var scenes = {
   68: {
     title: "The Sandals Promise",
     text: [
-      "Bharata accepts your sandals as a symbol of rightful rule and departs in tears.",
-      "{{name}}, once Bharata departs, your exile journey resumes and the forest's first major threat approaches."
+      "{{siblingTwoName}} accepts your sandals as a symbol of rightful rule and departs in tears.",
+      "{{name}}, once {{siblingTwoName}} departs, your exile journey resumes and the forest's first major threat approaches."
     ],
     choices: [{ label: "Continue", next: -4 }]
   }
@@ -497,6 +533,17 @@ function clearStoryCard() {
 
 function restart() {
   currentScene = 0;
+  playerName = "";
+  fatherName = "";
+  motherName = "";
+  wifeName = "";
+  siblingOneName = "";
+  siblingTwoName = "";
+  siblingThreeName = "";
+  siblingOneGender = "male";
+  siblingTwoGender = "male";
+  siblingThreeGender = "male";
+  secondMotherName = "";
   broughtLakshmana = false;
   wentAlone = false;
   historyStack = [];
@@ -506,24 +553,50 @@ function restart() {
 
 function startAdventure() {
   var input = document.getElementById("playerName");
+  var fatherInput = document.getElementById("fatherName");
+  var motherInput = document.getElementById("motherName");
+  var siblingOneInput = document.getElementById("siblingOneName");
+  var siblingTwoInput = document.getElementById("siblingTwoName");
+  var siblingThreeInput = document.getElementById("siblingThreeName");
+  var siblingOneGenderInput = document.getElementById("siblingOneGender");
+  var siblingTwoGenderInput = document.getElementById("siblingTwoGender");
+  var siblingThreeGenderInput = document.getElementById("siblingThreeGender");
+  var secondMotherInput = document.getElementById("secondMotherName");
+  var wifeInput = document.getElementById("wifeName");
+
   playerName = input ? input.value.trim() : "";
   if (!playerName) {
-    playerName = "Traveler";
+    playerName = "Rama";
   }
+  fatherName = fatherInput && fatherInput.value.trim() ? fatherInput.value.trim() : "Dasharatha";
+  motherName = motherInput && motherInput.value.trim() ? motherInput.value.trim() : "Kausalya";
+  siblingOneName = siblingOneInput && siblingOneInput.value.trim() ? siblingOneInput.value.trim() : "Lakshmana";
+  siblingTwoName = siblingTwoInput && siblingTwoInput.value.trim() ? siblingTwoInput.value.trim() : "Bharata";
+  siblingThreeName = siblingThreeInput && siblingThreeInput.value.trim() ? siblingThreeInput.value.trim() : "Shatrughna";
+  siblingOneGender = siblingOneGenderInput && siblingOneGenderInput.value === "female" ? "female" : "male";
+  siblingTwoGender = siblingTwoGenderInput && siblingTwoGenderInput.value === "female" ? "female" : "male";
+  siblingThreeGender = siblingThreeGenderInput && siblingThreeGenderInput.value === "female" ? "female" : "male";
+  secondMotherName = secondMotherInput && secondMotherInput.value.trim() ? secondMotherInput.value.trim() : "Kaikeyi";
+  wifeName = wifeInput && wifeInput.value.trim() ? wifeInput.value.trim() : "Sita";
+
   historyStack = [];
   currentScene = 1;
   var soundtrack = document.getElementById("backgroundMusic");
-  var volumeSlider = document.getElementById("volumeSlider");
-  var volumeValue = document.getElementById("volumeValue");
   if (soundtrack) {
     soundtrack.volume = 0.5;
     soundtrack.muted = false;
-  }
-  if (volumeSlider) {
-    volumeSlider.value = "50";
-  }
-  if (volumeValue) {
-    volumeValue.textContent = "50%";
+    if (window.sessionStorage) {
+      window.sessionStorage.setItem("ramayanaMusicState", JSON.stringify({
+        currentTime: soundtrack.currentTime || 0,
+        volume: 0.5,
+        muted: false,
+        paused: soundtrack.paused
+      }));
+    }
+    var playAttempt = soundtrack.play();
+    if (playAttempt && typeof playAttempt.catch === "function") {
+      playAttempt.catch(function () {});
+    }
   }
   if (window.localStorage) {
     window.localStorage.setItem("ramayanaMusicVolume", "50");
@@ -564,9 +637,90 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function getCharacterNames() {
+  var names = [
+    playerName || "Rama",
+    fatherName || "Dasharatha",
+    motherName || "Kausalya",
+    wifeName || "Sita",
+    siblingOneName || "Lakshmana",
+    siblingTwoName || "Bharata",
+    siblingThreeName || "Shatrughna",
+    secondMotherName || "Kaikeyi",
+    "Ravana",
+    "Hanuman",
+    "Sugriva",
+    "Vali",
+    "Jatayu",
+    "Surphanaka",
+    "Maricha",
+    "Vibhishana",
+    "Kumbhakarna",
+    "Mandodari",
+    "Manthara",
+    "Sumitra",
+    "Lava",
+    "Kush",
+    "Angada",
+    "Sampati",
+    "Jambaavan"
+  ];
+
+  return names
+    .filter(function (name) { return typeof name === "string" && name.trim(); })
+    .filter(function (name, index, list) { return list.indexOf(name) === index; })
+    .sort(function (a, b) { return b.length - a.length; });
+}
+
+function formatStoryHtml(text) {
+  var output = escapeHtml(interpolatePlayerName(text));
+  getCharacterNames().forEach(function (name) {
+    var escapedName = escapeHtml(name);
+    var pattern = new RegExp(escapeRegExp(escapedName), "g");
+    output = output.replace(pattern, "<span class='character-name'>" + escapedName + "</span>");
+  });
+  return output;
+}
+
 function interpolatePlayerName(text) {
-  var displayName = playerName || "Traveler";
-  return text.replace(/\{\{name\}\}/g, displayName);
+  var siblingOneSubject = siblingOneGender === "female" ? "she" : "he";
+  var siblingOneObject = siblingOneGender === "female" ? "her" : "him";
+  var siblingOnePossessive = siblingOneGender === "female" ? "her" : "his";
+  var siblingTwoSubject = siblingTwoGender === "female" ? "she" : "he";
+  var siblingTwoObject = siblingTwoGender === "female" ? "her" : "him";
+  var siblingTwoPossessive = siblingTwoGender === "female" ? "her" : "his";
+  var siblingThreeSubject = siblingThreeGender === "female" ? "she" : "he";
+  var siblingThreeObject = siblingThreeGender === "female" ? "her" : "him";
+  var siblingThreePossessive = siblingThreeGender === "female" ? "her" : "his";
+  var replacements = {
+    "{{name}}": playerName || "Rama",
+    "{{fatherName}}": fatherName || "Dasharatha",
+    "{{motherName}}": motherName || "Kausalya",
+    "{{wifeName}}": wifeName || "Sita",
+    "{{siblingOneName}}": siblingOneName || "Lakshmana",
+    "{{siblingTwoName}}": siblingTwoName || "Bharata",
+    "{{siblingThreeName}}": siblingThreeName || "Shatrughna",
+    "{{secondMotherName}}": secondMotherName || "Kaikeyi",
+    "{{siblingOneSubject}}": siblingOneSubject,
+    "{{siblingOneObject}}": siblingOneObject,
+    "{{siblingOnePossessive}}": siblingOnePossessive,
+    "{{siblingTwoSubject}}": siblingTwoSubject,
+    "{{siblingTwoObject}}": siblingTwoObject,
+    "{{siblingTwoPossessive}}": siblingTwoPossessive,
+    "{{siblingThreeSubject}}": siblingThreeSubject,
+    "{{siblingThreeObject}}": siblingThreeObject,
+    "{{siblingThreePossessive}}": siblingThreePossessive
+  };
+
+  var output = text;
+  Object.keys(replacements).forEach(function (key) {
+    output = output.replaceAll(key, replacements[key]);
+  });
+  return output;
 }
 
 function showScene() {
@@ -576,7 +730,7 @@ function showScene() {
   }
 
   var scene = scenes[currentScene];
-  var sceneTitle = escapeHtml(scene.title);
+  var sceneTitle = formatStoryHtml(scene.title);
   var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo' data-tooltip='undo'>Undo</button><button type='button' onclick='openTimelineModal()' aria-label='Open my storyline'>My Storyline</button></div>";
 
   if (currentScene === 1) {
@@ -586,13 +740,13 @@ function showScene() {
   }
 
   scene.text.forEach(function (paragraph) {
-    html += "<p>" + escapeHtml(interpolatePlayerName(paragraph)) + "</p>";
+    html += "<p>" + formatStoryHtml(paragraph) + "</p>";
   });
 
   if (Array.isArray(scene.dialogue)) {
     html += "<div class='scene-dialogue' aria-label='Scene dialogue'>";
     scene.dialogue.forEach(function (entry) {
-      html += "<p><strong>" + escapeHtml(interpolatePlayerName(entry.speaker)) + ":</strong> " + escapeHtml(interpolatePlayerName(entry.line)) + "</p>";
+      html += "<p><strong>" + formatStoryHtml(entry.speaker) + ":</strong> " + formatStoryHtml(entry.line) + "</p>";
     });
     html += "</div>";
   }
@@ -602,7 +756,7 @@ function showScene() {
     if (choice.restart) {
       html += "<button type='button' onclick='restart()' aria-label='Restart'>" + escapeHtml(choice.label) + "</button>";
     } else {
-      html += "<button type='button' onclick='makeChoice(" + index + ")'>" + escapeHtml(choice.label) + "</button>";
+      html += "<button type='button' onclick='makeChoice(" + index + ")'>" + formatStoryHtml(choice.label) + "</button>";
     }
   });
   html += "</div>";
@@ -667,38 +821,58 @@ function setupNavbar() {
 
 function setupVolumeSlider() {
   var audio = document.getElementById("backgroundMusic");
-  var slider = document.getElementById("volumeSlider");
-  var valueLabel = document.getElementById("volumeValue");
-  if (!audio || !slider || !valueLabel) {
+  if (!audio) {
     return;
   }
 
-  var storedValue = window.localStorage ? window.localStorage.getItem("ramayanaMusicVolume") : null;
-  var startingValue = Number(storedValue);
-  if (!Number.isFinite(startingValue)) {
-    startingValue = Number(slider.value);
+  var state = null;
+  if (window.sessionStorage) {
+    try {
+      state = JSON.parse(window.sessionStorage.getItem("ramayanaMusicState") || "null");
+    } catch (error) {
+      state = null;
+    }
   }
-  if (!Number.isFinite(startingValue)) {
-    startingValue = 65;
-  }
-  startingValue = Math.max(0, Math.min(100, Math.round(startingValue)));
-  slider.value = String(startingValue);
-  audio.volume = startingValue / 100;
-  audio.muted = startingValue === 0;
-  valueLabel.textContent = startingValue + "%";
 
-  slider.addEventListener("input", function () {
-    var nextValue = Number(slider.value);
-    if (!Number.isFinite(nextValue)) {
-      return;
+  var storedVolume = window.localStorage ? Number(window.localStorage.getItem("ramayanaMusicVolume")) : NaN;
+  var fallbackVolume = Number.isFinite(storedVolume) ? Math.max(0, Math.min(1, storedVolume / 100)) : 0.65;
+  var restoredVolume = state && Number.isFinite(state.volume) ? Math.max(0, Math.min(1, state.volume)) : fallbackVolume;
+  audio.volume = restoredVolume;
+  audio.muted = !!(state && state.muted);
+
+  if (state && Number.isFinite(state.currentTime)) {
+    audio.addEventListener("loadedmetadata", function onLoadedMetadata() {
+      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.currentTime = Math.max(0, state.currentTime);
+    });
+  }
+
+  if (!state || !state.paused) {
+    var autoplayAttempt = audio.play();
+    if (autoplayAttempt && typeof autoplayAttempt.catch === "function") {
+      autoplayAttempt.catch(function () {});
     }
-    audio.volume = Math.max(0, Math.min(1, nextValue / 100));
-    audio.muted = nextValue === 0;
-    valueLabel.textContent = Math.round(nextValue) + "%";
+  }
+
+  function persistMusicState() {
     if (window.localStorage) {
-      window.localStorage.setItem("ramayanaMusicVolume", String(Math.round(nextValue)));
+      window.localStorage.setItem("ramayanaMusicVolume", String(Math.round(audio.volume * 100)));
     }
-  });
+    if (window.sessionStorage) {
+      window.sessionStorage.setItem("ramayanaMusicState", JSON.stringify({
+        currentTime: audio.currentTime || 0,
+        volume: audio.volume,
+        muted: audio.muted,
+        paused: audio.paused
+      }));
+    }
+  }
+
+  audio.addEventListener("timeupdate", persistMusicState);
+  audio.addEventListener("volumechange", persistMusicState);
+  audio.addEventListener("pause", persistMusicState);
+  audio.addEventListener("play", persistMusicState);
+  window.addEventListener("pagehide", persistMusicState);
 }
 
 function renderSimpleTimelineList() {
@@ -712,11 +886,11 @@ function renderSimpleTimelineList() {
     if (!scenes[sceneId]) {
       return;
     }
-    html += "<li><strong>" + escapeHtml(scenes[sceneId].title) + "</strong><p class='timeline-scene-description'>" + escapeHtml(interpolatePlayerName(scenes[sceneId].text.join(" "))) + "</p></li>";
+    html += "<li><strong>" + formatStoryHtml(scenes[sceneId].title) + "</strong><p class='timeline-scene-description'>" + formatStoryHtml(scenes[sceneId].text.join(" ")) + "</p></li>";
   });
 
   if (scenes[currentScene]) {
-    html += "<li class='timeline-current-scene'><strong>" + escapeHtml(scenes[currentScene].title) + " (Current)</strong><p class='timeline-scene-description'>" + escapeHtml(interpolatePlayerName(scenes[currentScene].text.join(" "))) + "</p></li>";
+    html += "<li class='timeline-current-scene'><strong>" + formatStoryHtml(scenes[currentScene].title) + " (Current)</strong><p class='timeline-scene-description'>" + formatStoryHtml(scenes[currentScene].text.join(" ")) + "</p></li>";
   }
 
   if (!html) {
