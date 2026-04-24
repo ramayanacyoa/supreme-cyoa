@@ -14,7 +14,10 @@ _Last updated: 2026-04-24 (UTC)_
 - Training Ground trivia sequence after meeting Hanuman.
 - Farthest current progression end card titled **The Ramayana Adventure: Lanka** with **Coming Soon**.
 - Added royal-court branch where a second argument against exile can trigger an execution ending.
-- Character names highlighted in bright teal across scene content and timeline display.
+- Character names highlighted in a softer gold across scene content and timeline display.
+- Family setup can now be toggled on/off with an **Enable/Disable Family Setup** control on the main setup card.
+- Mid-game guardrail: first-time family setup enable is blocked with **"Not Available. Finish current game session."**
+- Mid-game disable resets active story names to canon defaults, while re-enable restores previously saved custom family values.
 
 ## Navigation and Audio
 
@@ -33,7 +36,7 @@ _Last updated: 2026-04-24 (UTC)_
 
 ## Release and Content Notes
 
-- Public update badge/version set to **1.0.4**.
+- Public update badge/version set to **1.0.5**.
 - Main title standardized as **The Ramayana Adventure: Banwas**.
 - People-page category description and royal-house wording capitalization normalized.
 - Site favicon links standardized to `ramayana_favicon.ico`.

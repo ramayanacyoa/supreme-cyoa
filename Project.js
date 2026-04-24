@@ -13,8 +13,11 @@ var secondMotherName = "";
 var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
+var familySetupEnabled = false;
+var familySetupActivatedOnce = false;
+var customNames = null;
 
-console.log("Update 21");
+console.log("Update 22");
 
 var scenes = {
   1: {
@@ -548,10 +551,27 @@ function restart() {
   wentAlone = false;
   historyStack = [];
   clearStoryCard();
+  applyFamilySetupState();
   updateUndoButton();
 }
 
-function startAdventure() {
+function getCanonNames() {
+  return {
+    playerName: "Rama",
+    fatherName: "Dasharatha",
+    motherName: "Kausalya",
+    wifeName: "Sita",
+    siblingOneName: "Lakshmana",
+    siblingTwoName: "Bharata",
+    siblingThreeName: "Shatrughna",
+    siblingOneGender: "male",
+    siblingTwoGender: "male",
+    siblingThreeGender: "male",
+    secondMotherName: "Kaikeyi"
+  };
+}
+
+function readCustomNamesFromInputs() {
   var input = document.getElementById("playerName");
   var fatherInput = document.getElementById("fatherName");
   var motherInput = document.getElementById("motherName");
@@ -564,20 +584,99 @@ function startAdventure() {
   var secondMotherInput = document.getElementById("secondMotherName");
   var wifeInput = document.getElementById("wifeName");
 
-  playerName = input ? input.value.trim() : "";
-  if (!playerName) {
-    playerName = "Rama";
+  return {
+    playerName: input && input.value.trim() ? input.value.trim() : "Rama",
+    fatherName: fatherInput && fatherInput.value.trim() ? fatherInput.value.trim() : "Dasharatha",
+    motherName: motherInput && motherInput.value.trim() ? motherInput.value.trim() : "Kausalya",
+    wifeName: wifeInput && wifeInput.value.trim() ? wifeInput.value.trim() : "Sita",
+    siblingOneName: siblingOneInput && siblingOneInput.value.trim() ? siblingOneInput.value.trim() : "Lakshmana",
+    siblingTwoName: siblingTwoInput && siblingTwoInput.value.trim() ? siblingTwoInput.value.trim() : "Bharata",
+    siblingThreeName: siblingThreeInput && siblingThreeInput.value.trim() ? siblingThreeInput.value.trim() : "Shatrughna",
+    siblingOneGender: siblingOneGenderInput && siblingOneGenderInput.value === "female" ? "female" : "male",
+    siblingTwoGender: siblingTwoGenderInput && siblingTwoGenderInput.value === "female" ? "female" : "male",
+    siblingThreeGender: siblingThreeGenderInput && siblingThreeGenderInput.value === "female" ? "female" : "male",
+    secondMotherName: secondMotherInput && secondMotherInput.value.trim() ? secondMotherInput.value.trim() : "Kaikeyi"
+  };
+}
+
+function assignNames(nameSet) {
+  playerName = nameSet.playerName;
+  fatherName = nameSet.fatherName;
+  motherName = nameSet.motherName;
+  wifeName = nameSet.wifeName;
+  siblingOneName = nameSet.siblingOneName;
+  siblingTwoName = nameSet.siblingTwoName;
+  siblingThreeName = nameSet.siblingThreeName;
+  siblingOneGender = nameSet.siblingOneGender;
+  siblingTwoGender = nameSet.siblingTwoGender;
+  siblingThreeGender = nameSet.siblingThreeGender;
+  secondMotherName = nameSet.secondMotherName;
+}
+
+function applyFamilySetupState() {
+  var fields = document.getElementById("familySetupFields");
+  var toggleBtn = document.getElementById("toggleFamilySetupBtn");
+  var notice = document.getElementById("familySetupNotice");
+  if (fields) {
+    fields.hidden = !familySetupEnabled;
   }
-  fatherName = fatherInput && fatherInput.value.trim() ? fatherInput.value.trim() : "Dasharatha";
-  motherName = motherInput && motherInput.value.trim() ? motherInput.value.trim() : "Kausalya";
-  siblingOneName = siblingOneInput && siblingOneInput.value.trim() ? siblingOneInput.value.trim() : "Lakshmana";
-  siblingTwoName = siblingTwoInput && siblingTwoInput.value.trim() ? siblingTwoInput.value.trim() : "Bharata";
-  siblingThreeName = siblingThreeInput && siblingThreeInput.value.trim() ? siblingThreeInput.value.trim() : "Shatrughna";
-  siblingOneGender = siblingOneGenderInput && siblingOneGenderInput.value === "female" ? "female" : "male";
-  siblingTwoGender = siblingTwoGenderInput && siblingTwoGenderInput.value === "female" ? "female" : "male";
-  siblingThreeGender = siblingThreeGenderInput && siblingThreeGenderInput.value === "female" ? "female" : "male";
-  secondMotherName = secondMotherInput && secondMotherInput.value.trim() ? secondMotherInput.value.trim() : "Kaikeyi";
-  wifeName = wifeInput && wifeInput.value.trim() ? wifeInput.value.trim() : "Sita";
+  if (toggleBtn) {
+    toggleBtn.textContent = familySetupEnabled ? "Disable Family Setup" : "Enable Family Setup";
+    toggleBtn.setAttribute("aria-expanded", familySetupEnabled ? "true" : "false");
+  }
+  if (notice && !notice.dataset.lockMessage) {
+    notice.textContent = familySetupEnabled ? "Family setup is enabled for this run." : "";
+  }
+}
+
+function toggleFamilySetup() {
+  var notice = document.getElementById("familySetupNotice");
+  if (notice) {
+    notice.dataset.lockMessage = "";
+  }
+
+  if (familySetupEnabled) {
+    customNames = readCustomNamesFromInputs();
+    familySetupEnabled = false;
+    assignNames(getCanonNames());
+    if (currentScene > 0) {
+      showScene();
+    }
+    applyFamilySetupState();
+    return;
+  }
+
+  if (currentScene > 0 && !familySetupActivatedOnce) {
+    if (notice) {
+      notice.textContent = "Not Available. Finish current game session.";
+      notice.dataset.lockMessage = "true";
+    }
+    return;
+  }
+
+  familySetupEnabled = true;
+  familySetupActivatedOnce = true;
+  customNames = customNames || readCustomNamesFromInputs();
+  assignNames(customNames);
+  if (currentScene > 0) {
+    showScene();
+  }
+  applyFamilySetupState();
+}
+
+function startAdventure() {
+  var baseNameInput = document.getElementById("playerName");
+  var basePlayerName = baseNameInput && baseNameInput.value.trim() ? baseNameInput.value.trim() : "Rama";
+  if (familySetupEnabled) {
+    customNames = readCustomNamesFromInputs();
+    customNames.playerName = basePlayerName;
+    familySetupActivatedOnce = true;
+    assignNames(customNames);
+  } else {
+    var canonNames = getCanonNames();
+    canonNames.playerName = basePlayerName;
+    assignNames(canonNames);
+  }
 
   historyStack = [];
   currentScene = 1;
@@ -936,6 +1035,7 @@ function closeInventoryModal() {}
 document.addEventListener("DOMContentLoaded", function () {
   setupNavbar();
   setupVolumeSlider();
+  applyFamilySetupState();
   if (typeof applyResolutionTierStyling === "function") {
     applyResolutionTierStyling();
     window.addEventListener("resize", applyResolutionTierStyling);

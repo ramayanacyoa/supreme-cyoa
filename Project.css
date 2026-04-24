@@ -389,6 +389,10 @@ body[data-resolution-tier="uhd"] {
   filter: brightness(1.04) saturate(1.3) drop-shadow(0 5px 10px rgba(255, 186, 77, 0.45));
 }
 
+#startBtn {
+  margin-top: 24px;
+}
+
 #startBtn[data-tooltip]:hover::after,
 #undoButton.art-button[data-tooltip]:hover::after,
 #startBtn[data-tooltip]:focus-visible::after,
@@ -550,6 +554,19 @@ p {
   display: grid;
   gap: 10px;
   justify-items: center;
+}
+
+.family-setup-fields {
+  margin-top: 10px;
+}
+
+.setup-notice {
+  margin: 10px auto 0;
+  width: min(320px, 100%);
+  text-align: left;
+  min-height: 1.4em;
+  font-size: 0.88rem;
+  color: #ffd98c;
 }
 
 .setup-label {
@@ -903,11 +920,11 @@ p {
 
 .timeline-current-scene strong,
 .timeline-current-scene .timeline-scene-description {
-  color: #51e3bf;
+  color: #f3c978;
 }
 
 .character-name {
-  color: #51e3bf;
+  color: #f3c978;
   font-weight: 700;
 }
 

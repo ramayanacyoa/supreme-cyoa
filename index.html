@@ -10,7 +10,7 @@
   <link rel="icon" type="image/x-icon" href="ramayana_favicon.ico">
 </head>
 <body>
-  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 1.0.4</a>
+  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 1.0.5</a>
 
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
@@ -40,31 +40,36 @@
       <div class="intro-card">
         <h2>Welcome, Brave Traveler</h2>
         <p>Before your journey begins, shape your royal household. Follow the prompts in order—any field left blank will automatically use the classic Ramayana name.</p>
+        <button type="button" id="toggleFamilySetupBtn" onclick="toggleFamilySetup()" aria-controls="familySetupFields" aria-expanded="false">Enable Family Setup</button>
+        <p id="familySetupNotice" class="setup-notice" aria-live="polite"></p>
         <div class="name-grid">
-          <p class="setup-label">1) Name yourself and your parents</p>
+          <p class="setup-label">1) Name yourself</p>
           <input type="text" id="playerName" placeholder="Your name (Rama)" />
+        </div>
+        <div class="name-grid family-setup-fields" id="familySetupFields" hidden>
+          <p class="setup-label">2) Name your parents</p>
           <input type="text" id="fatherName" placeholder="Father's name (Dasharatha)" />
           <input type="text" id="motherName" placeholder="Mother's name (Kausalya)" />
-          <p class="setup-label">2) Name sibling 1 (Lakshmana role) and choose gender</p>
+          <p class="setup-label">3) Name sibling 1 (Lakshmana role) and choose gender</p>
           <input type="text" id="siblingOneName" placeholder="1st sibling / Lakshmana" />
           <select id="siblingOneGender" aria-label="First sibling gender">
             <option value="male">First sibling: Brother</option>
             <option value="female">First sibling: Sister</option>
           </select>
-          <p class="setup-label">3) Name sibling 2 (Bharata role), choose gender, then name their mother (Kaikeyi role)</p>
+          <p class="setup-label">4) Name sibling 2 (Bharata role), choose gender, then name their mother (Kaikeyi role)</p>
           <input type="text" id="siblingTwoName" placeholder="2nd sibling / Bharata" />
           <select id="siblingTwoGender" aria-label="Second sibling gender">
             <option value="male">Second sibling: Brother</option>
             <option value="female">Second sibling: Sister</option>
           </select>
           <input type="text" id="secondMotherName" placeholder="2nd sibling's mother (Kaikeyi)" />
-          <p class="setup-label">4) Name sibling 3 (Shatrughna role) and choose gender</p>
+          <p class="setup-label">5) Name sibling 3 (Shatrughna role) and choose gender</p>
           <input type="text" id="siblingThreeName" placeholder="3rd sibling / Shatrughna" />
           <select id="siblingThreeGender" aria-label="Third sibling gender">
             <option value="male">Third sibling: Brother</option>
             <option value="female">Third sibling: Sister</option>
           </select>
-          <p class="setup-label">5) Name your wife (Sita role)</p>
+          <p class="setup-label">6) Name your wife (Sita role)</p>
           <input type="text" id="wifeName" placeholder="Wife's name (Sita)" />
         </div>
         <button type="button" onclick="startAdventure()" id="startBtn" data-tooltip="begin your quest">Begin your Quest</button>
