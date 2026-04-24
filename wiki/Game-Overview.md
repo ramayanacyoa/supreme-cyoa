@@ -2,57 +2,26 @@
 
 ## What this project is
 
-**The Ramayana: Choose Your Adventure** is a browser-based, single-page, choice-driven narrative game inspired by the Ramayana.
-
-The story is rendered dynamically by JavaScript and branches by scene ID transitions.
+**The Ramayana Adventure: Banwas** is a browser-based, choice-driven narrative game inspired by the Ramayana.
 
 ## Core experience
 
 - Player enters a name and starts from Scene 1.
-- Scene content is rendered into `#storyCard`.
-- Choices transition between scenes via `makeChoice()` / `makeDecision()`.
-- Endings can trigger a restart path.
-- A timeline modal visualizes explored and possible routes.
-- Inventory modal tracks artifact discoveries and lore.
-- Post-recon Lanka war content includes long-form scene writing and tactical branch choices through Scene 102.
+- Scene content renders into `#storyCard`.
+- Choices transition between scenes through scene IDs.
+- Endings can trigger restart.
+- Storyline modal provides a readable progress summary.
+
+## Current progression status
+
+- The currently deepest branch ends on:
+  - **The Ramayana Adventure: Lanka**
+  - **Coming Soon**
 
 ## UI components at a glance
 
-- Sticky top nav with:
-  - About link
-  - Timeline button
-  - Inventory button with item count
-  - Background music controls and volume dropdown
-- Hidden update console marker (`Update 1` currently)
-- Intro card + start button
-- Story card with Undo button
-- Timeline modal with zoom/reveal
-- Inventory modal with artifact lore list
-
-## Audio behavior
-
-- Default soundtrack: **Sacred Path Of Rama.mp3**
-- Rescue soundtrack: **Lanka Burns At Dawn.mp3**
-- Track auto-switches when entering rescue phase scenes.
-- Volume dropdown drives actual `<audio>` volume and muted state.
-
-## Routing behavior
-
-Hash-based routes are supported:
-
-- `#scene-<id>`
-- `#scene-<id>?timeline=1`
-- `#timeline`
-
-On load/hashchange, the app attempts to restore route state if the scene ID is in the routable scene list.
-
-## State model (high-level)
-
-The game tracks:
-
-- Current scene ID and player name
-- Scene-specific booleans (e.g., `broughtLakshmana`, `wentAlone`)
-- Receipt history (scene summaries + selected choices)
-- Undo history snapshots
-- Timeline visit/edge history
-- Inventory artifact collection
+- Sticky navbar with consistent links across pages.
+- Navbar soundtrack audio controls and volume slider.
+- Intro card and launch button text: **Begin your Quest**.
+- Story card with Undo button.
+- Updates page with latest public release notes.

@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>People of the Ramayana</title>
   <link rel="stylesheet" href="Project.css">
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
-  <link rel="icon" type="image/x-icon" href="favicon_io/favicon.ico">
-  <link rel="manifest" href="favicon_io/site.webmanifest">
+  <link rel="icon" type="image/x-icon" href="ramayana_favicon.ico">
   <script src="resolution.js"></script>
   <script src="people-of-ramayana.js" defer></script>
   <script>
@@ -22,7 +18,7 @@
   </script>
 </head>
 <body id="peoplePageBody">
-  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 15</a>
+  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 1.0.0</a>
 
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
@@ -32,6 +28,15 @@
       <a class="nav-link-pill nav-link-current" href="people-of-ramayana.html" aria-current="page">People of the Ramayana</a>
       <a class="nav-link-pill" href="https://arjun-singh.com/" target="_blank" rel="noopener noreferrer">About</a>
     </div>
+    <div id="soundtrackBadge" aria-label="Background soundtrack controls">
+      <span class="soundtrack-label">Soundtrack</span>
+      <audio id="backgroundMusic" controls controlsList="nodownload noplaybackrate" autoplay muted loop preload="metadata">
+        <source src="Sacred Path Of Rama.mp3" type="audio/mpeg">
+      </audio>
+      <label for="volumeSlider" class="soundtrack-label">Volume</label>
+      <input id="volumeSlider" type="range" min="0" max="100" step="1" value="65" aria-label="Background music volume">
+      <span id="volumeValue" class="soundtrack-label" aria-live="polite">65%</span>
+    </div>
   </nav>
 
   <div id="titleContainer">
@@ -39,7 +44,7 @@
       <h1>People of the Ramayana</h1>
       <h3 class="subtitle">Individuals, Clans, Tribes, and Kingdoms</h3>
       <h4 id="description">A quick guide to the major figures and groups in the epic world.</h4>
-      <p>Use the category filters below to explore heroes, sages, royal houses, vanara allies, rakshasa commanders, and major realms.</p>
+      <p>Use the category filters below to explore heroes, sages, Royal Houses, vanara allies, rakshasa commanders, and major realms.</p>
     </header>
   </div>
 

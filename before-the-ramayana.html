@@ -5,16 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Before The Ramayana</title>
   <link rel="stylesheet" href="Project.css">
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
-  <link rel="icon" type="image/x-icon" href="favicon_io/favicon.ico">
-  <link rel="manifest" href="favicon_io/site.webmanifest">
+  <link rel="icon" type="image/x-icon" href="ramayana_favicon.ico">
   <script src="resolution.js"></script>
   <script src="Project.js"></script>
 </head>
 <body id="backstorybody">
-  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 15</a>
+  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 1.0.0</a>
 
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
@@ -23,6 +19,15 @@
       <a class="nav-link-pill nav-link-current" href="before-the-ramayana.html" aria-current="page">Before the Ramayana</a>
       <a class="nav-link-pill" href="people-of-ramayana.html">People of the Ramayana</a>
       <a class="nav-link-pill" href="https://arjun-singh.com/" target="_blank" rel="noopener noreferrer">About</a>
+    </div>
+    <div id="soundtrackBadge" aria-label="Background soundtrack controls">
+      <span class="soundtrack-label">Soundtrack</span>
+      <audio id="backgroundMusic" controls controlsList="nodownload noplaybackrate" autoplay muted loop preload="metadata">
+        <source src="Sacred Path Of Rama.mp3" type="audio/mpeg">
+      </audio>
+      <label for="volumeSlider" class="soundtrack-label">Volume</label>
+      <input id="volumeSlider" type="range" min="0" max="100" step="1" value="65" aria-label="Background music volume">
+      <span id="volumeValue" class="soundtrack-label" aria-live="polite">65%</span>
     </div>
   </nav>
 

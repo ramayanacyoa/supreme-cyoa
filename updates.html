@@ -5,16 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ramayana Adventure Updates</title>
   <link rel="stylesheet" href="Project.css">
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
-  <link rel="icon" type="image/x-icon" href="favicon_io/favicon.ico">
-  <link rel="manifest" href="favicon_io/site.webmanifest">
+  <link rel="icon" type="image/x-icon" href="ramayana_favicon.ico">
   <script src="resolution.js"></script>
   <script src="Project.js"></script>
 </head>
 <body>
-  <a id="updateBadge" class="nav-link-current" href="updates.html" aria-label="Go to updates page" aria-current="page" data-resolution-label="HD">Update 15</a>
+  <a id="updateBadge" class="nav-link-current" href="updates.html" aria-label="Go to updates page" aria-current="page" data-resolution-label="HD">Update 1.0.0</a>
 
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
@@ -23,6 +19,15 @@
       <a class="nav-link-pill" href="before-the-ramayana.html">Before the Ramayana</a>
       <a class="nav-link-pill" href="people-of-ramayana.html">People of the Ramayana</a>
       <a class="nav-link-pill" href="https://arjun-singh.com/" target="_blank" rel="noopener noreferrer">About</a>
+    </div>
+    <div id="soundtrackBadge" aria-label="Background soundtrack controls">
+      <span class="soundtrack-label">Soundtrack</span>
+      <audio id="backgroundMusic" controls controlsList="nodownload noplaybackrate" autoplay muted loop preload="metadata">
+        <source src="Sacred Path Of Rama.mp3" type="audio/mpeg">
+      </audio>
+      <label for="volumeSlider" class="soundtrack-label">Volume</label>
+      <input id="volumeSlider" type="range" min="0" max="100" step="1" value="65" aria-label="Background music volume">
+      <span id="volumeValue" class="soundtrack-label" aria-live="polite">65%</span>
     </div>
   </nav>
 
@@ -38,10 +43,10 @@
   <main id="storyCard" aria-live="polite">
     <h2>Latest Update</h2>
     <div id="updateInfo">
-      <h3>Update 15</h3>
-      <p>Added a dedicated soundtrack volume slider with a live percentage readout in the navbar audio controls.</p>
-      <p>Saved volume preferences in local storage so your soundtrack level persists between visits.</p>
-      <p>Improved mobile soundtrack layout by adapting audio and volume control sizing through resolution.js.</p>
+      <h3>Update 1.0.0 — First Stable Release</h3>
+      <p>Stabilized the front page title, button styling, and launch text for the first major release.</p>
+      <p>Unified navbar audio controls across key pages and tuned quest-start behavior to set soundtrack volume to 50%.</p>
+      <p>Refined people-page capitalization and updated story progression messaging toward Lanka.</p>
     </div>
   </main>
 </body>

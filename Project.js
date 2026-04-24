@@ -4,7 +4,7 @@ var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
 
-console.log("Update 15");
+console.log("Update 16");
 
 var scenes = {
   1: {
@@ -439,10 +439,9 @@ var scenes = {
     choices: [{ label: "Restart", restart: true }]
   },
   54: {
-    title: "War Council",
+    title: "The Ramayana Adventure: Lanka",
     text: [
-      "At the council fire, you, {{name}}, review scouts' reports, sea routes, and Lanka's defenses with your allies.",
-      "Part 2: The Lanka War — Coming Soon!"
+      "Coming Soon"
     ],
     dialogue: [
       { speaker: "Hanuman", line: "\"Give the word, and we leap for Lanka tonight.\"" },
@@ -513,6 +512,22 @@ function startAdventure() {
   }
   historyStack = [];
   currentScene = 1;
+  var soundtrack = document.getElementById("backgroundMusic");
+  var volumeSlider = document.getElementById("volumeSlider");
+  var volumeValue = document.getElementById("volumeValue");
+  if (soundtrack) {
+    soundtrack.volume = 0.5;
+    soundtrack.muted = false;
+  }
+  if (volumeSlider) {
+    volumeSlider.value = "50";
+  }
+  if (volumeValue) {
+    volumeValue.textContent = "50%";
+  }
+  if (window.localStorage) {
+    window.localStorage.setItem("ramayanaMusicVolume", "50");
+  }
   showScene();
   updateUndoButton();
 }

@@ -2,64 +2,39 @@
 
 ## Repository structure
 
-- `index.html` — main app shell, nav, modals, audio UI, starter controls.
-- `Project.js` — complete story engine, scene rendering, transitions, timeline, minigames, routing, state management.
-- `Project.css` — full visual system and component styling.
-- `before-the-ramayana.html` — separate "coming soon" prequel page.
-- `favicon_io/` + root image/audio assets.
+- `index.html` — main app shell, navbar audio controls, starter controls, and story card.
+- `Project.js` — story engine, scene rendering, transitions, navbar toggle wiring, and soundtrack volume behavior.
+- `Project.css` — visual system and component styling.
+- `before-the-ramayana.html` — prequel landing page.
+- `people-of-ramayana.html` + `people-of-ramayana.js` — people and group reference page.
+- `updates.html` — release notes and latest version info.
+- Root assets include `ramayana_favicon.ico`, background image, and soundtrack MP3s.
 
 ## Runtime flow
 
-1. `DOMContentLoaded` initializes timeline/inventory hooks, controls, and route application.
-2. Player clicks Start -> `startAdventure()` sets scene 1.
-3. `showScene()` paints scene markup to `#storyCard`.
-4. Choice button click -> `makeChoice()` / `makeDecision()` mutates state and scene.
-5. `showScene()` re-renders + timeline/inventory/receipt updates.
+1. `DOMContentLoaded` initializes navbar and soundtrack controls.
+2. Player clicks Start -> `startAdventure()` sets scene 1 and normalizes volume to 50%.
+3. `showScene()` renders the current scene to `#storyCard`.
+4. Choice button click updates state and loads the next scene.
 
 ## Key systems you should not break
 
 ### 1) Scene rendering and transitions
 
-- `showScene()` and `makeChoice()` are tightly coupled by scene IDs.
-- Keep scene IDs unique and consistent across both functions.
-- New scenes above legacy Scene 102 are now guarded by a strict sequential validator; do not skip IDs.
+- Keep scene IDs unique.
+- Keep `makeChoice()` transition targets in sync with existing scene IDs.
 
-### 2) Timeline coherence
+### 2) Storyline history
 
-When changing story flow, update all of:
+- `historyStack` powers Undo and Storyline modal rendering.
+- Reset it carefully during restart/start flows.
 
-- `timelineNodeTitles`
-- `timelineLevels`
-- `timelineEdges`
-- (optional but recommended) `routableSceneIds`
+### 3) Cross-page navbar/audio consistency
 
-### 3) Route restoration
+- Any navbar change should be mirrored in `index.html`, `before-the-ramayana.html`, `people-of-ramayana.html`, and `updates.html`.
+- Maintain shared IDs for audio controls (`backgroundMusic`, `volumeSlider`, `volumeValue`).
 
-- Hash parser supports scene and timeline-open state.
-- If route support is expected for new scenes, include IDs in routable list.
+### 4) Update tracking
 
-### 4) Receipt generation
-
-`makeReceipt()` currently renders receipt card only for selected scene IDs.
-If you introduce new ending/final nodes, consider whether they should generate receipts.
-
-### 5) Inventory + lore
-
-- Add new artifact names to `artifactLoreCatalog`.
-- Ensure acquisition points call `addArtifact("...")`.
-
-## Current known implementation notes
-
-- `updatePlayerStatsCard()` and `closePlayerStatsModal()` are stubs (no-op).
-- `makeDecision()` handles part of Part 2 progression alongside `makeChoice()`.
-- Timeline edge labels are remapped to destination scene titles at runtime.
-- Audio starts muted by default and relies on user interaction for reliable autoplay.
-
-## Contribution checklist for future scene additions
-
-- [ ] Add new `showScene()` branch
-- [ ] Add transitions in `makeChoice()` or `makeDecision()`
-- [ ] Add/update timeline titles/levels/edges
-- [ ] Add scene to `routableSceneIds` if hash routing needed
-- [ ] Update any ending receipt trigger logic
-- [ ] If artifact-related, define lore and add pickup logic
+- Hidden console marker is maintained in `Project.js` (`console.log("Update X")`).
+- Public release label and details are maintained in `updates.html` and update badges.

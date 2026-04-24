@@ -63,6 +63,48 @@
         });
     }
 
+    function setupVolumeSlider() {
+        var audio = document.getElementById("backgroundMusic");
+        var slider = document.getElementById("volumeSlider");
+        var valueLabel = document.getElementById("volumeValue");
+
+        if (!audio || !slider || !valueLabel) {
+            return;
+        }
+
+        var storedValue = window.localStorage ? window.localStorage.getItem("ramayanaMusicVolume") : null;
+        var startingValue = Number(storedValue);
+
+        if (!Number.isFinite(startingValue)) {
+            startingValue = Number(slider.value);
+        }
+
+        if (!Number.isFinite(startingValue)) {
+            startingValue = 65;
+        }
+
+        startingValue = Math.max(0, Math.min(100, Math.round(startingValue)));
+        slider.value = String(startingValue);
+        audio.volume = startingValue / 100;
+        audio.muted = startingValue === 0;
+        valueLabel.textContent = startingValue + "%";
+
+        slider.addEventListener("input", function () {
+            var nextValue = Number(slider.value);
+            if (!Number.isFinite(nextValue)) {
+                return;
+            }
+
+            audio.volume = Math.max(0, Math.min(1, nextValue / 100));
+            audio.muted = nextValue === 0;
+            valueLabel.textContent = Math.round(nextValue) + "%";
+
+            if (window.localStorage) {
+                window.localStorage.setItem("ramayanaMusicVolume", String(Math.round(nextValue)));
+            }
+        });
+    }
+
     var peopleEntries = [
         {
             name: "Rama",
@@ -103,13 +145,13 @@
         {
             name: "Ayodhya (Ikshvaku / Solar dynasty)",
             type: "group",
-            role: "Kingdom and royal house",
+            role: "Kingdom and Royal House",
             description: "Rama's homeland and one of the primary royal lineages in the story's political world."
         },
         {
             name: "Mithila (House of Janaka)",
             type: "group",
-            role: "Kingdom and royal house",
+            role: "Kingdom and Royal House",
             description: "Sita's homeland, associated with wisdom, philosophy, and sacred royal duty."
         },
         {
@@ -184,6 +226,7 @@
 
         renderPeople("all");
         setupNavbarToggle();
+        setupVolumeSlider();
 
         peopleCategory.addEventListener("change", function (event) {
             renderPeople(event.target.value);
