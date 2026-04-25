@@ -1,5 +1,5 @@
 var preludeText = "Fulfill your dharma, and let your deeds become legend.";
-
+// the variable defines the prelude text
 var currentScene = 0;
 var playerName = "";
 var broughtLakshmana = false;
@@ -14,8 +14,10 @@ var familyCast = {
   siblingThreeName: "Shatrughna",
   secondMotherName: "Kaikeyi"
 };
+// defining all base story variables
 
 
+//the following are all the story components of the scenes
 var scenes = {
   1: {
     title: "The Ramayana Begins",
