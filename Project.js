@@ -3,8 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var choices = document.getElementById("choices");
   if (storyCard && choices && choices.children.length === 0) {
     storyCard.insertAdjacentHTML(
-      "afterbegin",
-      '<img class="prelude-image" src="ram_pic.png" alt="Ram prelude image"><p class="prelude-text">Fulfill your dharma, and let your deeds become legend.</p>'
+      <p class="prelude-text">Fulfill your dharma, and let your deeds become legend.</p>'
     );
   }
 });
