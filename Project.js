@@ -3,7 +3,7 @@ var playerName = "";
 var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
-
+console.log("Ready for Expo")
 var familyCast = {
   fatherName: "Dasharatha",
   motherName: "Kausalya",
