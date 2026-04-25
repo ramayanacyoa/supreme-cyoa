@@ -1,12 +1,4 @@
-// document.addEventListener("DOMContentLoaded", function () {
-//   var storyCard = document.getElementById("storyCard");
-//   var choices = document.getElementById("choices");
-//   if (storyCard && choices && choices.children.length === 0) {
-//     storyCard.insertAdjacentHTML(
-//       <p class="prelude-text">Fulfill your dharma, and let your deeds become legend.</p>'
-//     );
-//   }
-// });
+var preludeText = "Fulfill your dharma, and let your deeds become legend.";
 
 var currentScene = 0;
 var playerName = "";
@@ -540,7 +532,7 @@ function randomPercent() {
 function clearStoryCard() {
   var storyCard = document.getElementById("storyCard");
   if (storyCard) {
-    storyCard.innerHTML = "<div id='choices'></div>";
+    storyCard.innerHTML = "<p class='prelude-text'>" + preludeText + "</p>";
   }
 }
 
@@ -811,3 +803,5 @@ function closeTimelineModal() {
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
 }
+
+window.startAdventure = startAdventure;
