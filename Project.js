@@ -7,6 +7,7 @@ var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
 console.log("Confirmed - Ready for Expo")
+console.log("Added new heading")
 var familyCast = {
   fatherName: "Dasharatha",
   motherName: "Kausalya",
