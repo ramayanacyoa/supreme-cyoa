@@ -1,3 +1,6 @@
+if (!storyCard.hasChildNodes()) {
+  storyCard.innerHTML = "<h1>Fulfill your dharma, and let your deeds become legend.</h1>";
+}
 var currentScene = 0;
 var playerName = "";
 var broughtLakshmana = false;
