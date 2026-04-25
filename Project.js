@@ -1,12 +1,12 @@
-document.addEventListener("DOMContentLoaded", function () {
-  var storyCard = document.getElementById("storyCard");
-  var choices = document.getElementById("choices");
-  if (storyCard && choices && choices.children.length === 0) {
-    storyCard.insertAdjacentHTML(
-      <p class="prelude-text">Fulfill your dharma, and let your deeds become legend.</p>'
-    );
-  }
-});
+// document.addEventListener("DOMContentLoaded", function () {
+//   var storyCard = document.getElementById("storyCard");
+//   var choices = document.getElementById("choices");
+//   if (storyCard && choices && choices.children.length === 0) {
+//     storyCard.insertAdjacentHTML(
+//       <p class="prelude-text">Fulfill your dharma, and let your deeds become legend.</p>'
+//     );
+//   }
+// });
 
 var currentScene = 0;
 var playerName = "";
