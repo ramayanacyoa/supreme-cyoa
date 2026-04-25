@@ -530,6 +530,7 @@ var scenes = {
 function randomPercent() {
   return Math.floor(Math.random() * 100);
 }
+// finds a random number 1-100
 
 function clearStoryCard() {
   var storyCard = document.getElementById("storyCard");
@@ -537,7 +538,7 @@ function clearStoryCard() {
     storyCard.innerHTML = "<p class='prelude-text'>" + preludeText + "</p>" + "<img src='rama_pic.png alt='A descriptive description of the image' id='preludeImg'>";
   }
 }
-
+//resets the story card
 function restart() {
   currentScene = 0;
   playerName = "";
@@ -547,11 +548,10 @@ function restart() {
   clearStoryCard();
   updateUndoButton();
 }
-
+//restarts the whole game/story system
 function startAdventure() {
   var baseNameInput = document.getElementById("playerName");
   playerName = baseNameInput && baseNameInput.value.trim() ? baseNameInput.value.trim() : "Rama";
-
   historyStack = [];
   currentScene = 1;
   showScene();
@@ -561,6 +561,7 @@ function startAdventure() {
   }
   updateUndoButton();
 }
+//starts the adventure
 
 function resolveSpecialNext(next) {
   if (next === -1) {
@@ -584,6 +585,7 @@ function resolveSpecialNext(next) {
 
   return next;
 }
+//determines special transitions between special scenes
 
 function escapeHtml(value) {
   return value
