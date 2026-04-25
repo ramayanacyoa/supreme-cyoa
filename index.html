@@ -40,12 +40,15 @@
       <div class="intro-card">
         <h2>Welcome, Brave Traveler</h2>
         <p>Type your name and begin your journey. Then start the game to enter the adventure.</p>
+        <!-- Family setup feature disabled.
         <button type="button" id="toggleFamilySetupBtn" onclick="toggleFamilySetup()" aria-controls="familySetupFields" aria-expanded="false">Enable Family Setup</button>
         <p id="familySetupNotice" class="setup-notice" aria-live="polite"></p>
+        -->
         <div class="name-grid">
-          <p id="playerNameLabel" class="setup-label" hidden>1) Name yourself</p>
+          <p id="playerNameLabel" class="setup-label">Name yourself</p>
           <input type="text" id="playerName" placeholder="Your name (Rama)" />
         </div>
+        <!-- Family setup feature disabled.
         <div class="name-grid family-setup-fields" id="familySetupFields" hidden>
           <p class="setup-label">2) Name your parents</p>
           <input type="text" id="fatherName" placeholder="Father's name (Dasharatha)" />
@@ -72,6 +75,7 @@
           <p class="setup-label">6) Name your wife (Sita role)</p>
           <input type="text" id="wifeName" placeholder="Wife's name (Sita)" />
         </div>
+        -->
         <button type="button" onclick="startAdventure()" id="startBtn" data-tooltip="begin your quest">Begin your Quest</button>
       </div>
     </div>

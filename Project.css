@@ -556,6 +556,7 @@ p {
   justify-items: center;
 }
 
+/* Family setup feature disabled.
 .family-setup-fields {
   margin-top: 10px;
 }
@@ -572,6 +573,7 @@ p {
 #toggleFamilySetupBtn {
   margin-top: 18px;
 }
+*/
 
 .setup-label {
   margin: 12px 0 0;

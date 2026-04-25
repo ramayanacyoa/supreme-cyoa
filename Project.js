@@ -13,11 +13,11 @@ var secondMotherName = "";
 var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
-var familySetupEnabled = false;
-var familySetupActivatedOnce = false;
-var customNames = null;
+// var familySetupEnabled = false;
+// var familySetupActivatedOnce = false;
+// var customNames = null;
 
-console.log("Update 23");
+console.log("Update 24");
 
 var scenes = {
   1: {
@@ -551,7 +551,6 @@ function restart() {
   wentAlone = false;
   historyStack = [];
   clearStoryCard();
-  applyFamilySetupState();
   updateUndoButton();
 }
 
@@ -571,33 +570,8 @@ function getCanonNames() {
   };
 }
 
-function readCustomNamesFromInputs() {
-  var input = document.getElementById("playerName");
-  var fatherInput = document.getElementById("fatherName");
-  var motherInput = document.getElementById("motherName");
-  var siblingOneInput = document.getElementById("siblingOneName");
-  var siblingTwoInput = document.getElementById("siblingTwoName");
-  var siblingThreeInput = document.getElementById("siblingThreeName");
-  var siblingOneGenderInput = document.getElementById("siblingOneGender");
-  var siblingTwoGenderInput = document.getElementById("siblingTwoGender");
-  var siblingThreeGenderInput = document.getElementById("siblingThreeGender");
-  var secondMotherInput = document.getElementById("secondMotherName");
-  var wifeInput = document.getElementById("wifeName");
-
-  return {
-    playerName: input && input.value.trim() ? input.value.trim() : "Rama",
-    fatherName: fatherInput && fatherInput.value.trim() ? fatherInput.value.trim() : "Dasharatha",
-    motherName: motherInput && motherInput.value.trim() ? motherInput.value.trim() : "Kausalya",
-    wifeName: wifeInput && wifeInput.value.trim() ? wifeInput.value.trim() : "Sita",
-    siblingOneName: siblingOneInput && siblingOneInput.value.trim() ? siblingOneInput.value.trim() : "Lakshmana",
-    siblingTwoName: siblingTwoInput && siblingTwoInput.value.trim() ? siblingTwoInput.value.trim() : "Bharata",
-    siblingThreeName: siblingThreeInput && siblingThreeInput.value.trim() ? siblingThreeInput.value.trim() : "Shatrughna",
-    siblingOneGender: siblingOneGenderInput && siblingOneGenderInput.value === "female" ? "female" : "male",
-    siblingTwoGender: siblingTwoGenderInput && siblingTwoGenderInput.value === "female" ? "female" : "male",
-    siblingThreeGender: siblingThreeGenderInput && siblingThreeGenderInput.value === "female" ? "female" : "male",
-    secondMotherName: secondMotherInput && secondMotherInput.value.trim() ? secondMotherInput.value.trim() : "Kaikeyi"
-  };
-}
+// Family setup feature intentionally disabled.
+// function readCustomNamesFromInputs() {}
 
 function assignNames(nameSet) {
   playerName = nameSet.playerName;
@@ -613,74 +587,16 @@ function assignNames(nameSet) {
   secondMotherName = nameSet.secondMotherName;
 }
 
-function applyFamilySetupState() {
-  var fields = document.getElementById("familySetupFields");
-  var playerLabel = document.getElementById("playerNameLabel");
-  var toggleBtn = document.getElementById("toggleFamilySetupBtn");
-  var notice = document.getElementById("familySetupNotice");
-  if (fields) {
-    fields.hidden = !familySetupEnabled;
-  }
-  if (playerLabel) {
-    playerLabel.hidden = !familySetupEnabled;
-  }
-  if (toggleBtn) {
-    toggleBtn.textContent = familySetupEnabled ? "Disable Family Setup" : "Enable Family Setup";
-    toggleBtn.setAttribute("aria-expanded", familySetupEnabled ? "true" : "false");
-  }
-  if (notice && !notice.dataset.lockMessage) {
-    notice.textContent = familySetupEnabled ? "Family setup is enabled for this run." : "";
-  }
-}
-
-function toggleFamilySetup() {
-  var notice = document.getElementById("familySetupNotice");
-  if (notice) {
-    notice.dataset.lockMessage = "";
-  }
-
-  if (familySetupEnabled) {
-    customNames = readCustomNamesFromInputs();
-    familySetupEnabled = false;
-    assignNames(getCanonNames());
-    if (currentScene > 0) {
-      showScene();
-    }
-    applyFamilySetupState();
-    return;
-  }
-
-  if (currentScene > 0 && !familySetupActivatedOnce) {
-    if (notice) {
-      notice.textContent = "Not Available. Finish current game session.";
-      notice.dataset.lockMessage = "true";
-    }
-    return;
-  }
-
-  familySetupEnabled = true;
-  familySetupActivatedOnce = true;
-  customNames = customNames || readCustomNamesFromInputs();
-  assignNames(customNames);
-  if (currentScene > 0) {
-    showScene();
-  }
-  applyFamilySetupState();
-}
+// Family setup feature intentionally disabled.
+// function applyFamilySetupState() {}
+// function toggleFamilySetup() {}
 
 function startAdventure() {
   var baseNameInput = document.getElementById("playerName");
   var basePlayerName = baseNameInput && baseNameInput.value.trim() ? baseNameInput.value.trim() : "Rama";
-  if (familySetupEnabled) {
-    customNames = readCustomNamesFromInputs();
-    customNames.playerName = basePlayerName;
-    familySetupActivatedOnce = true;
-    assignNames(customNames);
-  } else {
-    var canonNames = getCanonNames();
-    canonNames.playerName = basePlayerName;
-    assignNames(canonNames);
-  }
+  var canonNames = getCanonNames();
+  canonNames.playerName = basePlayerName;
+  assignNames(canonNames);
 
   historyStack = [];
   currentScene = 1;
@@ -1039,7 +955,6 @@ function closeInventoryModal() {}
 document.addEventListener("DOMContentLoaded", function () {
   setupNavbar();
   setupVolumeSlider();
-  applyFamilySetupState();
   if (typeof applyResolutionTierStyling === "function") {
     applyResolutionTierStyling();
     window.addEventListener("resize", applyResolutionTierStyling);

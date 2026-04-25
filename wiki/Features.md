@@ -13,9 +13,8 @@ This page lists the live, player-facing features currently present in the projec
 
 ## 2) Personalization
 
-- Custom names for player and family.
+- Custom player name input on the start card.
 - Canonical fallback names when inputs are blank.
-- Optional family setup toggle.
 - Dynamic pronoun support for sibling selections.
 - Runtime placeholder interpolation in story text.
 - Character-name highlighting inside scene content.
@@ -63,5 +62,5 @@ This page lists the live, player-facing features currently present in the projec
 ## 9) Accessibility and resilience
 
 - Semantic/ARIA support in key controls.
-- Input guidance for setup defaults.
+- Input guidance for player-name defaults.
 - Graceful fallbacks for optional browser features.

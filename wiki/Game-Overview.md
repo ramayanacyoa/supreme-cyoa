@@ -25,6 +25,6 @@ The playable arc currently covers:
 
 - Sticky navbar across major pages.
 - Built-in soundtrack controls in the navbar.
-- Intro start card with setup inputs.
+- Intro start card with player-name input.
 - Story card for narrative and choices.
 - Updates page for public release notes.
