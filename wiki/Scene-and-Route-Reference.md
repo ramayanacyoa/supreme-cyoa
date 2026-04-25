@@ -31,11 +31,6 @@ This page summarizes the currently implemented narrative structure.
 
 From the Hanuman hub, available branches include:
 
-- Journey trivia,
-- Guessing game,
-- Storytelling game,
-- Ally conversation/training,
-- Ocean exploration,
 - Rescue storyline continuation.
 
 ### Part 2: Rescue sequence
@@ -56,14 +51,10 @@ From the Hanuman hub, available branches include:
 
 ## Special scene IDs in use
 
-- Lore artifacts: 95, 96, 97
-- Negotiation duel: 98
-- Legacy reflection IDs: 61, 62, 63
-- Guessing game: 93
-- Storytelling game/result: 99, 100
-- Ocean exploration loop: 101, 102
-- Ally conversation/training: 77
-- Trivia loop: 70–73
+- Hanuman hub: 66
+- Rescue launch: 75
+- Surasa test: 78
+- Lanka reconnaissance: 80, 81
 
 ## Timeline model
 
