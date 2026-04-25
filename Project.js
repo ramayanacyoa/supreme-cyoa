@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (storyCard && choices && choices.children.length === 0) {
     storyCard.insertAdjacentHTML(
       "afterbegin",
-      '<img class="prelude-image" src="ram_image.png" alt="Ram prelude image"><p class="prelude-text">Fulfill your dharma, and let your deeds become legend.</p>'
+      '<img class="prelude-image" src="ram_pic.png" alt="Ram prelude image"><p class="prelude-text">Fulfill your dharma, and let your deeds become legend.</p>'
     );
   }
 });

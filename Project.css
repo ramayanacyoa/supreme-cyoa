@@ -589,6 +589,15 @@ p {
 }
 
 
+.prelude-image {
+  display: block;
+  margin: 14px auto 20px;
+  width: min(860px, 98%);
+  border-radius: 26px;
+  border: 12px solid #d4a63a;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.38);
+}
+
 .prelude-text {
   margin: 0 auto;
   max-width: 680px;
