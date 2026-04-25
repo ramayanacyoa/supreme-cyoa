@@ -1,5 +1,6 @@
 var preludeText = "Fulfill your dharma, and let your deeds become legend.";
 // the variable defines the prelude text
+console.log("Update 1.0.1")
 var currentScene = 0;
 var playerName = "";
 var broughtLakshmana = false;
