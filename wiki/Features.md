@@ -1,6 +1,6 @@
 # Features
 
-_Last updated: 2026-04-24 (UTC)_
+_Last updated: 2026-04-25 (UTC)_
 
 ## Gameplay and UI Features
 
@@ -18,6 +18,7 @@ _Last updated: 2026-04-24 (UTC)_
 - Family setup can now be toggled on/off with an **Enable/Disable Family Setup** control on the main setup card.
 - Mid-game guardrail: first-time family setup enable is blocked with **"Not Available. Finish current game session."**
 - Mid-game disable resets active story names to canon defaults, while re-enable restores previously saved custom family values.
+- Setup copy now emphasizes typing your name and starting immediately, while the "1) Name yourself" label stays hidden unless Family Setup is enabled.
 
 ## Navigation and Audio
 
@@ -36,7 +37,7 @@ _Last updated: 2026-04-24 (UTC)_
 
 ## Release and Content Notes
 
-- Public update badge/version set to **1.0.5**.
+- Public update badge/version set to **1.0.0** for **First Stable Release**.
 - Main title standardized as **The Ramayana Adventure: Banwas**.
 - People-page category description and royal-house wording capitalization normalized.
 - Site favicon links standardized to `ramayana_favicon.ico`.

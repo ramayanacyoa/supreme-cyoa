@@ -17,7 +17,7 @@ var familySetupEnabled = false;
 var familySetupActivatedOnce = false;
 var customNames = null;
 
-console.log("Update 22");
+console.log("Update 23");
 
 var scenes = {
   1: {
@@ -615,10 +615,14 @@ function assignNames(nameSet) {
 
 function applyFamilySetupState() {
   var fields = document.getElementById("familySetupFields");
+  var playerLabel = document.getElementById("playerNameLabel");
   var toggleBtn = document.getElementById("toggleFamilySetupBtn");
   var notice = document.getElementById("familySetupNotice");
   if (fields) {
     fields.hidden = !familySetupEnabled;
+  }
+  if (playerLabel) {
+    playerLabel.hidden = !familySetupEnabled;
   }
   if (toggleBtn) {
     toggleBtn.textContent = familySetupEnabled ? "Disable Family Setup" : "Enable Family Setup";

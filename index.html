@@ -10,7 +10,7 @@
   <link rel="icon" type="image/x-icon" href="ramayana_favicon.ico">
 </head>
 <body>
-  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 1.0.5</a>
+  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 1.0.0</a>
 
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
@@ -39,11 +39,11 @@
     <div id="beginningContainer">
       <div class="intro-card">
         <h2>Welcome, Brave Traveler</h2>
-        <p>Before your journey begins, shape your royal household. Follow the prompts in order—any field left blank will automatically use the classic Ramayana name.</p>
+        <p>Type your name and begin your journey. Then start the game to enter the adventure.</p>
         <button type="button" id="toggleFamilySetupBtn" onclick="toggleFamilySetup()" aria-controls="familySetupFields" aria-expanded="false">Enable Family Setup</button>
         <p id="familySetupNotice" class="setup-notice" aria-live="polite"></p>
         <div class="name-grid">
-          <p class="setup-label">1) Name yourself</p>
+          <p id="playerNameLabel" class="setup-label" hidden>1) Name yourself</p>
           <input type="text" id="playerName" placeholder="Your name (Rama)" />
         </div>
         <div class="name-grid family-setup-fields" id="familySetupFields" hidden>
