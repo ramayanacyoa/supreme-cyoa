@@ -2,7 +2,10 @@ document.addEventListener("DOMContentLoaded", function () {
   var storyCard = document.getElementById("storyCard");
   var choices = document.getElementById("choices");
   if (storyCard && choices && choices.children.length === 0) {
-    storyCard.insertAdjacentHTML("afterbegin", '<p class="prelude-text">Fulfill your dharma, and let your deeds become legend.</p>');
+    storyCard.insertAdjacentHTML(
+      "afterbegin",
+      '<img class="prelude-image" src="ram_image.png" alt="Ram prelude image"><p class="prelude-text">Fulfill your dharma, and let your deeds become legend.</p>'
+    );
   }
 });
 
@@ -558,26 +561,6 @@ function startAdventure() {
 
   historyStack = [];
   currentScene = 1;
-  var soundtrack = document.getElementById("backgroundMusic");
-  if (soundtrack) {
-    soundtrack.volume = 0.5;
-    soundtrack.muted = false;
-    if (window.sessionStorage) {
-      window.sessionStorage.setItem("ramayanaMusicState", JSON.stringify({
-        currentTime: soundtrack.currentTime || 0,
-        volume: 0.5,
-        muted: false,
-        paused: soundtrack.paused
-      }));
-    }
-    var playAttempt = soundtrack.play();
-    if (playAttempt && typeof playAttempt.catch === "function") {
-      playAttempt.catch(function () {});
-    }
-  }
-  if (window.localStorage) {
-    window.localStorage.setItem("ramayanaMusicVolume", "50");
-  }
   showScene();
   var storyCard = document.getElementById("storyCard");
   if (storyCard && typeof storyCard.scrollIntoView === "function") {
@@ -780,82 +763,6 @@ function updateUndoButton() {
   undoButton.disabled = historyStack.length === 0;
 }
 
-function setupNavbar() {
-  var toggle = document.getElementById("navbarToggle");
-  var nav = document.getElementById("topNavbar");
-  if (!toggle || !nav) {
-    return;
-  }
-
-  toggle.addEventListener("click", function () {
-    var open = nav.classList.toggle("nav-open");
-    toggle.setAttribute("aria-expanded", open ? "true" : "false");
-  });
-
-  document.addEventListener("click", function (event) {
-    if (window.matchMedia("(max-width: 768px)").matches && nav.classList.contains("nav-open") && !nav.contains(event.target)) {
-      nav.classList.remove("nav-open");
-      toggle.setAttribute("aria-expanded", "false");
-    }
-  });
-}
-
-function setupVolumeSlider() {
-  var audio = document.getElementById("backgroundMusic");
-  if (!audio) {
-    return;
-  }
-
-  var state = null;
-  if (window.sessionStorage) {
-    try {
-      state = JSON.parse(window.sessionStorage.getItem("ramayanaMusicState") || "null");
-    } catch (error) {
-      state = null;
-    }
-  }
-
-  var storedVolume = window.localStorage ? Number(window.localStorage.getItem("ramayanaMusicVolume")) : NaN;
-  var fallbackVolume = Number.isFinite(storedVolume) ? Math.max(0, Math.min(1, storedVolume / 100)) : 0.65;
-  var restoredVolume = state && Number.isFinite(state.volume) ? Math.max(0, Math.min(1, state.volume)) : fallbackVolume;
-  audio.volume = restoredVolume;
-  audio.muted = !!(state && state.muted);
-
-  if (state && Number.isFinite(state.currentTime)) {
-    audio.addEventListener("loadedmetadata", function onLoadedMetadata() {
-      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
-      audio.currentTime = Math.max(0, state.currentTime);
-    });
-  }
-
-  if (!state || !state.paused) {
-    var autoplayAttempt = audio.play();
-    if (autoplayAttempt && typeof autoplayAttempt.catch === "function") {
-      autoplayAttempt.catch(function () {});
-    }
-  }
-
-  function persistMusicState() {
-    if (window.localStorage) {
-      window.localStorage.setItem("ramayanaMusicVolume", String(Math.round(audio.volume * 100)));
-    }
-    if (window.sessionStorage) {
-      window.sessionStorage.setItem("ramayanaMusicState", JSON.stringify({
-        currentTime: audio.currentTime || 0,
-        volume: audio.volume,
-        muted: audio.muted,
-        paused: audio.paused
-      }));
-    }
-  }
-
-  audio.addEventListener("timeupdate", persistMusicState);
-  audio.addEventListener("volumechange", persistMusicState);
-  audio.addEventListener("pause", persistMusicState);
-  audio.addEventListener("play", persistMusicState);
-  window.addEventListener("pagehide", persistMusicState);
-}
-
 function renderSimpleTimelineList() {
   var list = document.getElementById("timelineList");
   if (!list) {
@@ -905,16 +812,3 @@ function closeTimelineModal() {
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
 }
-function adjustTimelineZoom() {}
-function revealTimelinePossibilities() {}
-function handleInventoryModalBackdrop() {}
-function closeInventoryModal() {}
-
-document.addEventListener("DOMContentLoaded", function () {
-  setupNavbar();
-  setupVolumeSlider();
-  if (typeof applyResolutionTierStyling === "function") {
-    applyResolutionTierStyling();
-    window.addEventListener("resize", applyResolutionTierStyling);
-  }
-});
