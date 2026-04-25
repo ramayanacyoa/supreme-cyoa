@@ -532,7 +532,7 @@ function randomPercent() {
 function clearStoryCard() {
   var storyCard = document.getElementById("storyCard");
   if (storyCard) {
-    storyCard.innerHTML = "<p class='prelude-text'>" + preludeText + "</p>";
+    storyCard.innerHTML = "<p class='prelude-text'>" + preludeText + "</p>" + "<img src='rama_pic.png alt='A descriptive description of the image' id='preludeImg'>";
   }
 }
 
