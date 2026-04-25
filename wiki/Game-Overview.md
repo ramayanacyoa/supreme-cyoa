@@ -1,27 +1,30 @@
 # Game Overview
 
-## What this project is
+**The Ramayana Adventure: Banwas** is a browser-based, choice-driven story inspired by the Ramayana.
 
-**The Ramayana Adventure: Banwas** is a browser-based, choice-driven narrative game inspired by the Ramayana.
+## What the viewer experiences
 
-## Core experience
+- Enter a name and begin at Scene 1.
+- Read story cards and pick choices to move through branches.
+- Reach multiple possible endings based on decisions and chance outcomes.
+- Use **Undo** to return to the previous decision point.
+- Open **My Storyline** to view a recap of visited scenes.
 
-- Player enters a name and starts from Scene 1.
-- Scene content renders into `#storyCard`.
-- Choices transition between scenes through scene IDs.
-- Endings can trigger restart.
-- Storyline modal provides a readable progress summary.
+## Current playable scope
 
-## Current progression status
+The playable arc currently covers:
 
-- The currently deepest branch ends on:
-  - **The Ramayana Adventure: Lanka**
-  - **Coming Soon**
+- Exile opening and early branching paths.
+- Surphanaka encounter outcomes.
+- Golden deer sequence and abduction arc.
+- Jatayu branch outcomes.
+- Kishkindha alliance flow with Hanuman hub content.
+- A **Coming Soon** Lanka continuation card.
 
-## UI components at a glance
+## Interface highlights
 
-- Sticky navbar with consistent links across pages.
-- Navbar soundtrack audio controls and volume slider.
-- Intro card and launch button text: **Begin your Quest**.
-- Story card with Undo button.
-- Updates page with latest public release notes.
+- Sticky navbar across major pages.
+- Built-in soundtrack controls in the navbar.
+- Intro start card with setup inputs.
+- Story card for narrative and choices.
+- Updates page for public release notes.

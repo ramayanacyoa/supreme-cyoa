@@ -1,22 +1,20 @@
-# Supreme CYOA Wiki (Current State)
+# Supreme CYOA Wiki
 
-_Last updated: 2026-04-24 (UTC)_
+_Last updated: 2026-04-25 (UTC)_
 
-Welcome to the project wiki for **The Ramayana Adventure: Banwas**.
+Welcome to the wiki for **The Ramayana Adventure: Banwas**.
 
-## Quick links
+## Start here
 
 - [Game Overview](./Game-Overview.md)
 - [Scene & Route Reference](./Scene-and-Route-Reference.md)
-- [Developer Guide](./Developer-Guide.md)
+- [Minigames, Progression, and Unlocks](./Minigames-Progression-and-Unlocks.md)
 - [Features](./Features.md)
 
-## Snapshot
+## Current snapshot
 
-- Current hidden update console marker: **Update 16**
-- Public release version: **1.0.0 (First Stable Release)**
-- Main entry page: `index.html`
-- Story logic file: `Project.js`
-- Styling file: `Project.css`
-- Secondary page: `before-the-ramayana.html`
-- Reference page: `people-of-ramayana.html`
+- Hidden console update marker: **Update 22**
+- Public release version: **1.0.5**
+- Main game page: `index.html`
+- Story logic: `Project.js`
+- Styling: `Project.css`

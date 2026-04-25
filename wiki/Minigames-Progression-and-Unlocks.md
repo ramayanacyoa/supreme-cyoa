@@ -2,73 +2,58 @@
 
 ## Journey Trivia
 
-- Question bank is generated from `ramayanaTriviaFacts` and prompt variants.
+- Questions are generated from `ramayanaTriviaFacts`.
 - Session limit is controlled by `triviaSessionQuestionLimit` (currently 10).
-- Session ends when:
-  - 3 wrong answers, or
-  - Question limit reached.
-- Perfect sessions increment `perfectTriviaSessionsInRow`.
-- At a streak of **20 perfect sessions**, `dasharathaStoryUnlocked` is enabled.
+- A session ends after 3 wrong answers or when the question limit is reached.
+- Perfect sessions increase `perfectTriviaSessionsInRow`.
+- At 20 perfect sessions in a row, `dasharathaStoryUnlocked` becomes true.
 
 ## Guessing Game (Scene 93)
 
-- Uses `ramayanaGuessPool` entries with:
-  - `answer`
-  - `type` (Person/Place/Thing)
-  - progressive clue list
+- Uses `ramayanaGuessPool` entries (`answer`, `type`, and clue list).
 - Wrong guesses reveal additional clues.
-- Correct guesses increment solved count and start a new round.
+- Correct guesses increase solved count and start a new round.
 
 ## Storytelling Game (Scenes 99–100)
 
-- Uses `storytellingQuestions` with:
-  - prompt
-  - expected keywords
-  - model answer
-- Scoring checks keyword matches in free-text answer.
-- Feedback and model answer are shown in result scene.
+- Uses `storytellingQuestions` entries (prompt, keywords, model answer).
+- Scoring checks keyword matches in free-text responses.
+- Results show feedback with a model answer.
 
 ## Ally Conversations / Training (Scene 77)
 
-Characters currently available:
+Available allies:
 
 - Hanuman
 - Sugriva
 - Lakshmana
 - Angada
 
-Conversation supports tone-based replies and optional sparring offers.
-Sparring outcomes are chance-based with per-character fight modifiers.
+Conversation includes tone-based replies and optional sparring. Sparring outcomes are chance-based with per-character modifiers.
 
 ## Ocean Exploration (Scenes 101–102)
 
-Regions currently available:
+Regions:
 
 - Shoals of Setubandha
 - Skies Above Lanka
 - Ashoka Garden Paths
 
-Each expedition:
+Each expedition chooses a region, grants one random artifact from that pool, and records it in inventory without duplicates.
 
-- Selects a region
-- Randomly grants one artifact from that region pool
-- Records artifact in inventory (no duplicates)
-- Displays region-specific summary + lore
+## Artifact inventory system
 
-## Artifact Inventory System
-
-- Inventory button in nav shows collected item count.
-- Modal lists each artifact with lore text from `artifactLoreCatalog`.
+- Inventory button shows collected item count.
+- Modal lists collected artifacts with lore text from `artifactLoreCatalog`.
 - Duplicate pickups are prevented by `addArtifact()`.
 
 ## Combat/chance odds
 
-Base challenge odds currently:
+Base challenge odds:
 
 - fight: 70
 - journeyTrivia: 50
 - guessing: 35
 - fallback: 40
 
-`clampOdds()` caps final odds to range 5–95.
-
+`clampOdds()` limits final odds to 5–95.
