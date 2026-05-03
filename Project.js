@@ -1,11 +1,13 @@
 var preludeText = "Fulfill your dharma, and let your deeds become legend.";
 // the variable defines the prelude text
+console.log("Update 1.0.7")
 console.log("Update 1.0.8")
 var currentScene = 0;
 var playerName = "";
 var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
+var timelineEntries = [];
 var timelineRevealAll = false;
 var familyCast = {
   fatherName: "Dasharatha",
@@ -107,9 +109,9 @@ var scenes = {
     title: "The Ramayana Begins",
     text: [
       "Welcome, {{name}}!",
-      "{{name}}, you are the prince of Ayodhya, and the kingdom is preparing to celebrate your coronation as {{fatherName}} grows old.",
+      "{{name}}, you are the prince of Ayodhya, and the kingdom prepares to celebrate your coronation as {{fatherName}} grows old.",
       "Before dawn, {{secondMotherName}} invokes old promises and demands that {{siblingTwoName}} receive the throne while you, {{name}}, are sent into exile.",
-      "To protect dharma and your father's honor, you accept a life of hardship and vow that you, {{name}}, will not enter any city until the exile ends."
+      "To protect dharma and your father's honor, you choose hardship over conflict and vow not to enter any city until exile ends."
     ],
     choices: [
       { label: "Argue back", next: 3 },
@@ -154,7 +156,7 @@ var scenes = {
   71: {
     title: "Who Goes With You?",
     text: [
-      "You steady yourself and choose whether to walk into exile alone or with {{siblingOneName}} and {{wifeName}}."
+      "At Ayodhya's edge, you pause and decide whether to carry exile alone or share it with {{siblingOneName}} and {{wifeName}}."
     ],
     choices: [
       { label: "Go alone", next: 5, onPick: function () { wentAlone = true; } },
@@ -644,6 +646,7 @@ function restart() {
   broughtLakshmana = false;
   wentAlone = false;
   historyStack = [];
+  timelineEntries = [];
   clearStoryCard();
   updateUndoButton();
   if (window.history && window.history.replaceState) {
@@ -655,6 +658,7 @@ function startAdventure() {
   var baseNameInput = document.getElementById("playerName");
   playerName = baseNameInput && baseNameInput.value.trim() ? baseNameInput.value.trim() : "Rama";
   historyStack = [];
+  timelineEntries = [];
   currentScene = 1;
   gameState = createInitialGameState(playerName);
   registerCoreSystems();
@@ -693,6 +697,14 @@ function resolveSpecialNext(next) {
   return next;
 }
 //determines special transitions between special scenes
+
+function getPossibleNextScenes(next) {
+  if (next === -1) return [14, 18, 52];
+  if (next === -2) return [29, 39];
+  if (next === -3) return [33, 34];
+  if (next === -4) return [7, 8];
+  return (typeof next === "number" && next > 0 && scenes[next]) ? [next] : [];
+}
 
 function escapeHtml(value) {
   return value
@@ -906,6 +918,7 @@ function makeChoice(choiceIndex) {
   }
 
   var choice = scene.choices[choiceIndex];
+  var fromScene = currentScene;
   if (gameState) eventBus.emit(GAME_EVENTS.CHOICE_MADE, { sceneId: currentScene, choice: choice });
   if (typeof choice.onPick === "function") {
     choice.onPick();
@@ -913,6 +926,7 @@ function makeChoice(choiceIndex) {
 
   historyStack.push(currentScene);
   currentScene = resolveSpecialNext(choice.next);
+  timelineEntries.push({ from: fromScene, to: currentScene, label: choice.label });
   showScene();
 }
 
@@ -957,11 +971,11 @@ function renderSimpleTimelineList() {
   }
 
   var html = "";
-  historyStack.forEach(function (sceneId) {
-    if (!scenes[sceneId]) {
+  timelineEntries.forEach(function (entry, index) {
+    if (!entry || !scenes[entry.from] || !scenes[entry.to]) {
       return;
     }
-    html += "<li><strong>" + formatStoryHtml(scenes[sceneId].title) + "</strong><p class='timeline-scene-description'>" + formatStoryHtml(scenes[sceneId].text.join(" ")) + "</p></li>";
+    html += "<li><strong>Step " + (index + 1) + ":</strong> " + formatStoryHtml(scenes[entry.from].title) + " → " + formatStoryHtml(scenes[entry.to].title) + "<p class='timeline-scene-description'>Choice: " + formatStoryHtml(entry.label) + "</p></li>";
   });
 
   if (scenes[currentScene]) {
@@ -993,7 +1007,7 @@ function updateTimelineRevealButton() {
   if (!button) {
     return;
   }
-  button.textContent = timelineRevealAll ? "Hide Unexperienced Scenes" : "Reveal Coming Scenes";
+  button.textContent = timelineRevealAll ? "Hide Unexplored Scenes" : "Reveal Coming Scenes";
   button.setAttribute("aria-pressed", timelineRevealAll ? "true" : "false");
 }
 
@@ -1014,11 +1028,12 @@ function renderTimelineFlowchart() {
       continue;
     }
     scene.choices.forEach(function (choice) {
-      if (typeof choice.next !== "number" || choice.next < 1 || !scenes[choice.next]) return;
-      if (levelById[choice.next] == null || levelById[choice.next] > levelById[id] + 1) {
-        levelById[choice.next] = levelById[id] + 1;
-        queue.push(choice.next);
-      }
+      getPossibleNextScenes(choice.next).forEach(function (nextId) {
+        if (levelById[nextId] == null || levelById[nextId] > levelById[id] + 1) {
+          levelById[nextId] = levelById[id] + 1;
+          queue.push(nextId);
+        }
+      });
     });
   }
 
@@ -1050,16 +1065,18 @@ function renderTimelineFlowchart() {
     var scene = scenes[fromId];
     if (!scene || !scene.choices || !pos[fromId]) return;
     scene.choices.forEach(function (choice) {
-      if (typeof choice.next !== "number" || choice.next < 1 || !pos[choice.next]) return;
-      var edgeVisible = timelineRevealAll || (visited[fromId] && visited[choice.next]);
-      if (!edgeVisible) return;
-      var x1 = pos[fromId].x + nodeW;
-      var y1 = pos[fromId].y + nodeH / 2;
-      var x2 = pos[choice.next].x;
-      var y2 = pos[choice.next].y + nodeH / 2;
-      var mid = (x1 + x2) / 2;
-      var active = visited[fromId] && visited[choice.next] ? " active" : "";
-      svg += "<path class='timeline-edge" + active + "' d='M" + x1 + " " + y1 + " C " + mid + " " + y1 + ", " + mid + " " + y2 + ", " + x2 + " " + y2 + "'></path>";
+      getPossibleNextScenes(choice.next).forEach(function (nextId) {
+        if (!pos[nextId]) return;
+        var edgeVisible = timelineRevealAll || (visited[fromId] && visited[nextId]);
+        if (!edgeVisible) return;
+        var x1 = pos[fromId].x + nodeW;
+        var y1 = pos[fromId].y + nodeH / 2;
+        var x2 = pos[nextId].x;
+        var y2 = pos[nextId].y + nodeH / 2;
+        var mid = (x1 + x2) / 2;
+        var active = visited[fromId] && visited[nextId] ? " active" : "";
+        svg += "<path class='timeline-edge" + active + "' d='M" + x1 + " " + y1 + " C " + mid + " " + y1 + ", " + mid + " " + y2 + ", " + x2 + " " + y2 + "'></path>";
+      });
     });
   });
 
