@@ -1,11 +1,14 @@
 var preludeText = "Fulfill your dharma, and let your deeds become legend.";
 // the variable defines the prelude text
 console.log("Update 1.0.6")
+console.log("Update 1.0.7")
+console.log("Update 1.0.8")
 var currentScene = 0;
 var playerName = "";
 var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
+var timelineEntries = [];
 var timelineRevealAll = false;
 var familyCast = {
   fatherName: "Dasharatha",
@@ -42,6 +45,9 @@ evaluateRelationshipStates();
 var GAME_EVENTS = { SCENE_LOAD: "onSceneLoad", CHOICE_MADE: "onChoiceMade", ITEM_ACQUIRED: "onItemAcquired", QUEST_UPDATED: "onQuestUpdated", COMBAT_START: "onCombatStart" };
 var gameState = null;
 var isRoutingSceneUpdate = false;
+var rpgPanelsVisible = false;
+var aiSceneSeed = 10000;
+var dayNightMode = "game";
 
 function getSceneIdFromUrl() {
   var fromPath = window.location.pathname.match(/\/scene\/(\d+)\/?$/);
@@ -106,9 +112,9 @@ var scenes = {
     title: "The Ramayana Begins",
     text: [
       "Welcome, {{name}}!",
-      "{{name}}, you are the prince of Ayodhya, and the kingdom is preparing to celebrate your coronation as {{fatherName}} grows old.",
+      "{{name}}, you are the prince of Ayodhya, and the kingdom prepares to celebrate your coronation as {{fatherName}} grows old.",
       "Before dawn, {{secondMotherName}} invokes old promises and demands that {{siblingTwoName}} receive the throne while you, {{name}}, are sent into exile.",
-      "To protect dharma and your father's honor, you accept a life of hardship and vow that you, {{name}}, will not enter any city until the exile ends."
+      "To protect dharma and your father's honor, you choose hardship over conflict and vow not to enter any city until exile ends."
     ],
     choices: [
       { label: "Argue back", next: 3 },
@@ -153,7 +159,7 @@ var scenes = {
   71: {
     title: "Who Goes With You?",
     text: [
-      "You steady yourself and choose whether to walk into exile alone or with {{siblingOneName}} and {{wifeName}}."
+      "At Ayodhya's edge, you pause and decide whether to carry exile alone or share it with {{siblingOneName}} and {{wifeName}}."
     ],
     choices: [
       { label: "Go alone", next: 5, onPick: function () { wentAlone = true; } },
@@ -614,6 +620,21 @@ function randomPercent() {
 }
 // finds a random number 1-100
 
+function isRealLifeNight() {
+  var hour = new Date().getHours();
+  return hour < 6 || hour >= 18;
+}
+
+function getDayNightLuckBonus() {
+  if (dayNightMode !== "real") return 0;
+  return isRealLifeNight() ? -12 : 12;
+}
+
+function getLuckThreshold(baseThreshold) {
+  var adjusted = baseThreshold + getDayNightLuckBonus();
+  return Math.max(5, Math.min(95, adjusted));
+}
+
 function clearStoryCard() {
   var storyCard = document.getElementById("storyCard");
   if (storyCard) {
@@ -627,6 +648,7 @@ function restart() {
   broughtLakshmana = false;
   wentAlone = false;
   historyStack = [];
+  timelineEntries = [];
   clearStoryCard();
   updateUndoButton();
   if (window.history && window.history.replaceState) {
@@ -638,6 +660,7 @@ function startAdventure() {
   var baseNameInput = document.getElementById("playerName");
   playerName = baseNameInput && baseNameInput.value.trim() ? baseNameInput.value.trim() : "Rama";
   historyStack = [];
+  timelineEntries = [];
   currentScene = 1;
   gameState = createInitialGameState(playerName);
   gameState.player.rpgStats = { strength: 12, defense: 11, speed: 10, agility: 10, stamina: 12, endurance: 11 };
@@ -656,18 +679,18 @@ function startAdventure() {
 
 function resolveSpecialNext(next) {
   if (next === -1) {
-    if (randomPercent() < 65) {
+    if (randomPercent() < getLuckThreshold(65)) {
       return wentAlone ? 52 : 14;
     }
     return 18;
   }
 
   if (next === -2) {
-    return randomPercent() < 50 ? 29 : 39;
+    return randomPercent() < getLuckThreshold(50) ? 29 : 39;
   }
 
   if (next === -3) {
-    return randomPercent() < 15 ? 33 : 34;
+    return randomPercent() < getLuckThreshold(15) ? 33 : 34;
   }
 
   if (next === -4) {
@@ -677,6 +700,14 @@ function resolveSpecialNext(next) {
   return next;
 }
 //determines special transitions between special scenes
+
+function getPossibleNextScenes(next) {
+  if (next === -1) return [14, 18, 52];
+  if (next === -2) return [29, 39];
+  if (next === -3) return [33, 34];
+  if (next === -4) return [7, 8];
+  return (typeof next === "number" && next > 0 && scenes[next]) ? [next] : [];
+}
 
 function escapeHtml(value) {
   return value
@@ -778,11 +809,19 @@ function showScene() {
   var sceneTitle = formatStoryHtml(scene.title);
   if (gameState && gameState.player.stats.dharma >= 70) sceneTitle += " <span class='dharma-echo'>• Aura of Dharma</span>";
   var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo' data-tooltip='undo'>Undo</button><button type='button' onclick='openTimelineModal()' aria-label='Open my storyline'>My Storyline</button><button type='button' onclick='openStatsModal()' aria-label='Open stats'>Stats</button><button type='button' onclick='downloadSaveFile()' aria-label='Export save'>Export Save</button><button type='button' onclick='triggerSaveUpload()' aria-label='Import save'>Import Save</button><button type='button' onclick='toggleDharmaConsole()' aria-label='Open Dharma Console'>Dharma Console</button><input id='saveFileInput' type='file' accept='application/json' style='display:none' onchange='importSaveFile(event)'></div>";
+  var luckNote = dayNightMode === "real"
+    ? (isRealLifeNight() ? "Real-time mode: Night luck is lower right now." : "Real-time mode: Day luck is higher right now.")
+    : "In-game mode: Standard story luck is active.";
+  var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo' data-tooltip='undo'>Undo</button><button type='button' onclick='openTimelineModal()' aria-label='Open my storyline'>My Storyline</button><button type='button' onclick='downloadSaveFile()' aria-label='Export save'>Export Save</button><button type='button' onclick='triggerSaveUpload()' aria-label='Import save'>Import Save</button><button type='button' onclick='toggleRpgPanels()' aria-label='Toggle RPG Panels'>RPG Features</button><button type='button' onclick='toggleDharmaConsole()' aria-label='Open Dharma Console'>Dharma Console</button><button type='button' onclick='generateInfiniteAiScene()' aria-label='Generate endless AI story scene'>AI Continue</button><label for='dayNightModeToggle' class='story-toggle-label'>Day/Night</label><select id='dayNightModeToggle' aria-label='Choose day and night mode' onchange='setDayNightMode(this.value)'><option value='game'" + (dayNightMode === "game" ? " selected" : "") + ">In-Game Day/Night</option><option value='real'" + (dayNightMode === "real" ? " selected" : "") + ">Real-Life Day/Night</option></select><span class='story-toggle-note'>" + escapeHtml(luckNote) + "</span><input id='saveFileInput' type='file' accept='application/json' style='display:none' onchange='importSaveFile(event)'></div>";
   if (gameState) {
     var inventoryView = Object.keys(gameState.player.inventory).map(function (key) { var item = gameState.player.inventory[key]; return "<li>" + escapeHtml(item.name) + " x" + item.qty + " <em>(" + escapeHtml(item.category) + ")</em></li>"; }).join("");
     var questView = [];
     ["main", "side", "hidden"].forEach(function (bucket) { Object.keys(gameState.quests[bucket]).forEach(function (qid) { var q = gameState.quests[bucket][qid]; questView.push("<li>" + escapeHtml(q.title) + " — " + escapeHtml(q.state) + "</li>"); }); });
     html += "<div id='rpgHud'><div class='hud-card'><h4>Dharma Console</h4><p>Dharma: " + gameState.player.stats.dharma + " | Aggression: " + gameState.player.stats.aggression + " | Compassion: " + gameState.player.stats.compassion + "</p><p>" + escapeHtml((gameState.ui.moralLog[0] || "Your journey has just begun.")) + "</p></div><div class='hud-card'><h4>World Clock</h4><p>Day " + progressionState.day + " • " + progressionState.timeOfDay + "</p><p>5-10 scenes now complete one in-world day cycle.</p></div><div class='hud-card'><h4>Inventory</h4><ul>" + (inventoryView || "<li>Empty</li>") + "</ul></div><div class='hud-card'><h4>Quest Tracker</h4><ul>" + (questView.join("") || "<li>No quests yet</li>") + "</ul></div></div>";
+    var rpgClass = rpgPanelsVisible ? "" : " rpg-collapsed";
+    var xp = Math.max(0, Math.round((gameState.player.stats.dharma + gameState.player.stats.compassion + gameState.player.stats.honor) / 3));
+    var stamina = Math.max(0, 100 - gameState.player.stats.aggression + Math.floor(gameState.player.stats.strategy / 2));
+    html += "<div id='rpgHud' class='" + rpgClass + "'><aside class='hud-card hud-left'><h4>Dharma Console</h4><p>Dharma: " + gameState.player.stats.dharma + " | Aggression: " + gameState.player.stats.aggression + " | Compassion: " + gameState.player.stats.compassion + "</p><p>" + escapeHtml((gameState.ui.moralLog[0] || "Your journey has just begun.")) + "</p><h4>Combat Readiness</h4><p>XP Power: " + xp + " | Stamina: " + stamina + "</p></aside><div class='hud-center'><div class='hud-card'><h4>Inventory</h4><ul>" + (inventoryView || "<li>Empty</li>") + "</ul></div></div><aside class='hud-card hud-right'><h4>Quest Tracker</h4><ul>" + (questView.join("") || "<li>No quests yet</li>") + "</ul><h4>Party Bond</h4><p>Sita: " + (gameState.player.affection.sita || 0) + " | Lakshmana: " + (gameState.player.affection.lakshmana || 0) + "</p></aside></div>";
   }
 
 
@@ -828,6 +867,55 @@ function showScene() {
   if (!isRoutingSceneUpdate) syncSceneRoute(false);
 }
 //the above formats the scene logic into html
+
+
+async function generateInfiniteAiScene() {
+  var scene = scenes[currentScene];
+  if (!scene || !gameState) return;
+  var aiButton = document.querySelector("button[onclick='generateInfiniteAiScene()']");
+  if (aiButton) { aiButton.disabled = true; aiButton.textContent = "Summoning..."; }
+  try {
+    var payload = {
+      player_name: gameState.player.name || "Rama",
+      current_title: interpolatePlayerName(scene.title),
+      current_text: interpolatePlayerName((scene.text || []).join(" ")),
+      stats: gameState.player.stats
+    };
+    var response = await fetch("/ai/continue-story", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    if (!response.ok) throw new Error("AI service unavailable");
+    var data = await response.json();
+    var newId = aiSceneSeed++;
+    scenes[newId] = {
+      title: data.title || "The Journey Continues",
+      subtitle: "AI-Generated Endless Chapter",
+      text: Array.isArray(data.paragraphs) && data.paragraphs.length ? data.paragraphs : ["The path extends beyond maps and memory."],
+      choices: [
+        { label: data.choice_a || "Advance with courage", next: newId + 1 },
+        { label: data.choice_b || "Reflect and adapt", next: newId + 1 }
+      ]
+    };
+    historyStack.push(currentScene);
+    currentScene = newId;
+    if (gameState.ui && gameState.ui.moralLog) gameState.ui.moralLog.unshift("AI has forged a new endless chapter.");
+    showScene();
+  } catch (err) {
+    alert("AI continuation could not load right now. Please try again.");
+  }
+}
+
+function toggleRpgPanels() {
+  rpgPanelsVisible = !rpgPanelsVisible;
+  showScene();
+}
+
+function setDayNightMode(mode) {
+  dayNightMode = mode === "real" ? "real" : "game";
+  try {
+    window.localStorage.setItem("ramayanaDayNightMode", dayNightMode);
+  } catch (e) {}
+  showScene();
+}
+
 function makeChoice(choiceIndex) {
   var scene = scenes[currentScene];
   if (!scene || !scene.choices[choiceIndex]) {
@@ -835,6 +923,7 @@ function makeChoice(choiceIndex) {
   }
 
   var choice = scene.choices[choiceIndex];
+  var fromScene = currentScene;
   if (gameState) eventBus.emit(GAME_EVENTS.CHOICE_MADE, { sceneId: currentScene, choice: choice });
   if (choice.effects && gameState) applyChoiceEffects(choice.effects);
   if (choice.timeAdvance) advanceWorldTime(choice.timeAdvance);
@@ -844,6 +933,7 @@ function makeChoice(choiceIndex) {
 
   historyStack.push(currentScene);
   currentScene = resolveSpecialNext(choice.next);
+  timelineEntries.push({ from: fromScene, to: currentScene, label: choice.label });
   showScene();
 }
 
@@ -891,6 +981,10 @@ window.addEventListener("popstate", function () {
 });
 
 window.addEventListener("load", function () {
+  try {
+    var savedMode = window.localStorage.getItem("ramayanaDayNightMode");
+    if (savedMode === "real" || savedMode === "game") dayNightMode = savedMode;
+  } catch (e) {}
   isRoutingSceneUpdate = true;
   applySceneFromRoute();
   isRoutingSceneUpdate = false;
@@ -912,11 +1006,11 @@ function renderSimpleTimelineList() {
   }
 
   var html = "";
-  historyStack.forEach(function (sceneId) {
-    if (!scenes[sceneId]) {
+  timelineEntries.forEach(function (entry, index) {
+    if (!entry || !scenes[entry.from] || !scenes[entry.to]) {
       return;
     }
-    html += "<li><strong>" + formatStoryHtml(scenes[sceneId].title) + "</strong><p class='timeline-scene-description'>" + formatStoryHtml(scenes[sceneId].text.join(" ")) + "</p></li>";
+    html += "<li><strong>Step " + (index + 1) + ":</strong> " + formatStoryHtml(scenes[entry.from].title) + " → " + formatStoryHtml(scenes[entry.to].title) + "<p class='timeline-scene-description'>Choice: " + formatStoryHtml(entry.label) + "</p></li>";
   });
 
   if (scenes[currentScene]) {
@@ -948,7 +1042,7 @@ function updateTimelineRevealButton() {
   if (!button) {
     return;
   }
-  button.textContent = timelineRevealAll ? "Hide Unexperienced Scenes" : "Reveal Coming Scenes";
+  button.textContent = timelineRevealAll ? "Hide Unexplored Scenes" : "Reveal Coming Scenes";
   button.setAttribute("aria-pressed", timelineRevealAll ? "true" : "false");
 }
 
@@ -969,11 +1063,12 @@ function renderTimelineFlowchart() {
       continue;
     }
     scene.choices.forEach(function (choice) {
-      if (typeof choice.next !== "number" || choice.next < 1 || !scenes[choice.next]) return;
-      if (levelById[choice.next] == null || levelById[choice.next] > levelById[id] + 1) {
-        levelById[choice.next] = levelById[id] + 1;
-        queue.push(choice.next);
-      }
+      getPossibleNextScenes(choice.next).forEach(function (nextId) {
+        if (levelById[nextId] == null || levelById[nextId] > levelById[id] + 1) {
+          levelById[nextId] = levelById[id] + 1;
+          queue.push(nextId);
+        }
+      });
     });
   }
 
@@ -1005,16 +1100,18 @@ function renderTimelineFlowchart() {
     var scene = scenes[fromId];
     if (!scene || !scene.choices || !pos[fromId]) return;
     scene.choices.forEach(function (choice) {
-      if (typeof choice.next !== "number" || choice.next < 1 || !pos[choice.next]) return;
-      var edgeVisible = timelineRevealAll || (visited[fromId] && visited[choice.next]);
-      if (!edgeVisible) return;
-      var x1 = pos[fromId].x + nodeW;
-      var y1 = pos[fromId].y + nodeH / 2;
-      var x2 = pos[choice.next].x;
-      var y2 = pos[choice.next].y + nodeH / 2;
-      var mid = (x1 + x2) / 2;
-      var active = visited[fromId] && visited[choice.next] ? " active" : "";
-      svg += "<path class='timeline-edge" + active + "' d='M" + x1 + " " + y1 + " C " + mid + " " + y1 + ", " + mid + " " + y2 + ", " + x2 + " " + y2 + "'></path>";
+      getPossibleNextScenes(choice.next).forEach(function (nextId) {
+        if (!pos[nextId]) return;
+        var edgeVisible = timelineRevealAll || (visited[fromId] && visited[nextId]);
+        if (!edgeVisible) return;
+        var x1 = pos[fromId].x + nodeW;
+        var y1 = pos[fromId].y + nodeH / 2;
+        var x2 = pos[nextId].x;
+        var y2 = pos[nextId].y + nodeH / 2;
+        var mid = (x1 + x2) / 2;
+        var active = visited[fromId] && visited[nextId] ? " active" : "";
+        svg += "<path class='timeline-edge" + active + "' d='M" + x1 + " " + y1 + " C " + mid + " " + y1 + ", " + mid + " " + y2 + ", " + x2 + " " + y2 + "'></path>";
+      });
     });
   });
 
