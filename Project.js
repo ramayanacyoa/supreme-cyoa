@@ -1,6 +1,6 @@
 var preludeText = "Fulfill your dharma, and let your deeds become legend.";
 // the variable defines the prelude text
-console.log("Update 1.0.3")
+console.log("Update 1.0.4")
 var currentScene = 0;
 var playerName = "";
 var broughtLakshmana = false;
@@ -37,6 +37,36 @@ function evaluateRelationshipStates() {
 
 evaluateRelationshipStates();
 
+var GAME_EVENTS = { SCENE_LOAD: "onSceneLoad", CHOICE_MADE: "onChoiceMade", ITEM_ACQUIRED: "onItemAcquired", QUEST_UPDATED: "onQuestUpdated", COMBAT_START: "onCombatStart" };
+var gameState = null;
+
+function createInitialGameState(name) {
+  return { player: { name: name || "Rama", health: 100, stats: { dharma: 50, aggression: 20, compassion: 50 }, affection: { sita: 70, lakshmana: 75, hanuman: 50, sugriva: 35, vibhishana: 20, bharata: 80 }, inventory: {} }, quests: { main: { exilePath: { id: "exilePath", title: "Path of Exile", type: "main", state: "active" } }, side: {}, hidden: {} }, world: { flags: {}, activeEvent: null }, scene: { current: 1, history: [] }, ui: { moralLog: [] } };
+}
+
+var eventBus = { listeners: {}, on: function (name, handler) { (this.listeners[name] = this.listeners[name] || []).push(handler); }, emit: function (name, payload) { (this.listeners[name] || []).forEach(function (handler) { handler(payload); }); } };
+
+function registerCoreSystems() {
+  eventBus.on(GAME_EVENTS.CHOICE_MADE, function (ctx) {
+    var label = (ctx && ctx.choice && ctx.choice.label) || "";
+    if (/accept|protect|honor|entrust|message/i.test(label)) { gameState.player.stats.dharma += 3; gameState.player.stats.compassion += 2; gameState.ui.moralLog.unshift("Your actions reflect rising compassion."); }
+    else if (/fight|argue/i.test(label)) { gameState.player.stats.aggression += 4; gameState.player.stats.dharma -= 1; gameState.ui.moralLog.unshift("Your aggression is influencing dialogue options."); }
+    gameState.player.stats.dharma = Math.max(0, Math.min(100, gameState.player.stats.dharma));
+    gameState.player.stats.aggression = Math.max(0, Math.min(100, gameState.player.stats.aggression));
+    gameState.player.stats.compassion = Math.max(0, Math.min(100, gameState.player.stats.compassion));
+    if (gameState.ui.moralLog.length > 5) gameState.ui.moralLog.length = 5;
+  });
+  eventBus.on(GAME_EVENTS.SCENE_LOAD, function () {
+    if (gameState.player.stats.dharma >= 65 && !gameState.quests.hidden.righteousPath) gameState.quests.hidden.righteousPath = { id: "righteousPath", title: "Righteous Path", type: "hidden", state: "active" };
+    if ((gameState.player.affection.hanuman || 0) >= 70 && !gameState.quests.side.hanumanRescue) gameState.quests.side.hanumanRescue = { id: "hanumanRescue", title: "Wind-Borne Rescue", type: "side", state: "active" };
+  });
+}
+
+function addItem(id, name, category, qty) {
+  if (!gameState.player.inventory[id]) gameState.player.inventory[id] = { id: id, name: name, category: category, qty: 0 };
+  gameState.player.inventory[id].qty += qty || 1;
+  eventBus.emit(GAME_EVENTS.ITEM_ACQUIRED, { id: id });
+}
 
 //the following are all the story components of the scenes
 var scenes = {
@@ -575,6 +605,10 @@ function startAdventure() {
   playerName = baseNameInput && baseNameInput.value.trim() ? baseNameInput.value.trim() : "Rama";
   historyStack = [];
   currentScene = 1;
+  gameState = createInitialGameState(playerName);
+  registerCoreSystems();
+  addItem("forest_bow", "Forest Bow", "weapons", 1);
+  addItem("sitas_token", "Sita's Token", "quest items", 1);
   showScene();
   var storyCard = document.getElementById("storyCard");
   if (storyCard && typeof storyCard.scrollIntoView === "function") {
@@ -704,8 +738,17 @@ function showScene() {
   }
 //this is the function that allows scenes to show
   var scene = scenes[currentScene];
+  if (gameState) { gameState.scene.current = currentScene; eventBus.emit(GAME_EVENTS.SCENE_LOAD, { sceneId: currentScene }); }
   var sceneTitle = formatStoryHtml(scene.title);
+  if (gameState && gameState.player.stats.dharma >= 70) sceneTitle += " <span class='dharma-echo'>• Aura of Dharma</span>";
   var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo' data-tooltip='undo'>Undo</button><button type='button' onclick='openTimelineModal()' aria-label='Open my storyline'>My Storyline</button><button type='button' onclick='downloadSaveFile()' aria-label='Export save'>Export Save</button><button type='button' onclick='triggerSaveUpload()' aria-label='Import save'>Import Save</button><button type='button' onclick='toggleDharmaConsole()' aria-label='Open Dharma Console'>Dharma Console</button><input id='saveFileInput' type='file' accept='application/json' style='display:none' onchange='importSaveFile(event)'></div>";
+  if (gameState) {
+    var inventoryView = Object.keys(gameState.player.inventory).map(function (key) { var item = gameState.player.inventory[key]; return "<li>" + escapeHtml(item.name) + " x" + item.qty + " <em>(" + escapeHtml(item.category) + ")</em></li>"; }).join("");
+    var questView = [];
+    ["main", "side", "hidden"].forEach(function (bucket) { Object.keys(gameState.quests[bucket]).forEach(function (qid) { var q = gameState.quests[bucket][qid]; questView.push("<li>" + escapeHtml(q.title) + " — " + escapeHtml(q.state) + "</li>"); }); });
+    html += "<div id='rpgHud'><div class='hud-card'><h4>Dharma Console</h4><p>Dharma: " + gameState.player.stats.dharma + " | Aggression: " + gameState.player.stats.aggression + " | Compassion: " + gameState.player.stats.compassion + "</p><p>" + escapeHtml((gameState.ui.moralLog[0] || "Your journey has just begun.")) + "</p></div><div class='hud-card'><h4>Inventory</h4><ul>" + (inventoryView || "<li>Empty</li>") + "</ul></div><div class='hud-card'><h4>Quest Tracker</h4><ul>" + (questView.join("") || "<li>No quests yet</li>") + "</ul></div></div>";
+  }
+
 
   if (currentScene === 1) {
     html += "<h1>" + sceneTitle + "</h1>";
@@ -755,6 +798,7 @@ function makeChoice(choiceIndex) {
   }
 
   var choice = scene.choices[choiceIndex];
+  if (gameState) eventBus.emit(GAME_EVENTS.CHOICE_MADE, { sceneId: currentScene, choice: choice });
   if (typeof choice.onPick === "function") {
     choice.onPick();
   }
@@ -949,7 +993,8 @@ function buildSaveSnapshot() {
     currentScene: currentScene,
     flags: { broughtLakshmana: broughtLakshmana, wentAlone: wentAlone },
     historyStack: historyStack.slice(),
-    systems: systemState
+    systems: systemState,
+    unifiedState: gameState
   };
 }
 
@@ -960,6 +1005,8 @@ function hydrateFromSave(snapshot) {
   wentAlone = !!(snapshot.flags && snapshot.flags.wentAlone);
   historyStack = Array.isArray(snapshot.historyStack) ? snapshot.historyStack : [];
   systemState = snapshot.systems || systemState;
+  gameState = snapshot.unifiedState || createInitialGameState(playerName);
+  registerCoreSystems();
   evaluateRelationshipStates();
   showScene();
 }

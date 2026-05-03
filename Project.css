@@ -1660,3 +1660,11 @@ blockquote,
     grid-template-columns: 1fr;
   }
 }
+
+#storyCard { animation: sceneFade 220ms ease; }
+@keyframes sceneFade { from { opacity: 0; transform: translateY(8px);} to { opacity:1; transform: translateY(0);} }
+#rpgHud { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin: 10px 0 14px; }
+.hud-card { background: rgba(17,12,22,0.6); border:1px solid rgba(255,223,162,.25); border-radius: 12px; padding:10px; }
+.hud-card h4 { margin:0 0 6px; color: var(--gold); }
+.hud-card ul { margin:0; padding-left: 18px; }
+.dharma-echo { font-size: .8em; color: var(--gold); }
