@@ -1,6 +1,6 @@
 var preludeText = "Fulfill your dharma, and let your deeds become legend.";
 // the variable defines the prelude text
-console.log("Update 1.0.1")
+console.log("Update 1.0.3")
 var currentScene = 0;
 var playerName = "";
 var broughtLakshmana = false;
@@ -17,6 +17,25 @@ var familyCast = {
   secondMotherName: "Kaikeyi"
 };
 // defining all base story variables
+
+var systemState = {
+  version: "2.1.0",
+  traits: { dharma: 50, aggression: 20, compassion: 50, strategy: 40, honor: 55 },
+  affection: { sita: 70, lakshmana: 75, hanuman: 50, sugriva: 35, vibhishana: 20, bharata: 80 },
+  relationshipStates: {},
+  resources: { food: 100, wood: 40, stone: 20, faith: 30, intel: 5 },
+  world: { chapter: "banwas", activeEvent: null },
+  inventory: []
+};
+
+function evaluateRelationshipStates() {
+  Object.keys(systemState.affection).forEach(function (id) {
+    var value = systemState.affection[id];
+    systemState.relationshipStates[id] = value >= 85 ? "oathbound" : value >= 65 ? "trusted" : value >= 20 ? "strained" : "fractured";
+  });
+}
+
+evaluateRelationshipStates();
 
 
 //the following are all the story components of the scenes
@@ -686,7 +705,7 @@ function showScene() {
 //this is the function that allows scenes to show
   var scene = scenes[currentScene];
   var sceneTitle = formatStoryHtml(scene.title);
-  var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo' data-tooltip='undo'>Undo</button><button type='button' onclick='openTimelineModal()' aria-label='Open my storyline'>My Storyline</button></div>";
+  var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo' data-tooltip='undo'>Undo</button><button type='button' onclick='openTimelineModal()' aria-label='Open my storyline'>My Storyline</button><button type='button' onclick='downloadSaveFile()' aria-label='Export save'>Export Save</button><button type='button' onclick='triggerSaveUpload()' aria-label='Import save'>Import Save</button><button type='button' onclick='toggleDharmaConsole()' aria-label='Open Dharma Console'>Dharma Console</button><input id='saveFileInput' type='file' accept='application/json' style='display:none' onchange='importSaveFile(event)'></div>";
 
   if (currentScene === 1) {
     html += "<h1>" + sceneTitle + "</h1>";
@@ -921,3 +940,73 @@ function closeTimelineModal() {
 //controls the timeline/storyline modal
 window.startAdventure = startAdventure;
 //starts adventure
+
+
+function buildSaveSnapshot() {
+  return {
+    version: systemState.version,
+    playerName: playerName,
+    currentScene: currentScene,
+    flags: { broughtLakshmana: broughtLakshmana, wentAlone: wentAlone },
+    historyStack: historyStack.slice(),
+    systems: systemState
+  };
+}
+
+function hydrateFromSave(snapshot) {
+  playerName = snapshot.playerName || "Rama";
+  currentScene = snapshot.currentScene || 1;
+  broughtLakshmana = !!(snapshot.flags && snapshot.flags.broughtLakshmana);
+  wentAlone = !!(snapshot.flags && snapshot.flags.wentAlone);
+  historyStack = Array.isArray(snapshot.historyStack) ? snapshot.historyStack : [];
+  systemState = snapshot.systems || systemState;
+  evaluateRelationshipStates();
+  showScene();
+}
+
+function downloadSaveFile() {
+  var payload = JSON.stringify({ exportedAt: new Date().toISOString(), gameState: buildSaveSnapshot() }, null, 2);
+  var blob = new Blob([payload], { type: "application/json" });
+  var url = URL.createObjectURL(blob);
+  var anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "ramayana-save.json";
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+function triggerSaveUpload() {
+  var input = document.getElementById("saveFileInput");
+  if (input) input.click();
+}
+
+function importSaveFile(event) {
+  var file = event && event.target && event.target.files && event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function () {
+    var parsed = JSON.parse(reader.result);
+    if (!parsed || !parsed.gameState) return;
+    hydrateFromSave(parsed.gameState);
+  };
+  reader.readAsText(file);
+}
+
+function toggleDharmaConsole() {
+  var existing = document.getElementById("dharmaConsolePanel");
+  if (existing) {
+    existing.remove();
+    return;
+  }
+  var panel = document.createElement("div");
+  panel.id = "dharmaConsolePanel";
+  panel.style = "background:#111;color:#eee;padding:12px;border:1px solid #444;border-radius:12px;margin-top:12px;";
+  panel.innerHTML = "<h3>Dharma Console</h3><p>Adjust systems for testing and replay.</p><button type='button' onclick=\"dharmaSetTrait('dharma',5)\">+5 Dharma</button> <button type='button' onclick=\"dharmaSetTrait('aggression',5)\">+5 Aggression</button> <button type='button' onclick=\"dharmaCompanion('hanuman',10)\">+10 Hanuman Affection</button> <button type='button' onclick=\"dharmaBranch(19)\">Jump to Golden Deer</button> <button type='button' onclick=\"dharmaEvent('Rotating_Challenge')\">Trigger Event</button>";
+  var storyCard = document.getElementById("storyCard");
+  if (storyCard) storyCard.appendChild(panel);
+}
+
+function dharmaSetTrait(key, amount) { systemState.traits[key] = (systemState.traits[key] || 0) + amount; }
+function dharmaCompanion(id, amount) { systemState.affection[id] = (systemState.affection[id] || 0) + amount; evaluateRelationshipStates(); }
+function dharmaBranch(sceneId) { currentScene = sceneId; showScene(); }
+function dharmaEvent(name) { systemState.world.activeEvent = name; }

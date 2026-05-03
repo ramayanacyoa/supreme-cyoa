@@ -119,7 +119,9 @@ export const campaignScenes = {
 
 export function determineEnding(player) {
   const s = player.stats;
-  if (s.dharma >= 75 && s.compassion >= 65 && s.honor >= 65) return "Ideal Dharma Ending";
+  const betrayed = player.flags?.betrayals?.length || 0;
+  if (s.dharma >= 75 && s.compassion >= 65 && s.honor >= 65 && betrayed === 0) return "Ideal Dharma Ending";
   if (s.aggression >= 80 && s.strategy >= 60 && s.compassion <= 30) return "Ruthless Conqueror Ending";
+  if (betrayed >= 2) return "Broken Oath Ending";
   return "Failed Ruler Ending";
 }
