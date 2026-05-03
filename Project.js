@@ -1,6 +1,6 @@
 var preludeText = "Fulfill your dharma, and let your deeds become legend.";
 // the variable defines the prelude text
-console.log("Update 1.0.6")
+console.log("Update 1.0.7")
 var currentScene = 0;
 var playerName = "";
 var broughtLakshmana = false;
@@ -41,6 +41,7 @@ var GAME_EVENTS = { SCENE_LOAD: "onSceneLoad", CHOICE_MADE: "onChoiceMade", ITEM
 var gameState = null;
 var isRoutingSceneUpdate = false;
 var rpgPanelsVisible = false;
+var aiSceneSeed = 10000;
 
 function getSceneIdFromUrl() {
   var fromPath = window.location.pathname.match(/\/scene\/(\d+)\/?$/);
@@ -776,7 +777,7 @@ function showScene() {
   if (gameState) { gameState.scene.current = currentScene; eventBus.emit(GAME_EVENTS.SCENE_LOAD, { sceneId: currentScene }); }
   var sceneTitle = formatStoryHtml(scene.title);
   if (gameState && gameState.player.stats.dharma >= 70) sceneTitle += " <span class='dharma-echo'>• Aura of Dharma</span>";
-  var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo' data-tooltip='undo'>Undo</button><button type='button' onclick='openTimelineModal()' aria-label='Open my storyline'>My Storyline</button><button type='button' onclick='downloadSaveFile()' aria-label='Export save'>Export Save</button><button type='button' onclick='triggerSaveUpload()' aria-label='Import save'>Import Save</button><button type='button' onclick='toggleRpgPanels()' aria-label='Toggle RPG Panels'>RPG Features</button><button type='button' onclick='toggleDharmaConsole()' aria-label='Open Dharma Console'>Dharma Console</button><input id='saveFileInput' type='file' accept='application/json' style='display:none' onchange='importSaveFile(event)'></div>";
+  var html = "<div id='storyCardToolbar'><button id='undoButton' class='art-button undo-art' type='button' onclick='undoLastChoice()' aria-label='Undo' data-tooltip='undo'>Undo</button><button type='button' onclick='openTimelineModal()' aria-label='Open my storyline'>My Storyline</button><button type='button' onclick='downloadSaveFile()' aria-label='Export save'>Export Save</button><button type='button' onclick='triggerSaveUpload()' aria-label='Import save'>Import Save</button><button type='button' onclick='toggleRpgPanels()' aria-label='Toggle RPG Panels'>RPG Features</button><button type='button' onclick='toggleDharmaConsole()' aria-label='Open Dharma Console'>Dharma Console</button><button type='button' onclick='generateInfiniteAiScene()' aria-label='Generate endless AI story scene'>AI Continue</button><input id='saveFileInput' type='file' accept='application/json' style='display:none' onchange='importSaveFile(event)'></div>";
   if (gameState) {
     var inventoryView = Object.keys(gameState.player.inventory).map(function (key) { var item = gameState.player.inventory[key]; return "<li>" + escapeHtml(item.name) + " x" + item.qty + " <em>(" + escapeHtml(item.category) + ")</em></li>"; }).join("");
     var questView = [];
@@ -830,6 +831,41 @@ function showScene() {
   if (!isRoutingSceneUpdate) syncSceneRoute(false);
 }
 //the above formats the scene logic into html
+
+
+async function generateInfiniteAiScene() {
+  var scene = scenes[currentScene];
+  if (!scene || !gameState) return;
+  var aiButton = document.querySelector("button[onclick='generateInfiniteAiScene()']");
+  if (aiButton) { aiButton.disabled = true; aiButton.textContent = "Summoning..."; }
+  try {
+    var payload = {
+      player_name: gameState.player.name || "Rama",
+      current_title: interpolatePlayerName(scene.title),
+      current_text: interpolatePlayerName((scene.text || []).join(" ")),
+      stats: gameState.player.stats
+    };
+    var response = await fetch("/ai/continue-story", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    if (!response.ok) throw new Error("AI service unavailable");
+    var data = await response.json();
+    var newId = aiSceneSeed++;
+    scenes[newId] = {
+      title: data.title || "The Journey Continues",
+      subtitle: "AI-Generated Endless Chapter",
+      text: Array.isArray(data.paragraphs) && data.paragraphs.length ? data.paragraphs : ["The path extends beyond maps and memory."],
+      choices: [
+        { label: data.choice_a || "Advance with courage", next: newId + 1 },
+        { label: data.choice_b || "Reflect and adapt", next: newId + 1 }
+      ]
+    };
+    historyStack.push(currentScene);
+    currentScene = newId;
+    if (gameState.ui && gameState.ui.moralLog) gameState.ui.moralLog.unshift("AI has forged a new endless chapter.");
+    showScene();
+  } catch (err) {
+    alert("AI continuation could not load right now. Please try again.");
+  }
+}
 
 function toggleRpgPanels() {
   rpgPanelsVisible = !rpgPanelsVisible;

@@ -10,7 +10,7 @@
   <script src="Project.js"></script>
 </head>
 <body>
-  <a id="updateBadge" class="nav-link-current" href="updates.html" aria-label="Go to updates page" aria-current="page" data-resolution-label="HD">Update 1.0.6</a>
+  <a id="updateBadge" class="nav-link-current" href="updates.html" aria-label="Go to updates page" aria-current="page" data-resolution-label="HD">Update 1.0.7</a>
 
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
@@ -40,14 +40,14 @@
   <main id="storyCard" aria-live="polite">
     <h2>Latest Update</h2>
     <div id="updateInfo">
-      <h3>Update 1.0.6 — RPG Side Panels & Toggle</h3>
-      <p>RPG features can now be toggled with a dedicated button so the story card stays clean until you want systems detail.</p>
+      <h3>Update 1.0.7 — Endless AI Story Continuation</h3>
+      <p>The adventure now supports AI-assisted endless chapter generation directly from the story card toolbar.</p>
       <p><strong>What’s included:</strong></p>
       <ul>
-        <li>New <strong>RPG Features</strong> button to reveal/hide the expanded RPG panels on demand.</li>
-        <li>Dharma Console summary pinned to the <strong>left</strong> side of the RPG layout.</li>
-        <li>Quest Tracker moved to the <strong>right</strong> side outside the core story text flow.</li>
-        <li>Added extra RPG systems: <strong>Combat Readiness</strong> (XP Power + Stamina) and <strong>Party Bond</strong> companion readouts.</li>
+        <li>New <strong>AI Continue</strong> button to generate fresh story chapters on demand so the journey never ends.</li>
+        <li>AI chapter output creates new scenes dynamically and links them into your active timeline history.</li>
+        <li>Backend endpoint <code>/ai/continue-story</code> now returns narrative paragraphs plus branching choice prompts.</li>
+        <li>Each generated scene includes two onward choices, enabling effectively infinite play loops.</li>
       </ul>
     </div>
   </main>
