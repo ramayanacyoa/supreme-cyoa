@@ -857,6 +857,28 @@ p {
   font-size: 14px;
 }
 
+
+
+.timeline-controls {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+#timelineRevealToggle {
+  width: auto;
+  min-width: 230px;
+}
+
+#timelineCard {
+  width: min(98vw, 1800px);
+  max-height: 96vh;
+  overflow: auto;
+}
+
+#receiptCard {
+  max-width: 100%;
+}
 #storyCard h2 {
   font-size: clamp(1.9rem, 4vw, 2.8rem);
   color: #fff0c6;
