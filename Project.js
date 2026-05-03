@@ -6,6 +6,7 @@ var playerName = "";
 var broughtLakshmana = false;
 var wentAlone = false;
 var historyStack = [];
+var timelineRevealAll = false;
 var familyCast = {
   fatherName: "Dasharatha",
   motherName: "Kausalya",
@@ -786,6 +787,110 @@ function renderSimpleTimelineList() {
 
   list.innerHTML = html;
 }
+
+function getVisitedSceneIds() {
+  var ids = {};
+  historyStack.forEach(function (sceneId) { ids[sceneId] = true; });
+  ids[currentScene] = true;
+  return ids;
+}
+
+function toggleTimelineReveal() {
+  timelineRevealAll = !timelineRevealAll;
+  updateTimelineRevealButton();
+  renderTimelineFlowchart();
+}
+
+function updateTimelineRevealButton() {
+  var button = document.getElementById("timelineRevealToggle");
+  if (!button) {
+    return;
+  }
+  button.textContent = timelineRevealAll ? "Hide Unexperienced Scenes" : "Reveal Coming Scenes";
+  button.setAttribute("aria-pressed", timelineRevealAll ? "true" : "false");
+}
+
+function renderTimelineFlowchart() {
+  var container = document.getElementById("timelineFlowchart");
+  if (!container) {
+    return;
+  }
+
+  var sceneIds = Object.keys(scenes).map(function (id) { return Number(id); }).sort(function (a, b) { return a - b; });
+  var levelById = {};
+  var queue = [1];
+  levelById[1] = 0;
+  while (queue.length) {
+    var id = queue.shift();
+    var scene = scenes[id];
+    if (!scene || !Array.isArray(scene.choices)) {
+      continue;
+    }
+    scene.choices.forEach(function (choice) {
+      if (typeof choice.next !== "number" || choice.next < 1 || !scenes[choice.next]) return;
+      if (levelById[choice.next] == null || levelById[choice.next] > levelById[id] + 1) {
+        levelById[choice.next] = levelById[id] + 1;
+        queue.push(choice.next);
+      }
+    });
+  }
+
+  var columns = {};
+  sceneIds.forEach(function (id) {
+    var lvl = levelById[id] != null ? levelById[id] : 0;
+    columns[lvl] = columns[lvl] || [];
+    columns[lvl].push(id);
+  });
+
+  var colKeys = Object.keys(columns).map(Number).sort(function (a,b){return a-b;});
+  var xGap = 430, yGap = 180, nodeW = 320, nodeH = 95, margin = 70;
+  var pos = {};
+  var maxRows = 1;
+  colKeys.forEach(function (col) {
+    columns[col].sort(function (a,b){return a-b;});
+    maxRows = Math.max(maxRows, columns[col].length);
+    columns[col].forEach(function (id, row) {
+      pos[id] = { x: margin + col * xGap, y: margin + row * yGap };
+    });
+  });
+
+  var width = Math.max(3900, margin * 2 + (colKeys.length + 1) * xGap);
+  var height = Math.max(1200, margin * 2 + (maxRows + 1) * yGap);
+  var visited = getVisitedSceneIds();
+
+  var svg = "<svg viewBox='0 0 " + width + " " + height + "' role='img' aria-label='Story flowchart'>";
+  sceneIds.forEach(function (fromId) {
+    var scene = scenes[fromId];
+    if (!scene || !scene.choices || !pos[fromId]) return;
+    scene.choices.forEach(function (choice) {
+      if (typeof choice.next !== "number" || choice.next < 1 || !pos[choice.next]) return;
+      var edgeVisible = timelineRevealAll || (visited[fromId] && visited[choice.next]);
+      if (!edgeVisible) return;
+      var x1 = pos[fromId].x + nodeW;
+      var y1 = pos[fromId].y + nodeH / 2;
+      var x2 = pos[choice.next].x;
+      var y2 = pos[choice.next].y + nodeH / 2;
+      var mid = (x1 + x2) / 2;
+      var active = visited[fromId] && visited[choice.next] ? " active" : "";
+      svg += "<path class='timeline-edge" + active + "' d='M" + x1 + " " + y1 + " C " + mid + " " + y1 + ", " + mid + " " + y2 + ", " + x2 + " " + y2 + "'></path>";
+    });
+  });
+
+  sceneIds.forEach(function (id) {
+    if (!pos[id]) return;
+    var visible = timelineRevealAll || visited[id];
+    if (!visible) return;
+    var cls = "timeline-node" + (visited[id] ? " visited" : "") + (id === currentScene ? " active" : "");
+    var title = interpolatePlayerName(scenes[id].title).slice(0, 28);
+    svg += "<rect class='" + cls + "' x='" + pos[id].x + "' y='" + pos[id].y + "' width='" + nodeW + "' height='" + nodeH + "' rx='16' ry='16'></rect>";
+    svg += "<text class='node-id' x='" + (pos[id].x + 16) + "' y='" + (pos[id].y + 30) + "'>#" + id + "</text>";
+    svg += "<text class='node-title' x='" + (pos[id].x + 16) + "' y='" + (pos[id].y + 60) + "'>" + escapeHtml(title) + "</text>";
+  });
+
+  svg += "</svg>";
+  container.innerHTML = svg;
+}
+
 //choice logic
 function openTimelineModal() {
   var modal = document.getElementById("timelineModal");
@@ -793,6 +898,8 @@ function openTimelineModal() {
     return;
   }
   renderSimpleTimelineList();
+  renderTimelineFlowchart();
+  updateTimelineRevealButton();
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
 }

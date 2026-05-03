@@ -62,6 +62,10 @@
         <button class="timeline-close" type="button" onclick="closeTimelineModal()" aria-label="Close my storyline">×</button>
       </div>
       <p>Your choices and scene descriptions so far:</p>
+      <div class="timeline-controls">
+        <button id="timelineRevealToggle" type="button" onclick="toggleTimelineReveal()" aria-pressed="false">Reveal Coming Scenes</button>
+      </div>
+      <div id="timelineFlowchart" aria-label="Storyline flowchart"></div>
       <div id="receiptCard">
         <div class="receipt-section">
           <div class="timeline-scenes-scroll">
