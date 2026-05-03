@@ -4,6 +4,7 @@ console.log("Update 1.0.6")
 console.log("Update 1.0.7")
 console.log("Update 1.0.8")
 console.log("Update 1.0.9")
+console.log("Update 1.0.10")
 var currentScene = 0;
 var playerName = "";
 var broughtLakshmana = false;
@@ -19,6 +20,14 @@ var familyCast = {
   siblingTwoName: "Bharata",
   siblingThreeName: "Shatrughna",
   secondMotherName: "Kaikeyi"
+};
+
+var heroProfiles = {
+  rama: { defaultName: "Rama", fatherName: "Dasharatha", motherName: "Kausalya", wifeName: "Sita", siblingOneName: "Lakshmana", siblingTwoName: "Bharata", siblingThreeName: "Shatrughna", secondMotherName: "Kaikeyi" },
+  lakshmana: { defaultName: "Lakshmana", fatherName: "Dasharatha", motherName: "Sumitra", wifeName: "Urmila", siblingOneName: "Rama", siblingTwoName: "Bharata", siblingThreeName: "Shatrughna", secondMotherName: "Kaikeyi" },
+  bharata: { defaultName: "Bharata", fatherName: "Dasharatha", motherName: "Kaikeyi", wifeName: "Mandavi", siblingOneName: "Rama", siblingTwoName: "Lakshmana", siblingThreeName: "Shatrughna", secondMotherName: "Kausalya" },
+  ravana: { defaultName: "Ravana", fatherName: "Vishrava", motherName: "Kaikesi", wifeName: "Mandodari", siblingOneName: "Kumbhakarna", siblingTwoName: "Vibhishana", siblingThreeName: "Surphanaka", secondMotherName: "Pushpotkata" },
+  sita: { defaultName: "Sita", fatherName: "Janaka", motherName: "Sunaina", wifeName: "Rama", siblingOneName: "Urmila", siblingTwoName: "Mandavi", siblingThreeName: "Shrutakirti", secondMotherName: "Kausalya" }
 };
 // defining all base story variables
 
@@ -661,8 +670,18 @@ function restart() {
 }
 //restarts the whole game/story system
 function startAdventure() {
+  var heroSelect = document.getElementById("heroSelect");
+  var heroKey = heroSelect && heroProfiles[heroSelect.value] ? heroSelect.value : "rama";
+  var heroProfile = heroProfiles[heroKey];
   var baseNameInput = document.getElementById("playerName");
-  playerName = baseNameInput && baseNameInput.value.trim() ? baseNameInput.value.trim() : "Rama";
+  playerName = baseNameInput && baseNameInput.value.trim() ? baseNameInput.value.trim() : heroProfile.defaultName;
+  familyCast.fatherName = heroProfile.fatherName;
+  familyCast.motherName = heroProfile.motherName;
+  familyCast.wifeName = heroProfile.wifeName;
+  familyCast.siblingOneName = heroProfile.siblingOneName;
+  familyCast.siblingTwoName = heroProfile.siblingTwoName;
+  familyCast.siblingThreeName = heroProfile.siblingThreeName;
+  familyCast.secondMotherName = heroProfile.secondMotherName;
   historyStack = [];
   timelineEntries = [];
   currentScene = 1;

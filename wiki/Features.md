@@ -18,6 +18,7 @@ This page now includes both **live features** and a **comprehensive systems expa
 
 ### 2) Personalization
 - Custom player name input on the start card.
+- Playable hero selection: Rama (classic), Lakshmana, Bharata, Ravana, or Sita.
 - Canonical fallback names when inputs are blank.
 - Dynamic pronoun support for sibling selections.
 - Runtime placeholder interpolation in story text.

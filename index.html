@@ -42,10 +42,20 @@
     <div id="beginningContainer">
       <div class="intro-card">
         <h2>Welcome, Brave Traveler</h2>
-        <p>Type your name and begin your journey. Then start the game to enter the adventure.</p>
+        <p>Choose a hero path, optionally rename the character, and begin your journey.</p>
+        <div class="name-grid">
+          <p class="setup-label">Play as</p>
+          <select id="heroSelect" aria-label="Choose your hero">
+            <option value="rama" selected>Rama (Classic)</option>
+            <option value="lakshmana">Lakshmana</option>
+            <option value="bharata">Bharata</option>
+            <option value="ravana">Ravana</option>
+            <option value="sita">Sita</option>
+          </select>
+        </div>
         <div class="name-grid">
           <p id="playerNameLabel" class="setup-label">Name yourself</p>
-          <input type="text" id="playerName" placeholder="Your name (Rama)" />
+          <input type="text" id="playerName" placeholder="Character name (optional)" />
         </div>
         <button type="button" onclick="startAdventure()" id="startBtn" data-tooltip="begin your quest">Begin your Quest</button>
       </div>
