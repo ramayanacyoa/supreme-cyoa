@@ -33,6 +33,8 @@ This page now includes both **live features** and a **comprehensive systems expa
 
 ### 5) Navigation and pages
 - Shared responsive navbar pattern.
+- Complex scene URL routing with deep links via query params and hash anchors.
+- Browser back/forward scene restoration through history state handling.
 - Core pages:
   - `index.html`
   - `updates.html`

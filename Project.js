@@ -1,6 +1,6 @@
 var preludeText = "Fulfill your dharma, and let your deeds become legend.";
 // the variable defines the prelude text
-console.log("Update 1.0.4")
+console.log("Update 1.0.5")
 var currentScene = 0;
 var playerName = "";
 var broughtLakshmana = false;
@@ -39,6 +39,36 @@ evaluateRelationshipStates();
 
 var GAME_EVENTS = { SCENE_LOAD: "onSceneLoad", CHOICE_MADE: "onChoiceMade", ITEM_ACQUIRED: "onItemAcquired", QUEST_UPDATED: "onQuestUpdated", COMBAT_START: "onCombatStart" };
 var gameState = null;
+var isRoutingSceneUpdate = false;
+
+function getSceneIdFromUrl() {
+  var fromPath = window.location.pathname.match(/\/scene\/(\d+)\/?$/);
+  if (fromPath && fromPath[1]) return Number(fromPath[1]);
+  var params = new URLSearchParams(window.location.search);
+  var fromQuery = Number(params.get("scene"));
+  if (!Number.isNaN(fromQuery) && fromQuery > 0) return fromQuery;
+  var fromHash = Number((window.location.hash || "").replace("#scene-", ""));
+  if (!Number.isNaN(fromHash) && fromHash > 0) return fromHash;
+  return null;
+}
+
+function syncSceneRoute(replaceMode) {
+  if (!window.history || !window.history.pushState || !scenes[currentScene]) return;
+  var sceneId = currentScene;
+  var params = new URLSearchParams(window.location.search);
+  params.set("scene", String(sceneId));
+  var query = params.toString();
+  var nextUrl = window.location.pathname + (query ? "?" + query : "") + "#scene-" + sceneId;
+  var method = replaceMode ? "replaceState" : "pushState";
+  window.history[method]({ sceneId: sceneId }, "", nextUrl);
+}
+
+function applySceneFromRoute() {
+  var routedScene = getSceneIdFromUrl();
+  if (!routedScene || !scenes[routedScene]) return;
+  currentScene = routedScene;
+  showScene();
+}
 
 function createInitialGameState(name) {
   return { player: { name: name || "Rama", health: 100, stats: { dharma: 50, aggression: 20, compassion: 50 }, affection: { sita: 70, lakshmana: 75, hanuman: 50, sugriva: 35, vibhishana: 20, bharata: 80 }, inventory: {} }, quests: { main: { exilePath: { id: "exilePath", title: "Path of Exile", type: "main", state: "active" } }, side: {}, hidden: {} }, world: { flags: {}, activeEvent: null }, scene: { current: 1, history: [] }, ui: { moralLog: [] } };
@@ -598,6 +628,9 @@ function restart() {
   historyStack = [];
   clearStoryCard();
   updateUndoButton();
+  if (window.history && window.history.replaceState) {
+    window.history.replaceState({}, "", window.location.pathname);
+  }
 }
 //restarts the whole game/story system
 function startAdventure() {
@@ -615,6 +648,7 @@ function startAdventure() {
     storyCard.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   updateUndoButton();
+  syncSceneRoute(true);
 }
 //starts the adventure
 
@@ -789,6 +823,7 @@ function showScene() {
 
   storyCard.innerHTML = html;
   updateUndoButton();
+  if (!isRoutingSceneUpdate) syncSceneRoute(false);
 }
 //the above formats the scene logic into html
 function makeChoice(choiceIndex) {
@@ -816,6 +851,18 @@ function undoLastChoice() {
   currentScene = historyStack.pop();
   showScene();
 }
+
+window.addEventListener("popstate", function () {
+  isRoutingSceneUpdate = true;
+  applySceneFromRoute();
+  isRoutingSceneUpdate = false;
+});
+
+window.addEventListener("load", function () {
+  isRoutingSceneUpdate = true;
+  applySceneFromRoute();
+  isRoutingSceneUpdate = false;
+});
 
 function updateUndoButton() {
   var undoButton = document.getElementById("undoButton");
