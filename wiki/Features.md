@@ -15,9 +15,11 @@ This page now includes both **live features** and a **comprehensive systems expa
 - Dialogue blocks for key character moments.
 - Extended campaign continuation from forest arc through Lanka war and Uttara Kanda endings.
 - Longer scene cadence with day/night progression pacing.
+- Hero-specific opening scenes for Lakshmana, Bharata, Ravana, and Sita perspectives.
 
 ### 2) Personalization
 - Custom player name input on the start card.
+- Playable hero selection: Rama (classic), Lakshmana, Bharata, Ravana, or Sita.
 - Canonical fallback names when inputs are blank.
 - Dynamic pronoun support for sibling selections.
 - Runtime placeholder interpolation in story text.
