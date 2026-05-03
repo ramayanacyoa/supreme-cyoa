@@ -10,7 +10,7 @@
   <script src="Project.js"></script>
 </head>
 <body>
-  <a id="updateBadge" class="nav-link-current" href="updates.html" aria-label="Go to updates page" aria-current="page" data-resolution-label="HD">Update 1.0.7</a>
+  <a id="updateBadge" class="nav-link-current" href="updates.html" aria-label="Go to updates page" aria-current="page" data-resolution-label="HD">Update 1.0.8</a>
 
   <nav id="topNavbar" aria-label="Site navigation">
     <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
@@ -40,14 +40,14 @@
   <main id="storyCard" aria-live="polite">
     <h2>Latest Update</h2>
     <div id="updateInfo">
-      <h3>Update 1.0.7 — Endless AI Story Continuation</h3>
-      <p>The adventure now supports AI-assisted endless chapter generation directly from the story card toolbar.</p>
+      <h3>Update 1.0.8 — Day/Night Mode Toggle (In-Game vs Real-Life)</h3>
+      <p>You can now choose whether day/night behavior follows in-game rules or your actual local real-world time.</p>
       <p><strong>What’s included:</strong></p>
       <ul>
-        <li>New <strong>AI Continue</strong> button to generate fresh story chapters on demand so the journey never ends.</li>
-        <li>AI chapter output creates new scenes dynamically and links them into your active timeline history.</li>
-        <li>Backend endpoint <code>/ai/continue-story</code> now returns narrative paragraphs plus branching choice prompts.</li>
-        <li>Each generated scene includes two onward choices, enabling effectively infinite play loops.</li>
+        <li>New toolbar toggle to switch between <strong>In-Game Day/Night</strong> and <strong>Real-Life Day/Night</strong>.</li>
+        <li>In Real-Life mode, random/luck-based scene outcomes are now influenced by actual time of day.</li>
+        <li>Daytime grants better luck odds; nighttime lowers luck odds, while player choices still drive progression.</li>
+        <li>The selected mode is saved in local storage and restored on page load.</li>
       </ul>
     </div>
   </main>
