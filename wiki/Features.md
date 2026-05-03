@@ -24,6 +24,7 @@ This page now includes both **live features** and a **comprehensive systems expa
 ### 3) Choice logic and chance systems
 - Runtime flags preserve route context.
 - Randomized outcomes in selected scenes.
+- Toggle between in-game luck and real-life day/night influenced luck.
 - Explicit restart flow for replayability.
 
 ### 4) Story UI
