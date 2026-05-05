@@ -1,6 +1,6 @@
 # Features
 
-_Last updated: 2026-05-03 (UTC)_
+_Last updated: 2026-05-05 (UTC)_
 
 This page now includes both **live features** and a **comprehensive systems expansion blueprint** for the next major evolution of the Ramayana RPG.
 
@@ -71,6 +71,11 @@ This page now includes both **live features** and a **comprehensive systems expa
 - Input guidance for player-name defaults.
 - Graceful fallbacks for optional browser features.
 
+
+- New class-based architecture split into GameEngine, SceneManager, StateManager, and UIController with modular responsibilities.
+- New long-form timeline generator spanning Ayodhya → Exile → Forest → Kishkindha → Lanka → Return with 240 base scenes plus dynamic encounters.
+- New per-scene background and character image layers with smooth transitions and readability overlays.
+- New foundational systems: party recruitment, inventory/equipment hooks, quests, kingdom resources, lineage memory, dream-world event routing, and local save/load.
 ### 10) Living world simulation (new)
 - Realtime and offline world passage simulation with story phase progression.
 - Sleep action that triggers Slumberland dream outcomes.

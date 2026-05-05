@@ -3,89 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title id="Question">The Ramayana Adventure: Banwas</title>
-  <!-- by arjun singh -->
-  <link rel="stylesheet" href="Project.css">
-  <script src="resolution.js"></script>
-  <script src="Project.js"></script>
-  <link rel="icon" type="image/x-icon" href="ramayana_favicon.ico">
+  <title>Ramayana: Kingdoms of Dharma</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/x-icon" href="ramayana_favicon.ico" />
 </head>
 <body>
-  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 1.0.6 - RPG Systems Expansion</a>
-  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 1.0.7 - Storyline Flowchart Fix</a>
-  <a id="updateBadge" href="updates.html" aria-label="Go to updates page" data-resolution-label="HD">Update 1.0.9 - Persistent World and Account System</a>
-
-  <nav id="topNavbar" aria-label="Site navigation">
-    <button id="navbarToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">☰</button>
-    <div id="navLinks">
-      <a id="aboutButton" class="nav-link-current" href="index.html" aria-current="page">Main Adventure</a>
-      <!-- <a class="nav-link-pill" href="before-the-ramayana.html">Before the Ramayana</a> -->
-      <a class="nav-link-pill" href="people-of-ramayana.html">People of the Ramayana</a>
-      <a class="nav-link-pill" href="about.html">About</a>
-    </div>
-    <div id="soundtrackBadge" aria-label="Background soundtrack controls">
-      <span class="soundtrack-label">Soundtrack</span>
-      <audio id="backgroundMusic" controls controlsList="nodownload noplaybackrate" autoplay muted loop preload="metadata">
-        <source src="Sacred Path Of Rama.mp3" type="audio/mpeg">
-      </audio>
-    </div>
-  </nav>
-
-  <div id="titleContainer">
-    <header>
-      <h1>The Ramayana Adventure: Banwas</h1>
-      <h3 class="subtitle">An Epic Adventure Awaits</h3>
-      <h4 id="description">Embark on your own journey through the great Indian epic.</h4>
-      <p>You will travel through ancient India, make difficult choices, and uncover how the story of the Ramayana might unfold in different ways.</p>
+  <div id="app" class="game-shell">
+    <header class="topbar">
+      <h1>Ramayana: Kingdoms of Dharma</h1>
+      <div class="topbar-actions">
+        <button id="saveBtn">Save</button>
+        <button id="loadBtn">Load</button>
+        <button id="timelineBtn">Timeline</button>
+      </div>
     </header>
 
-    <div id="beginningContainer">
-      <div class="intro-card">
-        <h2>Welcome, Brave Traveler</h2>
-        <p>Choose a hero path, optionally rename the character, and begin your journey.</p>
-        <div class="name-grid">
-          <p class="setup-label">Play as</p>
-          <select id="heroSelect" aria-label="Choose your hero">
-            <option value="rama" selected>Rama (Classic)</option>
-            <option value="lakshmana">Lakshmana</option>
-            <option value="bharata">Bharata</option>
-            <option value="ravana">Ravana</option>
-            <option value="sita">Sita</option>
-          </select>
-        </div>
-        <div class="name-grid">
-          <p id="playerNameLabel" class="setup-label">Name yourself</p>
-          <input type="text" id="playerName" placeholder="Character name (optional)" />
-        </div>
-        <button type="button" onclick="startAdventure()" id="startBtn" data-tooltip="begin your quest">Begin your Quest</button>
+    <aside class="hud" id="hud"></aside>
+
+    <main class="scene-stage">
+      <div class="scene-image-wrap">
+        <img id="bgImage" alt="Scene background" />
+        <img id="charImage" alt="Character portrait" />
+        <div class="image-overlay"></div>
       </div>
-    </div>
+      <article id="sceneCard" class="scene-card">
+        <h2 id="sceneTitle"></h2>
+        <p id="sceneText"></p>
+        <div id="choices" class="choice-grid"></div>
+      </article>
+    </main>
+
+    <section id="timelinePanel" class="timeline hidden">
+      <h3>Journey Timeline</h3>
+      <ol id="timelineList"></ol>
+    </section>
   </div>
 
-  <div id="storyCard">
-    <p class="prelude-text">Fulfill your dharma, and let your deeds become legend.</p>
-    <img class="prelude-image" src="rama_pic.png" alt="Rama standing with a bow" id="preludeImg" />
-  </div>
-
-  <div id="timelineModal" class="timeline-modal" onclick="handleTimelineModalBackdrop(event)" aria-hidden="true">
-    <div id="timelineCard">
-      <div class="timeline-modal-header">
-        <h2>My Storyline</h2>
-        <button class="timeline-close" type="button" onclick="closeTimelineModal()" aria-label="Close my storyline">×</button>
-      </div>
-      <p>Your choices and scene descriptions so far:</p>
-      <div class="timeline-controls">
-        <button id="timelineRevealToggle" type="button" onclick="toggleTimelineReveal()" aria-pressed="false">Reveal Coming Scenes</button>
-      </div>
-      <div id="timelineFlowchart" aria-label="Storyline flowchart"></div>
-      <div id="receiptCard">
-        <div class="receipt-section">
-          <div class="timeline-scenes-scroll">
-            <ol id="timelineList"></ol>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <script src="script.js"></script>
 </body>
 </html>
