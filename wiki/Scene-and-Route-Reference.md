@@ -63,3 +63,25 @@ From the Hanuman hub, available branches include:
 - Chance edges use `type: "chance"`.
 - Active highlighting reflects visited nodes and taken paths.
 - Reveal mode displays full path visibility.
+
+## Update 1.0.13 modular route additions
+
+The main adventure now supports direct URL routing with `?scene=<scene-id>#scene-<scene-id>` for every generated or modular scene.
+
+### New expansion route groups
+
+- `ayodhya-council-1` through `ayodhya-council-4`
+- `exile-side-1` through `exile-side-8`
+- `forest-side-1` through `forest-side-8`
+- `kishkindha-side-1` through `kishkindha-side-8`
+- `lanka-side-1` through `lanka-side-8`
+- `return-side-1` through `return-side-8`
+- `slumberland-rest`
+- `slumberland-trial`
+- `dream-1`
+
+### Timeline and receipt model update
+
+- Scene visits append structured timeline entries with scene id, title, day, phase, and timestamp.
+- Choice consequences append receipt entries describing the selected action and resulting day/night state.
+- Browser back/forward navigation re-renders scenes without re-applying scene effects, preventing duplicated history and resource changes.

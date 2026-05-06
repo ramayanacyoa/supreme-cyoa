@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 620" role="img" aria-labelledby="title desc">
+  <title id="title">Hero portrait fallback</title>
+  <desc id="desc">A stylized heroic silhouette with bow and gold aura.</desc>
+  <defs>
+    <radialGradient id="aura" cx="50%" cy="35%" r="55%">
+      <stop offset="0" stop-color="#f9d47c" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#f9d47c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="360" height="620" fill="none"/>
+  <ellipse cx="180" cy="250" rx="155" ry="210" fill="url(#aura)"/>
+  <path d="M115 555 C128 425 128 312 175 270 C222 312 232 425 245 555 Z" fill="#111827" stroke="#f2bf70" stroke-width="7"/>
+  <circle cx="178" cy="198" r="55" fill="#111827" stroke="#f2bf70" stroke-width="7"/>
+  <path d="M92 153 C170 40 257 65 283 202" fill="none" stroke="#f2bf70" stroke-width="9" stroke-linecap="round"/>
+  <path d="M257 88 L275 202 L222 170" fill="none" stroke="#f2bf70" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M86 500 C160 390 245 354 306 265" fill="none" stroke="#d6a654" stroke-width="10" stroke-linecap="round"/>
+</svg>
