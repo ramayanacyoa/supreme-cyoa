@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "ramayana",
+  "name": "supreme-cyoa",
   "compatibility_date": "2026-04-04",
   "observability": {
     "enabled": true
