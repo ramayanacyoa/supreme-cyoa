@@ -1,110 +1,250 @@
-console.log("Update 1.0.12");
+console.log("Update 1.0.13");
+
+import { EXPANDED_SCENES, RAMAYANA_ARCS } from './engine_extensions/expandedScenes.js';
+import { GameUI } from './ui/gameUI.js';
+import {
+  InventorySystem,
+  KingdomSystem,
+  PartySystem,
+  QuestSystem,
+  SaveLoadSystem,
+  TimeSystem,
+  canShowChoice,
+  clamp,
+  createDefaultState,
+  normaliseState
+} from './systems/gameSystems.js';
 
 class StateManager {
   constructor() {
-    this.state = {
-      player: { name: 'Rama', level: 1, xp: 0, stats: { strength: 6, dharma: 50, intelligence: 6, agility: 6 }, lineage: [] },
-      party: ['rama'], allies: { rama: { lvl: 1 }, hanuman: null, sugriva: null, vibhishana: null },
-      inventory: { herbs: 3, arrows: 10 }, equipment: { weapon: null, charm: null },
-      quests: { active: [], completed: [] }, kingdom: { tier: 1, food: 20, stone: 10, faith: 15 },
-      world: { day: 1, phase: 'Day', dharma: 50, flags: {}, history: [], currentScene: 'ayodhya-1' }
-    };
+    this.state = createDefaultState();
   }
-  save() { localStorage.setItem('rkod_save', JSON.stringify(this.state)); }
-  load() { const raw = localStorage.getItem('rkod_save'); if (raw) this.state = JSON.parse(raw); }
+}
+
+class SystemRegistry {
+  constructor(stateRef) {
+    this.stateRef = stateRef;
+    this.rebind();
+  }
+  rebind() {
+    const state = this.stateRef.state;
+    this.inventory = new InventorySystem(state);
+    this.quests = new QuestSystem(state);
+    this.party = new PartySystem(state);
+    this.time = new TimeSystem(state);
+    this.kingdom = new KingdomSystem(state);
+    this.saveLoad = new SaveLoadSystem(this.stateRef);
+  }
 }
 
 class SceneManager {
-  constructor(state) { this.state = state; this.scenes = this.buildScenes(); }
+  constructor(stateRef, systems) {
+    this.stateRef = stateRef;
+    this.systems = systems;
+    this.scenes = this.buildScenes();
+  }
+
   buildScenes() {
-    const arcs = ['ayodhya', 'exile', 'forest', 'kishkindha', 'lanka', 'return'];
     const scenes = {};
-    arcs.forEach((arc, ai) => {
-      for (let i = 1; i <= 40; i++) {
+    const sideEntrances = {
+      ayodhya: 'ayodhya-council-1', exile: 'exile-side-1', forest: 'forest-side-1', kishkindha: 'kishkindha-side-1', lanka: 'lanka-side-1', return: 'return-side-1'
+    };
+
+    RAMAYANA_ARCS.forEach((arc, arcIndex) => {
+      for (let i = 1; i <= 40; i += 1) {
         const id = `${arc}-${i}`;
-        const nextArc = arcs[Math.min(ai + 1, arcs.length - 1)];
+        const nextArc = RAMAYANA_ARCS[Math.min(arcIndex + 1, RAMAYANA_ARCS.length - 1)];
         const next = i < 40 ? `${arc}-${i + 1}` : `${nextArc}-1`;
-        scenes[id] = {
-          id, arc,
-          title: `${arc.toUpperCase()} • Chapter ${i}`,
-          text: `Day ${this.state.world.day}: You face trials in ${arc}. Your choices reshape allies, kingdom, and destiny.`,
-          backgroundImage: `https://picsum.photos/seed/${arc + i}/1200/700`,
-          characterImage: `https://picsum.photos/seed/hero${i}/360/620`,
-          effects: () => this.applySceneEffects(arc, i),
-          choices: [
-            { label: 'Follow dharma', to: next, effect: () => this.state.world.dharma += 2 },
-            { label: 'Take tactical risk', to: next, effect: () => this.state.player.stats.intelligence += 1 },
-            { label: 'Explore hidden path', to: this.randomEncounter(id), effect: () => this.state.player.xp += 8 }
-          ]
-        };
+        scenes[id] = this.createCoreScene({ id, arc, index: i, next, side: sideEntrances[arc] });
       }
     });
-    scenes['dream-1'] = { id:'dream-1', arc:'slumberland', title:'Slumberland Dream Gate', text:'You enter a dream realm. Hidden truths alter lineage memory.', backgroundImage:'https://picsum.photos/seed/dream/1200/700', characterImage:'https://picsum.photos/seed/moon/360/620', effects:()=>{this.state.player.lineage.push('Dream Omen');}, choices:[{label:'Awaken', to:this.state.world.currentScene}] };
+
+    this.createEncounters().forEach((scene) => { scenes[scene.id] = scene; });
+    EXPANDED_SCENES.forEach((scene) => { scenes[scene.id] = this.normaliseScene(scene); });
+    scenes['dream-1'] = this.normaliseScene({
+      id: 'dream-1',
+      arc: 'slumberland',
+      title: 'Slumberland Dream Gate',
+      text: 'You enter a dream realm. Hidden truths alter lineage memory, but the world continues beyond sleep.',
+      image: 'https://picsum.photos/seed/rkod-dream-gate/1200/700',
+      characterImage: 'https://picsum.photos/seed/rkod-moon-sage/360/620',
+      onEnter: () => {
+        const lineage = this.stateRef.state.player.lineage;
+        if (!lineage.includes('Dream Omen')) lineage.push('Dream Omen');
+        this.systems.quests.start('Interpret the dream omen');
+      },
+      choices: [{ label: 'Awaken at the last camp', to: () => this.stateRef.state.world.lastScene || 'forest-1', time: 4 }]
+    });
     return scenes;
   }
-  randomEncounter(returnTo) {
-    const ids = ['encounter-sage','encounter-demon','encounter-merchant'];
-    ids.forEach((id, idx) => {
-      this.scenes[id] = { id, arc: 'encounter', title: `Encounter ${idx+1}`, text: 'A dynamic event reacts to your party, time, and dharma.', backgroundImage:`https://picsum.photos/seed/${id}/1200/700`, characterImage:`https://picsum.photos/seed/${id}p/360/620`, effects:()=>{this.state.player.xp += 5; this.state.kingdom.food += 1;}, choices:[{label:'Return to journey', to:returnTo}] };
-    });
-    return ids[Math.floor(Math.random() * ids.length)];
-  }
-  applySceneEffects(arc, i) {
-    this.state.world.day += 1;
-    this.state.world.phase = this.state.world.day % 2 === 0 ? 'Night' : 'Day';
-    this.state.kingdom.food += 1;
-    if (arc === 'kishkindha' && i === 2) this.state.allies.hanuman = { lvl: 1 };
-    if (arc === 'kishkindha' && i === 10) this.state.allies.sugriva = { lvl: 1 };
-    if (arc === 'lanka' && i === 15) this.state.allies.vibhishana = { lvl: 1 };
-  }
-  getScene(id) { return this.scenes[id]; }
-}
 
-class UIController {
-  constructor(state) { this.state = state; this.hud = document.getElementById('hud'); }
-  renderHUD() {
-    const s = this.state;
-    this.hud.innerHTML = `<h3>Hero</h3><p>${s.player.name} Lv.${s.player.level} XP:${s.player.xp}</p>
-    <p>STR ${s.player.stats.strength} | INT ${s.player.stats.intelligence} | AGI ${s.player.stats.agility}</p>
-    <p>Dharma: ${s.world.dharma}</p><h4>Party</h4><p>${Object.keys(s.allies).filter(k=>s.allies[k]).join(', ')}</p>
-    <h4>Kingdom</h4><p>Tier ${s.kingdom.tier} • Food ${s.kingdom.food} • Faith ${s.kingdom.faith}</p>
-    <h4>Quests</h4><p>Active: ${s.quests.active.length} | Done: ${s.quests.completed.length}</p><p>Time: Day ${s.world.day} (${s.world.phase})</p>`;
+  createCoreScene({ id, arc, index, next, side }) {
+    const isNightGate = index % 7 === 0;
+    return this.normaliseScene({
+      id,
+      arc,
+      title: `${arc.toUpperCase()} • Chapter ${index}`,
+      text: `Day ${this.stateRef.state.world.day}: You face trials in ${arc}. Dharma, allies, inventory, and time now shape which paths remain open.`,
+      image: `https://picsum.photos/seed/rkod-${arc}-${index}/1200/700`,
+      characterImage: `https://picsum.photos/seed/rkod-hero-${arc}-${index}/360/620`,
+      onEnter: () => this.applySceneMilestones(arc, index),
+      choices: [
+        { label: 'Follow dharma', to: next, dharma: 2, time: 2 },
+        { label: 'Take tactical risk', to: next, stat: ['intelligence', 1], time: 2 },
+        { label: 'Explore a regional side path', to: side, xp: 8, time: 3 },
+        { label: 'Answer the night omen', to: 'dream-1', requiresPhase: 'Night', flag: ['nightOmenAnswered', true], time: 1 },
+        { label: 'Use herbs to aid travelers', to: next, requiresItem: 'herbs', cost: ['herbs', 1], dharma: 3, kingdom: { faith: 2 }, time: isNightGate ? 3 : 2 }
+      ]
+    });
   }
-  typeText(el, txt) { el.textContent=''; let i=0; el.classList.add('typing'); const tick=()=>{ if(i<txt.length){el.textContent+=txt[i++]; requestAnimationFrame(tick);} else el.classList.remove('typing');}; tick(); }
+
+  createEncounters() {
+    return ['sage', 'demon', 'merchant'].map((kind) => this.normaliseScene({
+      id: `encounter-${kind}`,
+      arc: 'encounter',
+      title: `${kind[0].toUpperCase() + kind.slice(1)} Encounter`,
+      text: 'A dynamic event reacts to your party, time, dharma, and resources before returning you to the wider road.',
+      image: `https://picsum.photos/seed/rkod-encounter-${kind}/1200/700`,
+      characterImage: `https://picsum.photos/seed/rkod-encounter-${kind}-portrait/360/620`,
+      onEnter: () => { this.systems.inventory.add(kind === 'merchant' ? 'arrows' : 'herbs', 1); },
+      choices: [{ label: 'Return to the journey', to: () => this.stateRef.state.world.lastScene || 'ayodhya-1', time: 1 }]
+    }));
+  }
+
+  normaliseScene(scene) {
+    return {
+      image: scene.image || scene.backgroundImage,
+      characterImage: scene.characterImage,
+      choices: [],
+      ...scene,
+      choices: (scene.choices || []).map((choice) => ({ time: 1, ...choice }))
+    };
+  }
+
+  applySceneMilestones(arc, index) {
+    const { party, quests } = this.systems;
+    if (arc === 'ayodhya' && index === 1) quests.start('Prepare for exile with dignity');
+    if (arc === 'exile' && index === 1) quests.complete('Prepare for exile with dignity');
+    if (arc === 'forest' && index === 5) quests.start('Protect the hermitages');
+    if (arc === 'kishkindha' && index === 2) party.add('hanuman', { lvl: 1, role: 'Devoted envoy' });
+    if (arc === 'kishkindha' && index === 10) party.add('sugriva', { lvl: 1, role: 'Vanara king' });
+    if (arc === 'lanka' && index === 15) party.add('vibhishana', { lvl: 1, role: 'Lanka defector' });
+    if (arc === 'return' && index === 1) quests.complete('Protect the hermitages');
+  }
+
+  getScene(id) { return this.scenes[id]; }
 }
 
 class GameEngine {
   constructor() {
     this.stateManager = new StateManager();
-    this.sceneManager = new SceneManager(this.stateManager.state);
-    this.ui = new UIController(this.stateManager.state);
+    this.systems = new SystemRegistry(this.stateManager);
+    this.sceneManager = new SceneManager(this.stateManager, this.systems);
+    this.ui = new GameUI(this.stateManager, {
+      onChoice: (choice) => this.choose(choice),
+      onRest: () => this.rest(),
+      onNavigate: (sceneId) => this.renderScene(sceneId)
+    });
     this.bindGlobalActions();
-    this.renderScene(this.stateManager.state.world.currentScene);
+    this.boot();
   }
+
+  boot() {
+    this.systems.saveLoad.load();
+    this.stateManager.state = normaliseState(this.stateManager.state);
+    this.systems.rebind();
+    const routedScene = new URLSearchParams(window.location.search).get('scene') || window.location.hash.replace('#scene-', '');
+    const startingScene = this.sceneManager.getScene(routedScene) ? routedScene : this.stateManager.state.world.currentScene;
+    this.renderScene(startingScene, { replace: true, runEffects: false, recordHistory: false });
+    this.systems.time.start(() => {
+      this.systems.kingdom.generate('real-time');
+      this.persistAndRefresh();
+    });
+  }
+
   bindGlobalActions() {
-    document.getElementById('saveBtn').onclick = () => this.stateManager.save();
-    document.getElementById('loadBtn').onclick = () => { this.stateManager.load(); this.renderScene(this.stateManager.state.world.currentScene); };
-    document.getElementById('timelineBtn').onclick = () => document.getElementById('timelinePanel').classList.toggle('hidden');
-    window.addEventListener('popstate', (e) => { if (e.state?.sceneId) this.renderScene(e.state.sceneId, true); });
+    document.getElementById('saveBtn').addEventListener('click', () => this.systems.saveLoad.save());
+    document.getElementById('loadBtn').addEventListener('click', () => {
+      if (this.systems.saveLoad.load()) {
+        this.systems.rebind();
+        this.renderScene(this.stateManager.state.world.currentScene, { replace: true, runEffects: false, recordHistory: false });
+      }
+    });
+    document.getElementById('timelineBtn').addEventListener('click', () => document.getElementById('timelinePanel').classList.toggle('hidden'));
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      localStorage.removeItem('rkod_save_v2');
+      localStorage.removeItem('rkod_save');
+      this.stateManager.state = createDefaultState();
+      this.systems.rebind();
+      this.renderScene('ayodhya-1', { replace: true, runEffects: false });
+    });
+    window.addEventListener('popstate', (event) => {
+      const sceneId = event.state?.sceneId;
+      if (sceneId) this.renderScene(sceneId, { replace: true, runEffects: false, recordHistory: false });
+    });
   }
-  renderScene(id, replace = false) {
-    const scene = this.sceneManager.getScene(id);
+
+  choose(choice) {
+    if (!canShowChoice(choice, this.stateManager.state)) return;
+    this.applyChoice(choice);
+    const destination = typeof choice.to === 'function' ? choice.to() : choice.to;
+    if (Math.random() < this.stateManager.state.settings.dreamChance && this.stateManager.state.world.phase === 'Night') {
+      this.renderScene('dream-1');
+      return;
+    }
+    this.renderScene(destination || this.stateManager.state.world.currentScene);
+  }
+
+  rest() {
+    const state = this.stateManager.state;
+    const hours = state.world.phase === 'Night' ? 1 : (18 - state.world.hour + 24) % 24 || 10;
+    this.systems.time.advance(hours, 'rest');
+    if (state.world.phase === 'Night') this.renderScene('slumberland-rest');
+    else this.persistAndRefresh();
+  }
+
+  applyChoice(choice) {
+    const state = this.stateManager.state;
+    if (choice.cost) this.systems.inventory.remove(choice.cost[0], choice.cost[1]);
+    if (choice.dharma) state.world.dharma = clamp(state.world.dharma + choice.dharma, 0, 100);
+    if (choice.xp) state.player.xp += choice.xp;
+    if (choice.stat) state.player.stats[choice.stat[0]] = (state.player.stats[choice.stat[0]] || 0) + choice.stat[1];
+    if (choice.kingdom) Object.entries(choice.kingdom).forEach(([key, value]) => { state.kingdom[key] = (state.kingdom[key] || 0) + value; });
+    if (choice.flag) state.world.flags[choice.flag[0]] = choice.flag[1];
+    if (choice.temporaryEffect && !state.player.temporaryEffects.includes(choice.temporaryEffect)) state.player.temporaryEffects.push(choice.temporaryEffect);
+    this.systems.time.advance(choice.time ?? 1, 'choice');
+    this.systems.kingdom.generate('choice');
+    state.world.timelineReceipts.push(`${choice.label} → ${state.world.phase}, Day ${state.world.day}`);
+    choice.effect?.(state, this.systems);
+  }
+
+  renderScene(id, options = {}) {
+    const { replace = false, runEffects = true, recordHistory = true } = options;
+    const scene = this.sceneManager.getScene(id) || this.sceneManager.getScene('ayodhya-1');
+    const state = this.stateManager.state;
     if (!scene) return;
-    this.stateManager.state.world.currentScene = id;
-    scene.effects?.();
-    this.stateManager.state.world.history.push({ id, title: scene.title, at: new Date().toISOString() });
-    const t = document.getElementById('sceneTitle'); const p = document.getElementById('sceneText');
-    t.textContent = scene.title; this.ui.typeText(p, scene.text);
-    bgImage.src = scene.backgroundImage; charImage.src = scene.characterImage;
-    const choiceWrap = document.getElementById('choices'); choiceWrap.innerHTML = '';
-    scene.choices.forEach(c => { const b = document.createElement('button'); b.textContent = c.label; b.onclick = () => { c.effect?.(); if (Math.random() < 0.04) return this.renderScene('dream-1'); this.renderScene(c.to); }; choiceWrap.appendChild(b); });
-    this.ui.renderHUD(); this.renderTimeline();
-    const url = `?scene=${encodeURIComponent(id)}#scene-${encodeURIComponent(id)}`;
-    history[replace ? 'replaceState' : 'pushState']({ sceneId: id }, '', url);
+
+    const previous = state.world.currentScene;
+    state.world.lastScene = previous !== scene.id ? previous : state.world.lastScene;
+    state.world.currentScene = scene.id;
+    state.world.sceneEntries[scene.id] = (state.world.sceneEntries[scene.id] || 0) + 1;
+
+    if (runEffects) scene.onEnter?.(state, this.systems);
+    if (recordHistory) {
+      state.world.history.push({ id: scene.id, title: scene.title, at: new Date().toISOString(), day: state.world.day, phase: state.world.phase });
+    }
+
+    this.ui.renderAll(scene, this.sceneManager.scenes);
+    const url = `?scene=${encodeURIComponent(scene.id)}#scene-${encodeURIComponent(scene.id)}`;
+    window.history[replace ? 'replaceState' : 'pushState']({ sceneId: scene.id }, '', url);
+    this.systems.saveLoad.save();
   }
-  renderTimeline() {
-    const list = document.getElementById('timelineList');
-    list.innerHTML = this.stateManager.state.world.history.slice(-30).map(h => `<li>${h.title}</li>`).join('');
+
+  persistAndRefresh() {
+    const scene = this.sceneManager.getScene(this.stateManager.state.world.currentScene);
+    this.ui.renderAll(scene, this.sceneManager.scenes);
+    this.systems.saveLoad.save();
   }
 }
-new GameEngine();
+
+document.addEventListener('DOMContentLoaded', () => new GameEngine());

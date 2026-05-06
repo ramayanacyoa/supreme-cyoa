@@ -8,37 +8,74 @@
   <link rel="icon" type="image/x-icon" href="ramayana_favicon.ico" />
 </head>
 <body>
-  <div id="app" class="game-shell">
-    <header class="topbar">
-      <h1>Ramayana: Kingdoms of Dharma</h1>
+  <div id="app" class="game-shell" data-phase="day">
+    <header class="topbar" aria-label="Player and world status">
+      <div class="brand-block">
+        <span class="eyebrow">Epic Interactive RPG</span>
+        <h1>Ramayana: Kingdoms of Dharma</h1>
+      </div>
+      <dl class="topbar-stats">
+        <div><dt>Hero</dt><dd id="playerName">Rama</dd></div>
+        <div><dt>Dharma</dt><dd id="dharmaValue">50</dd></div>
+        <div><dt>Gold</dt><dd id="goldValue">25</dd></div>
+        <div><dt>Time</dt><dd id="timeValue">Day 1 • 08:00 • Day</dd></div>
+      </dl>
       <div class="topbar-actions">
-        <button id="saveBtn">Save</button>
-        <button id="loadBtn">Load</button>
-        <button id="timelineBtn">Timeline</button>
+        <button id="saveBtn" type="button">Save</button>
+        <button id="loadBtn" type="button">Load</button>
+        <button id="timelineBtn" type="button">Timeline</button>
+        <button id="resetBtn" type="button">Reset</button>
       </div>
     </header>
 
-    <aside class="hud" id="hud"></aside>
+    <aside class="side-panel left-panel" aria-label="Quests and party">
+      <section class="panel-card">
+        <h2>Quests</h2>
+        <ul id="questList" class="hud-list"></ul>
+      </section>
+      <section class="panel-card">
+        <h2>Party</h2>
+        <ul id="partyList" class="hud-list"></ul>
+      </section>
+    </aside>
 
-    <main class="scene-stage">
+    <main class="scene-stage" aria-live="polite">
       <div class="scene-image-wrap">
-        <img id="bgImage" alt="Scene background" />
-        <img id="charImage" alt="Character portrait" />
+        <img id="bgImage" alt="Scene background" src="assets/images/fallback-scene.svg" />
+        <img id="charImage" alt="Character portrait" src="assets/images/fallback-character.svg" />
         <div class="image-overlay"></div>
       </div>
       <article id="sceneCard" class="scene-card">
+        <span class="scene-kicker">Living Timeline</span>
         <h2 id="sceneTitle"></h2>
         <p id="sceneText"></p>
         <div id="choices" class="choice-grid"></div>
       </article>
     </main>
 
+    <aside class="side-panel right-panel" aria-label="Inventory and kingdom status">
+      <section class="panel-card">
+        <h2>Inventory</h2>
+        <ul id="inventoryList" class="hud-list"></ul>
+      </section>
+      <section class="panel-card">
+        <h2>Kingdom</h2>
+        <ul id="kingdomStatus" class="hud-list"></ul>
+      </section>
+    </aside>
+
     <section id="timelinePanel" class="timeline hidden">
-      <h3>Journey Timeline</h3>
-      <ol id="timelineList"></ol>
+      <div>
+        <h2>Journey Timeline</h2>
+        <ol id="timelineList"></ol>
+      </div>
+      <div>
+        <h2>Receipts</h2>
+        <ol id="receiptList"></ol>
+      </div>
     </section>
   </div>
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>

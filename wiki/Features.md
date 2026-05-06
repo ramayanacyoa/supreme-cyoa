@@ -331,3 +331,11 @@ Support ongoing balance and narrative tuning.
 6. **Endings** resolve from cumulative state rather than isolated binary choices.
 
 This architecture ensures every feature reinforces the same core fantasy: leading a morally consequential, relationship-driven Ramayana campaign where decisions matter mechanically and narratively across the full lifespan of a run.
+
+## Update 1.0.13 — Stabilized Modular RPG Interface
+
+- Added modular browser RPG systems under `/systems/`, `/ui/`, and `/engine_extensions/` so new gameplay features extend the existing project without replacing the core scene model.
+- Added inventory add/remove checks, active/completed quest tracking, companion recruitment, light kingdom resource generation, localStorage autosave/load, and a robust day/night time loop.
+- Added a polished dark epic interface with a top status bar, left quest/party panel, central image-backed scene card, right inventory/kingdom panel, hover/click animations, scene fade transitions, and responsive layout behavior.
+- Added `scene.image` and `scene.characterImage` support with smooth image swaps, readability gradients, and local fallback SVG assets in `/assets/images/`.
+- Added Slumberland rest routing and 42 connected expansion scenes spanning Ayodhya, Exile, Forest, Kishkindha, Lanka, Return, and dream branches.

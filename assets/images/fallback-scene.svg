@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Golden Ramayana landscape fallback</title>
+  <desc id="desc">A stylized night palace and forest silhouette in gold and indigo.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="0.55" stop-color="#182642"/>
+      <stop offset="1" stop-color="#3d240d"/>
+    </linearGradient>
+    <radialGradient id="moon" cx="78%" cy="18%" r="20%">
+      <stop offset="0" stop-color="#ffe3a3"/>
+      <stop offset="0.45" stop-color="#f2bf70" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#f2bf70" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#sky)"/>
+  <rect width="1200" height="700" fill="url(#moon)"/>
+  <path d="M0 520 C160 450 250 540 390 480 C510 430 620 510 780 460 C940 410 1060 490 1200 420 L1200 700 L0 700Z" fill="#07111f" opacity="0.88"/>
+  <path d="M120 510 L180 390 L240 510 Z M155 390 L180 325 L205 390 Z M520 490 L610 320 L700 490 Z M575 320 L610 250 L645 320 Z" fill="#27190d" stroke="#d6a654" stroke-width="5"/>
+  <path d="M800 480 Q900 320 1000 480 Z" fill="#20140b" stroke="#f2bf70" stroke-width="6"/>
+  <circle cx="930" cy="128" r="58" fill="#ffe3a3" opacity="0.88"/>
+  <text x="70" y="120" fill="#f2bf70" font-family="Georgia,serif" font-size="54" font-weight="700">Ramayana</text>
+  <text x="72" y="168" fill="#f8dfad" font-family="Georgia,serif" font-size="24">Kingdoms of Dharma</text>
+</svg>
